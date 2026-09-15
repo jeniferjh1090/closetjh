@@ -44,7 +44,6 @@
       color: #aaa;
       margin-bottom: 12px;
     }
-    
     .tab-bar {
       display: flex;
       justify-content: space-around;
@@ -78,7 +77,6 @@
     }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
-
     .card {
       background-color: var(--card-bg);
       border: 1px solid rgba(212, 175, 55, 0.3);
@@ -105,7 +103,6 @@
       font-size: 13px;
     }
     input:focus, textarea:focus { border-color: var(--gold-primary); outline: none; }
-    
     .checkbox-container {
       display: flex;
       align-items: center;
@@ -129,7 +126,6 @@
       cursor: pointer;
       text-transform: none;
     }
-
     .btn-gold {
       background: var(--gold-gradient);
       color: #000;
@@ -155,7 +151,6 @@
       margin-top: 6px;
       cursor: pointer;
     }
-    
     canvas, .preview-img {
       width: 100%;
       height: auto;
@@ -173,7 +168,6 @@
       min-height: 80px;
       line-height: 1.5;
     }
-    
     .size-picker {
       display: flex;
       gap: 5px;
@@ -194,7 +188,6 @@
       color: #000;
       font-weight: bold;
     }
-    
     .kpi-container {
       display: flex;
       gap: 10px;
@@ -210,7 +203,6 @@
     }
     .kpi-val { font-size: 18px; font-weight: bold; color: var(--gold-primary); }
     .kpi-lbl { font-size: 10px; color: #888; }
-    
     .planner-row {
       display: flex;
       justify-content: space-between;
@@ -325,18 +317,19 @@
       <label>Estratégia & Planejador Semanal da Loja</label>
       <button class="btn-gold" onclick="gerarRotinaSemanalIA()">🧠 Gerar Melhor Estratégia da Semana com IA</button>
       
-      <div class="planner-row"><span>Segunda:</span> <input type="text" id="planSeg" placeholder="Ação estratégica..." style="width:70%; font-size:11px;"></div>
-      <div class="planner-row"><span>Terça:</span> <input type="text" id="planTer" placeholder="Ação estratégica..." style="width:70%; font-size:11px;"></div>
-      <div class="planner-row"><span>Quarta:</span> <input type="text" id="planQua" placeholder="Ação estratégica..." style="width:70%; font-size:11px;"></div>
-      <div class="planner-row"><span>Quinta:</span> <input type="text" id="planQui" placeholder="Ação estratégica..." style="width:70%; font-size:11px;"></div>
-      <div class="planner-row"><span>Sexta:</span> <input type="text" id="planSex" placeholder="Ação estratégica..." style="width:70%; font-size:11px;"></div>
-      <div class="planner-row"><span>Sábado:</span> <input type="text" id="planSab" placeholder="Ação estratégica..." style="width:70%; font-size:11px;"></div>
-      <button class="btn-outline" onclick="salvarPlanejamento()">💾 Salvar Cronograma Manualmente</button>
+      <div class="planner-row"><span>Segunda:</span> <input type="text" id="planSeg" placeholder="Ação estratégica..." style="width:70%; font-size:11px;" oninput="salvarPlanejamento()"></div>
+      <div class="planner-row"><span>Terça:</span> <input type="text" id="planTer" placeholder="Ação estratégica..." style="width:70%; font-size:11px;" oninput="salvarPlanejamento()"></div>
+      <div class="planner-row"><span>Quarta:</span> <input type="text" id="planQua" placeholder="Ação estratégica..." style="width:70%; font-size:11px;" oninput="salvarPlanejamento()"></div>
+      <div class="planner-row"><span>Quinta:</span> <input type="text" id="planQui" placeholder="Ação estratégica..." style="width:70%; font-size:11px;" oninput="salvarPlanejamento()"></div>
+      <div class="planner-row"><span>Sexta:</span> <input type="text" id="planSex" placeholder="Ação estratégica..." style="width:70%; font-size:11px;" oninput="salvarPlanejamento()"></div>
+      <div class="planner-row"><span>Sábado:</span> <input type="text" id="planSab" placeholder="Ação estratégica..." style="width:70%; font-size:11px;" oninput="salvarPlanejamento()"></div>
+      <button class="btn-outline" onclick="salvarPlanejamento(); alert('Cronograma salvo com sucesso!');">💾 Salvar Cronograma Manualmente</button>
     </div>
 
     <div class="card">
       <label>Catálogo de Looks Registrados</label>
       <div id="historicoLista">Nenhum look salvo ainda.</div>
+      <button class="btn-outline" onclick="limparHistorico()" style="margin-top: 10px; color: #ff5555; border-color: #ff5555;">🗑️ Limpar Catálogo</button>
     </div>
   </div>
 
@@ -350,7 +343,6 @@
   </div>
 
   <script>
-    // Cole aqui sua chave do Google AI Studio (ex: AIzaSy...)
     const CHAVE_API_PADRAO = "AQ.Ab8RN6IaO5xkEJhD2InzD_d_efJX2-azPBc0b-PWMKVcYmeFMQ";
 
     if (CanvasRenderingContext2D && !CanvasRenderingContext2D.prototype.roundRect) {
@@ -419,35 +411,29 @@
 
     async function chamarGemini(promptText, base64Img = null, usarBuscaGoogle = false, tentativa = 1) {
       let keyToUse = CHAVE_API_PADRAO.trim();
-      
-      if (!keyToUse || keyToUse.includes("SUA_CHAVE")) {
-        throw new Error("Chave de API não configurada! Insira sua chave AIza... na variável CHAVE_API_PADRAO.");
-      }
+      if (!keyToUse) throw new Error("Credencial não configurada na fonte.");
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 25000);
 
       try {
         const parts = [{ text: promptText }];
-        
         if (base64Img) {
-          parts.push({ 
-            inline_data: { 
-              mime_type: "image/jpeg", 
-              data: base64Img 
-            } 
-          });
+          parts.push({ inline_data: { mime_type: "image/jpeg", data: base64Img } });
         }
 
         const requestBody = { contents: [{ parts }] };
-        
         if (usarBuscaGoogle) {
           requestBody.tools = [{ googleSearch: {} }];
         }
 
-        const fetchUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${keyToUse}`;
-        
+        const fetchUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
         const headers = { 'Content-Type': 'application/json' };
+        if (keyToUse.startsWith('AIza')) {
+          headers['X-goog-api-key'] = keyToUse;
+        } else {
+          headers['Authorization'] = `Bearer ${keyToUse}`;
+        }
 
         const res = await fetch(fetchUrl, {
           method: 'POST',
@@ -458,10 +444,8 @@
         clearTimeout(timeoutId);
 
         const data = await res.json();
-
         if (data.error) {
           if (data.error.code === 429 && tentativa === 1) {
-            console.warn("Limite de cota atingido (429). Tentando novamente em 5 segundos...");
             await new Promise(resolve => setTimeout(resolve, 5000));
             return chamarGemini(promptText, base64Img, usarBuscaGoogle, 2);
           }
@@ -481,309 +465,7 @@
 
     async function analisarFotoComIA() {
       if(!base64Image) return alert('Selecione uma foto da peça primeiro!');
-      
       try {
         const prompt = 'Analise esta roupa feminina da ClosetJH. Responda APENAS em formato JSON estrito: {"nome": "Nome elegante da Peça", "tecido": "Tecido provável", "cores": "Cartela de cores sugerida", "preco_medio": "Valor médio de venda estimado (Ex: R$ 189,90)"}';
         const resText = await chamarGemini(prompt, base64Image, false);
-        const rawText = resText.replace(/```json|```/g, '').trim();
-        const parsed = JSON.parse(rawText);
-        
-        if(parsed.nome) document.getElementById('nomePeca').value = parsed.nome;
-        if(parsed.tecido) document.getElementById('tecidoPeca').value = parsed.tecido;
-        if(parsed.cores) document.getElementById('cartelaCores').value = parsed.cores;
-        if(parsed.preco_medio) document.getElementById('precoPeca').value = parsed.preco_medio;
-        alert('✨ Análise de Tecido, Cores & Valor Médio concluída com sucesso!');
-      } catch (err) {
-        alert(`⚠️ ${err.message}`);
-      }
-    }
-
-    function processarImagemSemFundo(img) {
-      const tempCanvas = document.createElement('canvas');
-      tempCanvas.width = img.naturalWidth || img.width || 800;
-      tempCanvas.height = img.naturalHeight || img.height || 1180;
-      const tCtx = tempCanvas.getContext('2d');
-      tCtx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
-      
-      try {
-        const imgData = tCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-        const data = imgData.data;
-        const cornerR = data[0], cornerG = data[1], cornerB = data[2];
-
-        for (let i = 0; i < data.length; i += 4) {
-          const r = data[i];
-          const g = data[i + 1];
-          const b = data[i + 2];
-          const isWhiteOrLight = (r > 215 && g > 215 && b > 215);
-          const diffCorner = Math.abs(r - cornerR) + Math.abs(g - cornerG) + Math.abs(b - cornerB);
-
-          if (isWhiteOrLight || (diffCorner < 45 && cornerR > 180)) {
-            data[i + 3] = 0;
-          }
-        }
-        tCtx.putImageData(imgData, 0, 0);
-      } catch (e) {
-        console.warn("Aviso na remoção de fundo:", e);
-      }
-      return tempCanvas;
-    }
-
-    function gerarTemplate(tipo) {
-      const canvas = document.getElementById('canvas');
-      const ctx = canvas.getContext('2d');
-      const nome = document.getElementById('nomePeca').value || 'LOOK CLOSETJH';
-      const preco = document.getElementById('precoPeca').value || 'R$ 00,00';
-      const tecido = document.getElementById('tecidoPeca').value || 'PREMIUM';
-      const cores = document.getElementById('cartelaCores').value || 'Tons Exclusivos';
-      const tamanhos = Array.from(document.querySelectorAll('.size-btn.selected')).map(b => b.innerText).join(' | ');
-      const removerFundo = document.getElementById('chkRemoveBg').checked;
-
-      canvas.style.display = 'block';
-      document.getElementById('downloadBtn').style.display = 'block';
-      document.getElementById('savePostBtn').style.display = 'block';
-
-      ctx.fillStyle = "#0b0b0b";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      if (imgElement.src && imgElement.complete) {
-        if (removerFundo) {
-          const imgProcessada = processarImagemSemFundo(imgElement);
-          ctx.drawImage(imgProcessada, 140, 210, 800, 1180);
-        } else {
-          ctx.drawImage(imgElement, 140, 210, 800, 1180);
-        }
-      }
-
-      ctx.fillStyle = "#D4AF37";
-      ctx.font = "bold 55px serif";
-      ctx.textAlign = "center";
-      ctx.fillText("CLOSETJH", canvas.width / 2, 85);
-
-      ctx.font = "22px sans-serif";
-      ctx.fillStyle = "#CCCCCC";
-      ctx.fillText(nome.toUpperCase(), canvas.width / 2, 135);
-
-      ctx.fillStyle = "#D4AF37";
-      ctx.beginPath();
-      ctx.roundRect(140, 1420, 380, 130, 15);
-      ctx.fill();
-
-      ctx.fillStyle = "#000000";
-      ctx.font = "bold 20px sans-serif";
-      ctx.textAlign = "left";
-      ctx.fillText("VALOR DA PEÇA", 160, 1460);
-      ctx.font = "bold 42px sans-serif";
-      ctx.fillText(preco, 160, 1515);
-
-      ctx.fillStyle = "rgba(20, 20, 20, 0.95)";
-      ctx.strokeStyle = "#D4AF37";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.roundRect(560, 1420, 380, 130, 15);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = "#D4AF37";
-      ctx.font = "bold 22px sans-serif";
-      ctx.fillText("TECIDO: " + tecido.toUpperCase(), 575, 1460);
-      ctx.fillStyle = "#FFFFFF";
-      ctx.font = "18px sans-serif";
-      ctx.fillText("PALETA: " + cores, 575, 1505);
-
-      ctx.fillStyle = "#161616";
-      ctx.strokeStyle = "#D4AF37";
-      ctx.beginPath();
-      ctx.roundRect(140, 1570, 800, 90, 15);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = "#D4AF37";
-      ctx.font = "bold 24px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("TAMANHOS: " + (tamanhos || 'TAMANHO ÚNICO'), canvas.width / 2, 1625);
-    }
-
-    function gerarCarrossel() {
-      gerarTemplate(1);
-      alert('Card 1 gerado no canvas! Clique em Salvar no iPhone e depois repita para as variações.');
-    }
-
-    function baixarImagem() {
-      const link = document.createElement('a');
-      link.download = 'look-closetjh-vendas.png';
-      link.href = document.getElementById('canvas').toDataURL();
-      link.click();
-    }
-
-    function calcularLucro() {
-      const custo = parseFloat(document.getElementById('custoAtacado').value) || 0;
-      const venda = parseFloat(document.getElementById('vendaVarejo').value) || 0;
-      const lucro = venda - custo;
-      const margem = venda > 0 ? ((lucro / venda) * 100).toFixed(1) : 0;
-
-      document.getElementById('resLucro').innerText = "R$ " + lucro.toFixed(2);
-      document.getElementById('resMargem').innerText = margem + "%";
-    }
-
-    async function pesquisarFornecedores() {
-      const termoInput = document.getElementById('buscaFornecedor').value.trim();
-      const temImagem = !!base64ImageAtacado;
-      const output = document.getElementById('fornecedoresOutput');
-
-      if (!termoInput && !temImagem) {
-        return alert("Por favor, digite um termo de busca OU insira uma imagem da peça para pesquisar!");
-      }
-
-      output.innerText = temImagem 
-        ? "📸 Analisando imagem da peça e pesquisando fornecedores reais no Google em tempo real..."
-        : "🌐 Pesquisando fornecedores reais no Google em tempo real...";
-
-      let prompt = "";
-      if (temImagem && termoInput) {
-        prompt = `Analise visualmente a imagem deste produto de moda feminina e combine com a seguinte busca do usuário: '${termoInput}'.\nFaça uma pesquisa completa na web (Google) para localizar fornecedores REAIS de atacado em Goiânia / Região da 44 que vendem esta peça ou estilo similar.`;
-      } else if (temImagem) {
-        prompt = `Analise visualmente a imagem desta roupa feminina (identifique o tipo de corte, tecido, estampa e estilo).\nPesquise no Google em tempo real por lojas e confecções de atacado REAIS (especialmente na Região da 44 / Goiânia - GO ou polo atacadista) que trabalhem com peças idênticas ou semelhantes.`;
-      } else {
-        prompt = `Faça uma pesquisa detalhada em tempo real na web (Google) sobre confecções e fornecedores REAIS no atacado para o seguinte termo: '${termoInput}'.`;
-      }
-
-      prompt += `\n\nRetorne informações REAIS, EXATAS E SEM ERROS encontradas na pesquisa:\n1. 🏬 Nome Oficial da Confecção / Loja Física Real\n2. 📍 Endereço Completo Exato (Galeria, Shopping na 44, Rua e Número da Loja)\n3. 📸 Instagram Oficial Real (@usuario)\n4. 📱 WhatsApp / Contato Comercial\n5. 💰 Preço Médio Exato da Peça no Atacado (R$) e Pedido Mínimo\n6. 👗 Descrição das Peças Disponíveis e Observações de Qualidade/Entrega.`;
-
-      try {
-        const resText = await chamarGemini(prompt, base64ImageAtacado || null, true);
-        output.innerText = resText;
-      } catch(err) {
-        output.innerText = `⚠️ Erro na consulta: ${err.message}`;
-      }
-    }
-
-    async function gerarCrossSelling() {
-      const nome = document.getElementById('nomePeca').value || 'Look ClosetJH';
-      const output = document.getElementById('aiOutput');
-      output.innerText = "⏳ Buscando sugestões de combinação...";
-
-      try {
-        const prompt = `Como consultor de moda luxuosa da ClosetJH, crie 3 sugestões de combinações para o vendedor oferecer junto com a peça '${nome}'.`;
-        const resText = await chamarGemini(prompt, null, false);
-        output.innerText = resText;
-      } catch(e) {
-        output.innerText = `⚠️ ${e.message}`;
-      }
-    }
-
-    async function gerarLegendaFeed() {
-      const nome = document.getElementById('nomePeca').value || 'Look Exclusivo';
-      const preco = document.getElementById('precoPeca').value || 'Preço Especial';
-      const tecido = document.getElementById('tecidoPeca').value || 'Premium';
-      const output = document.getElementById('aiOutput');
-      output.innerText = "⏳ Criando legenda persuasiva...";
-
-      try {
-        const prompt = `Crie uma legenda vendedora para o Instagram da ClosetJH. Produto: '${nome}', Tecido: '${tecido}', Valor: '${preco}'. Foco em elegância e urgência.`;
-        const resText = await chamarGemini(prompt, null, false);
-        output.innerText = resText;
-      } catch(e) {
-        output.innerText = `⚠️ ${e.message}`;
-      }
-    }
-
-    async function gerarRoteiroStories() {
-      const nome = document.getElementById('nomePeca').value || 'Look Exclusivo';
-      const output = document.getElementById('aiOutput');
-      output.innerText = "⏳ Criando sequência de Stories...";
-
-      try {
-        const prompt = `Monte 3 ideias de Stories estratégicos para o vendedor postar hoje vendendo a peça '${nome}'.`;
-        const resText = await chamarGemini(prompt, null, false);
-        output.innerText = resText;
-      } catch(e) {
-        output.innerText = `⚠️ ${e.message}`;
-      }
-    }
-
-    async function gerarRotinaSemanalIA() {
-      const prompt = `Você é o Diretor Estratégico de Vendas da ClosetJH. Analise o momento do mercado e crie a MELHOR rotina semanal estratégica de vendas e engajamento para a loja (Segunda a Sábado).\nResponda APENAS em JSON estrito com as chaves: "segunda", "terca", "quarta", "quinta", "sexta", "sabado".`;
-
-      try {
-        const resText = await chamarGemini(prompt, null, false);
-        const rawText = resText.replace(/```json|```/g, '').trim();
-        const parsed = JSON.parse(rawText);
-        if (parsed.segunda) document.getElementById('planSeg').value = parsed.segunda;
-        if (parsed.terca) document.getElementById('planTer').value = parsed.terca;
-        if (parsed.quarta) document.getElementById('planQua').value = parsed.quarta;
-        if (parsed.quinta) document.getElementById('planQui').value = parsed.quinta;
-        if (parsed.sexta) document.getElementById('planSex').value = parsed.sexta;
-        if (parsed.sabado) document.getElementById('planSab').value = parsed.sabado;
-        salvarPlanejamento();
-        alert('🧠 Melhor estratégia semanal preenchida com sucesso!');
-      } catch (err) {
-        alert(`⚠️ ${err.message}`);
-      }
-    }
-
-    function gerarLinkZap() {
-      const nome = document.getElementById('nomePeca').value || 'Look Exclusivo ClosetJH';
-      const preco = document.getElementById('precoPeca').value || 'Sob consulta';
-      const tecido = document.getElementById('tecidoPeca').value || 'Tecido Premium';
-      const tamanhos = Array.from(document.querySelectorAll('.size-btn.selected')).map(b => b.innerText).join(' | ') || 'Tamanho Único';
-      const numeroDestino = "5562981209836";
-
-      const mensagem = `Olá ClosetJH! Gostaria de consultar este look:\n\n` +
-        `👗 *Peça:* ${nome}\n` +
-        `💰 *Valor:* ${preco}\n` +
-        `🧶 *Tecido:* ${tecido}\n` +
-        `📏 *Tamanhos:* ${tamanhos}\n\n` +
-        `Poderia confirmar a disponibilidade para envio?`;
-
-      const link = `https://wa.me/${numeroDestino}?text=${encodeURIComponent(mensagem)}`;
-      window.open(link, '_blank');
-    }
-
-    function salvarNoHistorico() {
-      const nome = document.getElementById('nomePeca').value || 'Look Sem Nome';
-      const preco = document.getElementById('precoPeca').value || 'R$ 0,00';
-      const posts = JSON.parse(localStorage.getItem('closetjh_posts') || '[]');
-      posts.push({ nome, preco, data: new Date().toLocaleDateString('pt-BR') });
-      localStorage.setItem('closetjh_posts', JSON.stringify(posts));
-      alert('Look registrado com sucesso no acervo interno!');
-    }
-
-    function carregarHistorico() {
-      const posts = JSON.parse(localStorage.getItem('closetjh_posts') || '[]');
-      const container = document.getElementById('historicoLista');
-      if(posts.length === 0) {
-        container.innerHTML = "Nenhum look salvo ainda.";
-        return;
-      }
-      container.innerHTML = posts.map(p => `
-        <div style="background:#1e1e1e; padding:10px; border-radius:8px; margin-bottom:8px; border-left:3px solid #D4AF37;">
-          <strong style="color:#D4AF37">${p.nome}</strong> - ${p.preco}<br>
-          <small style="color:#888">Cadastrado em: ${p.data}</small>
-        </div>
-      `).join('');
-    }
-
-    function salvarPlanejamento() {
-      const plano = {
-        seg: document.getElementById('planSeg').value,
-        ter: document.getElementById('planTer').value,
-        qua: document.getElementById('planQua').value,
-        qui: document.getElementById('planQui').value,
-        sex: document.getElementById('planSex').value,
-        sab: document.getElementById('planSab').value
-      };
-      localStorage.setItem('closetjh_agenda', JSON.stringify(plano));
-    }
-
-    function carregarPlanejamento() {
-      const plano = JSON.parse(localStorage.getItem('closetjh_agenda') || '{}');
-      if(plano.seg) document.getElementById('planSeg').value = plano.seg;
-      if(plano.ter) document.getElementById('planTer').value = plano.ter;
-      if(plano.qua) document.getElementById('planQua').value = plano.qua;
-      if(plano.qui) document.getElementById('planQui').value = plano.qui;
-      if(plano.sex) document.getElementById('planSex').value = plano.sex;
-      if(plano.sab) document.getElementById('planSab').value = plano.sab;
-    }
-  </script>
-</body>
-</html>
+        const rawText = resText.replace(/```json|
