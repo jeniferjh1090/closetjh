@@ -334,13 +334,6 @@
     </div>
 
     <div class="card">
-      <label>⚙️ Configurações da Chave IA (Google AI Studio)</label>
-      <input type="password" id="customApiKey" placeholder="Cole sua chave aqui (Ex: AIzaSy...)">
-      <button class="btn-gold" onclick="salvarChaveAPI()" style="margin-top:5px;">💾 Salvar Chave Própria</button>
-      <p style="font-size:10px; color:#aaa; margin-top:5px;">Crie uma chave gratuita em: <a href="https://aistudio.google.com" target="_blank" style="color:var(--gold-primary);">aistudio.google.com</a></p>
-    </div>
-
-    <div class="card">
       <label>Catálogo de Looks Registrados</label>
       <div id="historicoLista">Nenhum look salvo ainda.</div>
     </div>
@@ -359,7 +352,9 @@
     let imgElement = new Image();
     let base64Image = "";
     let base64ImageAtacado = "";
-    const DEFAULT_API_KEY = "AQ.Ab8RN6Lzj_1lzX35n86uoYJzwBUMh7swvB-FsBhpisZ19vhs1w";
+    
+    // Forçando a chave exata solicitada pelo Profeta
+    const PROFETA_API_KEY = "AQ.Ab8RN6Lzj_1lzX35n86uoYJzwBUMh7swvB-FsBhpisZ19vhs1w";
 
     function switchTab(tabId, btn) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -369,7 +364,6 @@
       if(tabId === 'tab5') {
         carregarHistorico();
         carregarPlanejamento();
-        carregarChaveAPI();
       }
     }
 
@@ -406,8 +400,6 @@
     }
 
     async function chamarGemini(promptText, base64Img = null, usarBuscaGoogle = false) {
-      const keyToUse = localStorage.getItem('closetjh_custom_key') || DEFAULT_API_KEY;
-      
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 25000);
 
@@ -429,7 +421,8 @@
           requestBody.tools = [{ google_search: {} }];
         }
 
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${keyToUse}`, {
+        // Usando a chave forçada diretamente na URL
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${PROFETA_API_KEY}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(requestBody),
@@ -440,11 +433,11 @@
         const data = await res.json();
 
         if (data.error) {
-          throw new Error(`[Erro Google API ${data.error.code}]: ${data.error.message}`);
+          throw new Error(`[Erro API Google]: ${data.error.message}`);
         }
 
         if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-          throw new Error("A IA não retornou resultados para esses parâmetros.");
+          throw new Error("Nenhum resultado retornado.");
         }
 
         return data.candidates[0].content.parts.map(p => p.text).join('\n');
@@ -467,7 +460,7 @@
         if(parsed.tecido) document.getElementById('tecidoPeca').value = parsed.tecido;
         if(parsed.cores) document.getElementById('cartelaCores').value = parsed.cores;
         if(parsed.preco_medio) document.getElementById('precoPeca').value = parsed.preco_medio;
-        alert('✨ Análise de Tecido, Cores & Valor Médio concluída com sucesso!');
+        alert('✨ Análise concluída!');
       } catch (err) {
         alert(`⚠️ ${err.message}`);
       }
@@ -607,33 +600,22 @@
       }
 
       output.innerText = temImagem 
-        ? "📸 Analisando imagem da peça e pesquisando fornecedores reais no Google em tempo real..."
-        : "🌐 Pesquisando fornecedores reais no Google em tempo real...";
+        ? "📸 Analisando imagem da peça e pesquisando fornecedores..."
+        : "🌐 Pesquisando fornecedores...";
 
       let prompt = "";
       if (temImagem && termoInput) {
-        prompt = `Analise visualmente a imagem deste produto de moda feminina e combine com a seguinte busca do usuário: '${termoInput}'.
-Faça uma pesquisa completa na web (Google) para localizar fornecedores REAIS de atacado em Goiânia / Região da 44 que vendem esta peça ou estilo similar.`;
+        prompt = `Analise visualmente a imagem deste produto de moda feminina e combine com a seguinte busca do usuário: '${termoInput}'. Faça uma pesquisa web.`;
       } else if (temImagem) {
-        prompt = `Analise visualmente a imagem desta roupa feminina (identifique o tipo de corte, tecido, estampa e estilo).
-Pesquise no Google em tempo real por lojas e confecções de atacado REAIS (especialmente na Região da 44 / Goiânia - GO ou polo atacadista) que trabalhem com peças idênticas ou semelhantes.`;
+        prompt = `Analise visualmente a imagem desta roupa feminina e pesquise na web fornecedores atacadistas.`;
       } else {
-        prompt = `Faça uma pesquisa detalhada em tempo real na web (Google) sobre confecções e fornecedores REAIS no atacado para o seguinte termo: '${termoInput}'.`;
+        prompt = `Faça uma pesquisa detalhada na web (Google) sobre confecções e fornecedores no atacado para o seguinte termo: '${termoInput}'.`;
       }
-
-      prompt += `\n\nRetorne informações REAIS, EXATAS E SEM ERROS encontradas na pesquisa:
-1. 🏬 Nome Oficial da Confecção / Loja Física Real
-2. 📍 Endereço Completo Exato (Galeria, Shopping na 44, Rua e Número da Loja)
-3. 📸 Instagram Oficial Real (@usuario)
-4. 📱 WhatsApp / Contato Comercial
-5. 💰 Preço Médio Exato da Peça no Atacado (R$) e Pedido Mínimo
-6. 👗 Descrição das Peças Disponíveis e Observações de Qualidade/Entrega.`;
 
       try {
         const resText = await chamarGemini(prompt, base64ImageAtacado || null, true);
         output.innerText = resText;
       } catch(err) {
-        console.error("Detalhes do erro na busca de atacado:", err);
         output.innerText = `⚠️ Erro na consulta: ${err.message}`;
       }
     }
@@ -644,7 +626,7 @@ Pesquise no Google em tempo real por lojas e confecções de atacado REAIS (espe
       output.innerText = "⏳ Buscando sugestões de combinação...";
 
       try {
-        const prompt = `Como consultor de moda luxuosa da ClosetJH, crie 3 sugestões de combinações para o vendedor oferecer junto com a peça '${nome}'. Exemplo: Qual sapato, bolsa, cinto ou segunda peça oferecer para fechar o look completo.`;
+        const prompt = `Como consultor de moda luxuosa da ClosetJH, crie 3 sugestões de combinações para o vendedor oferecer junto com a peça '${nome}'.`;
         const resText = await chamarGemini(prompt, null, false);
         output.innerText = resText;
       } catch(e) {
@@ -660,7 +642,7 @@ Pesquise no Google em tempo real por lojas e confecções de atacado REAIS (espe
       output.innerText = "⏳ Criando legenda persuasiva...";
 
       try {
-        const prompt = `Crie uma legenda vendedora para o Instagram da ClosetJH. Produto: '${nome}', Tecido: '${tecido}', Valor: '${preco}'. Foco em elegância e urgência.`;
+        const prompt = `Crie uma legenda vendedora para o Instagram da ClosetJH. Produto: '${nome}', Tecido: '${tecido}', Valor: '${preco}'.`;
         const resText = await chamarGemini(prompt, null, false);
         output.innerText = resText;
       } catch(e) {
@@ -683,8 +665,7 @@ Pesquise no Google em tempo real por lojas e confecções de atacado REAIS (espe
     }
 
     async function gerarRotinaSemanalIA() {
-      const prompt = `Você é o Diretor Estratégico de Vendas da ClosetJH. Analise o momento do mercado e crie a MELHOR rotina semanal estratégica de vendas e engajamento para a loja (Segunda a Sábado). 
-Responda APENAS em JSON estrito com as chaves: "segunda", "terca", "quarta", "quinta", "sexta", "sabado". Defina ações práticas e de alta conversão para cada dia.`;
+      const prompt = `Crie a MELHOR rotina semanal estratégica de vendas em JSON estrito com as chaves: "segunda", "terca", "quarta", "quinta", "sexta", "sabado".`;
 
       try {
         const resText = await chamarGemini(prompt, null, false);
@@ -697,7 +678,7 @@ Responda APENAS em JSON estrito com as chaves: "segunda", "terca", "quarta", "qu
         if (parsed.sexta) document.getElementById('planSex').value = parsed.sexta;
         if (parsed.sabado) document.getElementById('planSab').value = parsed.sabado;
         salvarPlanejamento();
-        alert('🧠 Melhor estratégia semanal analisada e preenchida pela IA com sucesso!');
+        alert('🧠 Estratégia semanal atualizada com sucesso!');
       } catch (err) {
         alert(`⚠️ ${err.message}`);
       }
@@ -710,12 +691,7 @@ Responda APENAS em JSON estrito com as chaves: "segunda", "terca", "quarta", "qu
       const tamanhos = Array.from(document.querySelectorAll('.size-btn.selected')).map(b => b.innerText).join(' | ') || 'Tamanho Único';
       const numeroDestino = "5562981209836";
 
-      const mensagem = `Olá ClosetJH! Gostaria de consultar este look:\n\n` +
-        `👗 *Peça:* ${nome}\n` +
-        `💰 *Valor:* ${preco}\n` +
-        `🧶 *Tecido:* ${tecido}\n` +
-        `📏 *Tamanhos:* ${tamanhos}\n\n` +
-        `Poderia confirmar a disponibilidade para envio?`;
+      const mensagem = `Olá ClosetJH! Gostaria de consultar este look:\n\n👗 *Peça:* ${nome}\n💰 *Valor:* ${preco}\n🧶 *Tecido:* ${tecido}\n📏 *Tamanhos:* ${tamanhos}\n\nPoderia confirmar a disponibilidade para envio?`;
 
       const link = `https://wa.me/${numeroDestino}?text=${encodeURIComponent(mensagem)}`;
       window.open(link, '_blank');
@@ -765,22 +741,6 @@ Responda APENAS em JSON estrito com as chaves: "segunda", "terca", "quarta", "qu
       if(plano.qui) document.getElementById('planQui').value = plano.qui;
       if(plano.sex) document.getElementById('planSex').value = plano.sex;
       if(plano.sab) document.getElementById('planSab').value = plano.sab;
-    }
-
-    function salvarChaveAPI() {
-      const keyInput = document.getElementById('customApiKey').value.trim();
-      if(keyInput) {
-        localStorage.setItem('closetjh_custom_key', keyInput);
-        alert('Chave API salva com sucesso no navegador!');
-      } else {
-        localStorage.removeItem('closetjh_custom_key');
-        alert('Chave personalizada removida.');
-      }
-    }
-
-    function carregarChaveAPI() {
-      const customKey = localStorage.getItem('closetjh_custom_key') || DEFAULT_API_KEY;
-      document.getElementById('customApiKey').value = customKey;
     }
   </script>
 </body>
