@@ -353,7 +353,7 @@
     let base64Image = "";
     let base64ImageAtacado = "";
     
-    // Forçando a chave exata solicitada pelo Profeta
+    // Token OAuth configurado como Bearer Token
     const PROFETA_API_KEY = "AQ.Ab8RN6Lzj_1lzX35n86uoYJzwBUMh7swvB-FsBhpisZ19vhs1w";
 
     function switchTab(tabId, btn) {
@@ -421,10 +421,13 @@
           requestBody.tools = [{ google_search: {} }];
         }
 
-        // Usando a chave forçada diretamente na URL
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${PROFETA_API_KEY}`, {
+        // Usando Authorization Bearer para aceitar o token OAuth AQ.
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${PROFETA_API_KEY}`
+          },
           body: JSON.stringify(requestBody),
           signal: controller.signal
         });
@@ -669,79 +672,4 @@
 
       try {
         const resText = await chamarGemini(prompt, null, false);
-        const rawText = resText.replace(/```json|```/g, '').trim();
-        const parsed = JSON.parse(rawText);
-        if (parsed.segunda) document.getElementById('planSeg').value = parsed.segunda;
-        if (parsed.terca) document.getElementById('planTer').value = parsed.terca;
-        if (parsed.quarta) document.getElementById('planQua').value = parsed.quarta;
-        if (parsed.quinta) document.getElementById('planQui').value = parsed.quinta;
-        if (parsed.sexta) document.getElementById('planSex').value = parsed.sexta;
-        if (parsed.sabado) document.getElementById('planSab').value = parsed.sabado;
-        salvarPlanejamento();
-        alert('🧠 Estratégia semanal atualizada com sucesso!');
-      } catch (err) {
-        alert(`⚠️ ${err.message}`);
-      }
-    }
-
-    function gerarLinkZap() {
-      const nome = document.getElementById('nomePeca').value || 'Look Exclusivo ClosetJH';
-      const preco = document.getElementById('precoPeca').value || 'Sob consulta';
-      const tecido = document.getElementById('tecidoPeca').value || 'Tecido Premium';
-      const tamanhos = Array.from(document.querySelectorAll('.size-btn.selected')).map(b => b.innerText).join(' | ') || 'Tamanho Único';
-      const numeroDestino = "5562981209836";
-
-      const mensagem = `Olá ClosetJH! Gostaria de consultar este look:\n\n👗 *Peça:* ${nome}\n💰 *Valor:* ${preco}\n🧶 *Tecido:* ${tecido}\n📏 *Tamanhos:* ${tamanhos}\n\nPoderia confirmar a disponibilidade para envio?`;
-
-      const link = `https://wa.me/${numeroDestino}?text=${encodeURIComponent(mensagem)}`;
-      window.open(link, '_blank');
-    }
-
-    function salvarNoHistorico() {
-      const nome = document.getElementById('nomePeca').value || 'Look Sem Nome';
-      const preco = document.getElementById('precoPeca').value || 'R$ 0,00';
-      const posts = JSON.parse(localStorage.getItem('closetjh_posts') || '[]');
-      posts.push({ nome, preco, data: new Date().toLocaleDateString('pt-BR') });
-      localStorage.setItem('closetjh_posts', JSON.stringify(posts));
-      alert('Look registrado com sucesso no acervo interno!');
-    }
-
-    function carregarHistorico() {
-      const posts = JSON.parse(localStorage.getItem('closetjh_posts') || '[]');
-      const container = document.getElementById('historicoLista');
-      if(posts.length === 0) {
-        container.innerHTML = "Nenhum look salvo ainda.";
-        return;
-      }
-      container.innerHTML = posts.map(p => `
-        <div style="background:#1e1e1e; padding:10px; border-radius:8px; margin-bottom:8px; border-left:3px solid #D4AF37;">
-          <strong style="color:#D4AF37">${p.nome}</strong> - ${p.preco}<br>
-          <small style="color:#888">Cadastrado em: ${p.data}</small>
-        </div>
-      `).join('');
-    }
-
-    function salvarPlanejamento() {
-      const plano = {
-        seg: document.getElementById('planSeg').value,
-        ter: document.getElementById('planTer').value,
-        qua: document.getElementById('planQua').value,
-        qui: document.getElementById('planQui').value,
-        sex: document.getElementById('planSex').value,
-        sab: document.getElementById('planSab').value
-      };
-      localStorage.setItem('closetjh_agenda', JSON.stringify(plano));
-    }
-
-    function carregarPlanejamento() {
-      const plano = JSON.parse(localStorage.getItem('closetjh_agenda') || '{}');
-      if(plano.seg) document.getElementById('planSeg').value = plano.seg;
-      if(plano.ter) document.getElementById('planTer').value = plano.ter;
-      if(plano.qua) document.getElementById('planQua').value = plano.qua;
-      if(plano.qui) document.getElementById('planQui').value = plano.qui;
-      if(plano.sex) document.getElementById('planSex').value = plano.sex;
-      if(plano.sab) document.getElementById('planSab').value = plano.sab;
-    }
-  </script>
-</body>
-</html>
+        const rawText = resText.replace(/```json|
