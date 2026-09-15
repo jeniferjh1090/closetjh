@@ -359,6 +359,7 @@
     let imgElement = new Image();
     let base64Image = "";
     let base64ImageAtacado = "";
+    const DEFAULT_API_KEY = "AQ.Ab8RN6Lzj_1lzX35n86uoYJzwBUMh7swvB-FsBhpisZ19vhs1w";
 
     function switchTab(tabId, btn) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -405,12 +406,8 @@
     }
 
     async function chamarGemini(promptText, base64Img = null, usarBuscaGoogle = false) {
-      const keyToUse = localStorage.getItem('closetjh_custom_key');
+      const keyToUse = localStorage.getItem('closetjh_custom_key') || DEFAULT_API_KEY;
       
-      if (!keyToUse) {
-        throw new Error("Chave de API não configurada! Vá na aba 'Agenda/Configurações' e salve sua chave obtida no Google AI Studio.");
-      }
-
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 25000);
 
@@ -782,8 +779,8 @@ Responda APENAS em JSON estrito com as chaves: "segunda", "terca", "quarta", "qu
     }
 
     function carregarChaveAPI() {
-      const customKey = localStorage.getItem('closetjh_custom_key');
-      if(customKey) document.getElementById('customApiKey').value = customKey;
+      const customKey = localStorage.getItem('closetjh_custom_key') || DEFAULT_API_KEY;
+      document.getElementById('customApiKey').value = customKey;
     }
   </script>
 </body>
