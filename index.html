@@ -106,6 +106,30 @@
     }
     input:focus, textarea:focus { border-color: var(--gold-primary); outline: none; }
     
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #1a1a1a;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      margin-top: 10px;
+    }
+    .checkbox-container input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--gold-primary);
+      cursor: pointer;
+    }
+    .checkbox-container label {
+      margin: 0;
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      text-transform: none;
+    }
+
     .btn-gold {
       background: var(--gold-gradient);
       color: #000;
@@ -209,6 +233,12 @@
     <div class="card">
       <label>1. Carregar Foto do Manequim / Look</label>
       <input type="file" id="imageInput" accept="image/*">
+      
+      <div class="checkbox-container">
+        <input type="checkbox" id="chkRemoveBg" checked>
+        <label for="chkRemoveBg">✂️ Ativar Remoção de Fundo (Fundo Transparente/Limpo)</label>
+      </div>
+
       <button class="btn-outline" onclick="analisarFotoComIA()">✨ Analisar Foto (Tecido + Cores + Valor Médio)</button>
 
       <label>2. Informações da Peça</label>
@@ -261,16 +291,16 @@
   <!-- TAB 3: RADAR DE CONFECÇÕES & FORNECEDORES -->
   <div id="tab3" class="tab-content">
     <div class="card">
-      <label>Radar de Lojas & Confecções (Região da 44 / Polos Fabricantes)</label>
-      <label style="color:#aaa; font-size:9px;">Carregue a foto da peça para identificar o estilo da confecção (Opcional)</label>
+      <label>Radar de Lojas & Confecções (Pesquisa Real em Tempo Real)</label>
+      <label style="color:#aaa; font-size:9px;">Carregue a foto da peça para identificar o fornecedor por imagem (Opcional)</label>
       <input type="file" id="imageInputAtacado" accept="image/*">
       <img id="previewAtacado" class="preview-img" style="display:none;" />
       
-      <label style="margin-top:10px;">Ou descreva o tipo de peça / fábrica procurada</label>
-      <input type="text" id="buscaFornecedor" placeholder="Ex: Confecção de Alfaiataria na 44, Jeans Moda Feminina, Viscolinho">
+      <label style="margin-top:10px;">Ou informe a peça/estilo exato para pesquisar no mercado</label>
+      <input type="text" id="buscaFornecedor" placeholder="Ex: Vestido Alfaiataria Mega Moda 44, Macacão Jeans Goiânia">
       
-      <button class="btn-gold" onclick="pesquisarFornecedores()">🔍 Localizar Loja, Confecção & Contatos</button>
-      <div id="fornecedoresOutput" class="output-box">Consulte o endereço físico, Instagram, WhatsApp e detalhes de custo da confecção...</div>
+      <button class="btn-gold" onclick="pesquisarFornecedores()">🌐 Pesquisa Exata em Tempo Real (Valores & Instagram)</button>
+      <div id="fornecedoresOutput" class="output-box">Consulte aqui os fornecedores reais com links de Instagram, endereços e valores exatos...</div>
     </div>
   </div>
 
@@ -365,10 +395,10 @@
       if(file) reader.readAsDataURL(file);
     });
 
-    async function chamarGemini(promptText, base64Img = null) {
+    async function chamarGemini(promptText, base64Img = null, usarBuscaGoogle = false) {
       const keyToUse = localStorage.getItem('closetjh_custom_key') || DEFAULT_KEY;
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
 
       try {
         const parts = [{ text: promptText }];
@@ -376,10 +406,15 @@
           parts.push({ inline_data: { mime_type: "image/jpeg", data: base64Img } });
         }
 
+        const requestBody = { contents: [{ parts }] };
+        if (usarBuscaGoogle) {
+          requestBody.tools = [{ googleSearch: {} }];
+        }
+
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${keyToUse}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts }] }),
+          body: JSON.stringify(requestBody),
           signal: controller.signal
         });
         clearTimeout(timeoutId);
@@ -394,7 +429,7 @@
           throw new Error("Resposta da IA vazia ou sem suporte a este formato.");
         }
 
-        return data.candidates[0].content.parts[0].text;
+        return data.candidates[0].content.parts.map(p => p.text).join('\n');
       } catch (err) {
         clearTimeout(timeoutId);
         throw err;
@@ -425,6 +460,33 @@
       }
     }
 
+    function processarImagemSemFundo(img) {
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = img.naturalWidth || img.width;
+      tempCanvas.height = img.naturalHeight || img.height;
+      const tCtx = tempCanvas.getContext('2d');
+      tCtx.drawImage(img, 0, 0);
+      
+      const imgData = tCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+      const data = imgData.data;
+      const cornerR = data[0], cornerG = data[1], cornerB = data[2];
+
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const isWhiteOrLight = (r > 215 && g > 215 && b > 215);
+        const diffCorner = Math.abs(r - cornerR) + Math.abs(g - cornerG) + Math.abs(b - cornerB);
+
+        if (isWhiteOrLight || (diffCorner < 45 && cornerR > 180)) {
+          data[i + 3] = 0;
+        }
+      }
+      
+      tCtx.putImageData(imgData, 0, 0);
+      return tempCanvas;
+    }
+
     function gerarTemplate(tipo) {
       const canvas = document.getElementById('canvas');
       const ctx = canvas.getContext('2d');
@@ -433,6 +495,7 @@
       const tecido = document.getElementById('tecidoPeca').value || 'PREMIUM';
       const cores = document.getElementById('cartelaCores').value || 'Tons Exclusivos';
       const tamanhos = Array.from(document.querySelectorAll('.size-btn.selected')).map(b => b.innerText).join(' | ');
+      const removerFundo = document.getElementById('chkRemoveBg').checked;
 
       canvas.style.display = 'block';
       document.getElementById('downloadBtn').style.display = 'block';
@@ -442,7 +505,12 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       if (imgElement.src) {
-        ctx.drawImage(imgElement, 140, 210, 800, 1180);
+        if (removerFundo) {
+          const imgProcessada = processarImagemSemFundo(imgElement);
+          ctx.drawImage(imgProcessada, 140, 210, 800, 1180);
+        } else {
+          ctx.drawImage(imgElement, 140, 210, 800, 1180);
+        }
       }
 
       ctx.fillStyle = "#D4AF37";
@@ -517,31 +585,29 @@
     }
 
     async function pesquisarFornecedores() {
-      const termo = document.getElementById('buscaFornecedor').value || 'peça da imagem ou Moda Feminina';
+      const termo = document.getElementById('buscaFornecedor').value || 'Moda Feminina Atacado Regiao 44 Goiania';
       const output = document.getElementById('fornecedoresOutput');
-      output.innerText = "⏳ Mapeando confecções, endereços e contatos de atacado...";
+      output.innerText = "🌐 Conectando ao Google para pesquisar lojas exatas, Instagrams e valores atualizados no mercado...";
 
       try {
-        const prompt = `Atue como um especialista em compras de atacado na Região da 44 em Goiânia e polos industriais de confecção. Se eu enviei uma imagem, analise a roupa nela. Se não, foque na descrição '${termo}'. Forneça um relatório completo contendo:
-1. 📍 Localização da Loja / Galeria / Corredor (Ex: Rua 44, Mega Moda, Galeria Center Modas, Polo de Confecção).
-2. 📱 Contato Direto & WhatsApp para Vendas em Atacado.
-3. 📸 Perfil do Instagram da Confecção / Loja.
-4. 🏬 Tipo de Fabricação (Confecção própria, pronta entrega ou sob encomenda).
-5. 💰 Faixa de Custo Estimado no Atacado & Pedido Mínimo.
-6. 💡 Dica prática para negociar direto com o fabricante/confecção.
-Seja objetivo e direto.`;
+        const prompt = `Você é um assistente de compras para confecções de atacado. Faça uma pesquisa na web em tempo real sobre fornecedores e lojas de atacado reais em Goiânia (Região da 44, Mega Moda, etc.) para a peça ou categoria: '${termo}'.
+Retorne informações EXATAS, REAIS E SEM ERROS. Traga dados específicos da internet:
+1. 🏬 Nome Oficial da Confecção / Loja Físicas Real
+2. 📍 Endereço Exato (Galeria, Rua, Número da Loja, Shopping na 44)
+3. 📸 Instagram Oficial Real (@nome_da_loja)
+4. 📱 Contato comercial ou WhatsApp de Atacado Real
+5. 💰 Preço Médio Exato da Peça no Atacado (R$) e Pedido Mínimo
+6. 💡 Observação sobre qualidade ou entrega.
+
+Forneça resultados reais encontrados na pesquisa do Google.`;
         
-        const resText = await chamarGemini(prompt, base64ImageAtacado);
+        const resText = await chamarGemini(prompt, base64ImageAtacado, true);
         output.innerText = resText;
       } catch(err) {
-        output.innerText = `📍 [GUIA DE CONFECÇÕES & CONTATOS DA 44]:\n\n` +
-          `🏭 Confecção / Polo: Fabricantes de ${termo}\n` +
-          `📍 Localização Físicas: Galeria Center Modas / Mega Moda Shopping - Rua 44, Setor Norte Ferroviário, Goiânia - GO\n` +
-          `📱 WhatsApp Atacado: (62) 98120-0000 (Central de Vendas / Envio de Catálogo)\n` +
-          `📸 Instagram Oficial: @confeccao_atacado44_oficial\n` +
-          `🏬 Formato de Venda: Confecção Própria em Pronta Entrega\n` +
-          `💰 Custo Estimado: R$ 45,00 a R$ 85,00 (Pedido mínimo: 6 peças na grade ou variadas)\n` +
-          `💡 Dica de Ouro: Solicite o PDF do catálogo semanal via WhatsApp antes de ir presencialmente para reservar as peças.`;
+        output.innerText = `⚠️ Falha ao buscar dados em tempo real. Verifique se a sua conexão está ativa.\n\n` +
+          `📍 Lojas Referência na 44:\n` +
+          `• Mega Moda Shopping - Av. Contorno, N 1490, Goiânia - GO | IG: @megamodashopping\n` +
+          `• Galeria Center Modas - Rua 44, Goiânia - GO | Atacado a partir de 6 peças.`;
       }
     }
 
