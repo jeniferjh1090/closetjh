@@ -17,7 +17,7 @@
       color: var(--text-color);
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       margin: 0;
-      padding: 10px 10px 100px 10px;
+      padding: 10px 10px 85px 10px;
     }
     .badge-internal {
       background: #222;
@@ -54,7 +54,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      padding: 10px 0 calc(10px + env(safe-area-inset-bottom)) 0;
+      padding: 8px 0;
       z-index: 1000;
     }
     .tab-item {
@@ -73,7 +73,7 @@
     }
     .tab-item span {
       display: block;
-      font-size: 18px;
+      font-size: 17px;
       margin-bottom: 2px;
     }
     .tab-content { display: none; }
@@ -187,6 +187,7 @@
       padding: 8px;
       font-size: 11px;
       border-radius: 6px;
+      cursor: pointer;
     }
     .size-btn.selected {
       background: var(--gold-primary);
@@ -334,6 +335,13 @@
     </div>
 
     <div class="card">
+      <label>⚙️ Configurações da Chave IA (Google AI Studio)</label>
+      <input type="password" id="customApiKey" placeholder="Cole sua chave aqui (Ex: AIzaSy...)">
+      <button class="btn-gold" onclick="salvarChaveAPI()" style="margin-top:5px;">💾 Salvar Chave Própria</button>
+      <p style="font-size:10px; color:#aaa; margin-top:5px;">Crie uma chave gratuita em: <a href="https://aistudio.google.com" target="_blank" style="color:var(--gold-primary);">aistudio.google.com</a></p>
+    </div>
+
+    <div class="card">
       <label>Catálogo de Looks Registrados</label>
       <div id="historicoLista">Nenhum look salvo ainda.</div>
     </div>
@@ -352,8 +360,6 @@
     let imgElement = new Image();
     let base64Image = "";
     let base64ImageAtacado = "";
-    
-    const PROFETA_API_KEY = "AQ.Ab8RN6Lzj_1lzX35n86uoYJzwBUMh7swvB-FsBhpisZ19vhs1w";
 
     function switchTab(tabId, btn) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -363,6 +369,7 @@
       if(tabId === 'tab5') {
         carregarHistorico();
         carregarPlanejamento();
+        carregarChaveAPI();
       }
     }
 
@@ -399,6 +406,12 @@
     }
 
     async function chamarGemini(promptText, base64Img = null, usarBuscaGoogle = false) {
+      const keyToUse = localStorage.getItem('closetjh_custom_key');
+      
+      if (!keyToUse) {
+        throw new Error("Chave de API não configurada! Vá na aba 'Agenda/Configurações' e salve sua chave obtida no Google AI Studio.");
+      }
+
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 25000);
 
@@ -420,12 +433,9 @@
           requestBody.tools = [{ google_search: {} }];
         }
 
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`, {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${keyToUse}`, {
           method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${PROFETA_API_KEY}`
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(requestBody),
           signal: controller.signal
         });
@@ -434,11 +444,11 @@
         const data = await res.json();
 
         if (data.error) {
-          throw new Error(`[Erro API Google]: ${data.error.message}`);
+          throw new Error(`[Erro Google API ${data.error.code}]: ${data.error.message}`);
         }
 
         if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-          throw new Error("Nenhum resultado retornado.");
+          throw new Error("A IA não retornou resultados para esses parâmetros.");
         }
 
         return data.candidates[0].content.parts.map(p => p.text).join('\n');
@@ -461,7 +471,7 @@
         if(parsed.tecido) document.getElementById('tecidoPeca').value = parsed.tecido;
         if(parsed.cores) document.getElementById('cartelaCores').value = parsed.cores;
         if(parsed.preco_medio) document.getElementById('precoPeca').value = parsed.preco_medio;
-        alert('✨ Análise concluída!');
+        alert('✨ Análise de Tecido, Cores & Valor Médio concluída com sucesso!');
       } catch (err) {
         alert(`⚠️ ${err.message}`);
       }
@@ -601,22 +611,33 @@
       }
 
       output.innerText = temImagem 
-        ? "📸 Analisando imagem da peça e pesquisando fornecedores..."
-        : "🌐 Pesquisando fornecedores...";
+        ? "📸 Analisando imagem da peça e pesquisando fornecedores reais no Google em tempo real..."
+        : "🌐 Pesquisando fornecedores reais no Google em tempo real...";
 
       let prompt = "";
       if (temImagem && termoInput) {
-        prompt = `Analise visualmente a imagem deste produto de moda feminina e combine com a seguinte busca do usuário: '${termoInput}'. Faça uma pesquisa web.`;
+        prompt = `Analise visualmente a imagem deste produto de moda feminina e combine com a seguinte busca do usuário: '${termoInput}'.
+Faça uma pesquisa completa na web (Google) para localizar fornecedores REAIS de atacado em Goiânia / Região da 44 que vendem esta peça ou estilo similar.`;
       } else if (temImagem) {
-        prompt = `Analise visualmente a imagem desta roupa feminina e pesquise na web fornecedores atacadistas.`;
+        prompt = `Analise visualmente a imagem desta roupa feminina (identifique o tipo de corte, tecido, estampa e estilo).
+Pesquise no Google em tempo real por lojas e confecções de atacado REAIS (especialmente na Região da 44 / Goiânia - GO ou polo atacadista) que trabalhem com peças idênticas ou semelhantes.`;
       } else {
-        prompt = `Faça uma pesquisa detalhada na web (Google) sobre confecções e fornecedores no atacado para o seguinte termo: '${termoInput}'.`;
+        prompt = `Faça uma pesquisa detalhada em tempo real na web (Google) sobre confecções e fornecedores REAIS no atacado para o seguinte termo: '${termoInput}'.`;
       }
+
+      prompt += `\n\nRetorne informações REAIS, EXATAS E SEM ERROS encontradas na pesquisa:
+1. 🏬 Nome Oficial da Confecção / Loja Física Real
+2. 📍 Endereço Completo Exato (Galeria, Shopping na 44, Rua e Número da Loja)
+3. 📸 Instagram Oficial Real (@usuario)
+4. 📱 WhatsApp / Contato Comercial
+5. 💰 Preço Médio Exato da Peça no Atacado (R$) e Pedido Mínimo
+6. 👗 Descrição das Peças Disponíveis e Observações de Qualidade/Entrega.`;
 
       try {
         const resText = await chamarGemini(prompt, base64ImageAtacado || null, true);
         output.innerText = resText;
       } catch(err) {
+        console.error("Detalhes do erro na busca de atacado:", err);
         output.innerText = `⚠️ Erro na consulta: ${err.message}`;
       }
     }
@@ -627,7 +648,7 @@
       output.innerText = "⏳ Buscando sugestões de combinação...";
 
       try {
-        const prompt = `Como consultor de moda luxuosa da ClosetJH, crie 3 sugestões de combinações para o vendedor oferecer junto com a peça '${nome}'.`;
+        const prompt = `Como consultor de moda luxuosa da ClosetJH, crie 3 sugestões de combinações para o vendedor oferecer junto com a peça '${nome}'. Exemplo: Qual sapato, bolsa, cinto ou segunda peça oferecer para fechar o look completo.`;
         const resText = await chamarGemini(prompt, null, false);
         output.innerText = resText;
       } catch(e) {
@@ -643,7 +664,7 @@
       output.innerText = "⏳ Criando legenda persuasiva...";
 
       try {
-        const prompt = `Crie uma legenda vendedora para o Instagram da ClosetJH. Produto: '${nome}', Tecido: '${tecido}', Valor: '${preco}'.`;
+        const prompt = `Crie uma legenda vendedora para o Instagram da ClosetJH. Produto: '${nome}', Tecido: '${tecido}', Valor: '${preco}'. Foco em elegância e urgência.`;
         const resText = await chamarGemini(prompt, null, false);
         output.innerText = resText;
       } catch(e) {
@@ -666,8 +687,105 @@
     }
 
     async function gerarRotinaSemanalIA() {
-      const prompt = `Crie a MELHOR rotina semanal estratégica de vendas em JSON estrito com as chaves: "segunda", "terca", "quarta", "quinta", "sexta", "sabado".`;
+      const prompt = `Você é o Diretor Estratégico de Vendas da ClosetJH. Analise o momento do mercado e crie a MELHOR rotina semanal estratégica de vendas e engajamento para a loja (Segunda a Sábado). 
+Responda APENAS em JSON estrito com as chaves: "segunda", "terca", "quarta", "quinta", "sexta", "sabado". Defina ações práticas e de alta conversão para cada dia.`;
 
       try {
         const resText = await chamarGemini(prompt, null, false);
-        const rawText = resText.replace(/```json|
+        const rawText = resText.replace(/```json|```/g, '').trim();
+        const parsed = JSON.parse(rawText);
+        if (parsed.segunda) document.getElementById('planSeg').value = parsed.segunda;
+        if (parsed.terca) document.getElementById('planTer').value = parsed.terca;
+        if (parsed.quarta) document.getElementById('planQua').value = parsed.quarta;
+        if (parsed.quinta) document.getElementById('planQui').value = parsed.quinta;
+        if (parsed.sexta) document.getElementById('planSex').value = parsed.sexta;
+        if (parsed.sabado) document.getElementById('planSab').value = parsed.sabado;
+        salvarPlanejamento();
+        alert('🧠 Melhor estratégia semanal analisada e preenchida pela IA com sucesso!');
+      } catch (err) {
+        alert(`⚠️ ${err.message}`);
+      }
+    }
+
+    function gerarLinkZap() {
+      const nome = document.getElementById('nomePeca').value || 'Look Exclusivo ClosetJH';
+      const preco = document.getElementById('precoPeca').value || 'Sob consulta';
+      const tecido = document.getElementById('tecidoPeca').value || 'Tecido Premium';
+      const tamanhos = Array.from(document.querySelectorAll('.size-btn.selected')).map(b => b.innerText).join(' | ') || 'Tamanho Único';
+      const numeroDestino = "5562981209836";
+
+      const mensagem = `Olá ClosetJH! Gostaria de consultar este look:\n\n` +
+        `👗 *Peça:* ${nome}\n` +
+        `💰 *Valor:* ${preco}\n` +
+        `🧶 *Tecido:* ${tecido}\n` +
+        `📏 *Tamanhos:* ${tamanhos}\n\n` +
+        `Poderia confirmar a disponibilidade para envio?`;
+
+      const link = `https://wa.me/${numeroDestino}?text=${encodeURIComponent(mensagem)}`;
+      window.open(link, '_blank');
+    }
+
+    function salvarNoHistorico() {
+      const nome = document.getElementById('nomePeca').value || 'Look Sem Nome';
+      const preco = document.getElementById('precoPeca').value || 'R$ 0,00';
+      const posts = JSON.parse(localStorage.getItem('closetjh_posts') || '[]');
+      posts.push({ nome, preco, data: new Date().toLocaleDateString('pt-BR') });
+      localStorage.setItem('closetjh_posts', JSON.stringify(posts));
+      alert('Look registrado com sucesso no acervo interno!');
+    }
+
+    function carregarHistorico() {
+      const posts = JSON.parse(localStorage.getItem('closetjh_posts') || '[]');
+      const container = document.getElementById('historicoLista');
+      if(posts.length === 0) {
+        container.innerHTML = "Nenhum look salvo ainda.";
+        return;
+      }
+      container.innerHTML = posts.map(p => `
+        <div style="background:#1e1e1e; padding:10px; border-radius:8px; margin-bottom:8px; border-left:3px solid #D4AF37;">
+          <strong style="color:#D4AF37">${p.nome}</strong> - ${p.preco}<br>
+          <small style="color:#888">Cadastrado em: ${p.data}</small>
+        </div>
+      `).join('');
+    }
+
+    function salvarPlanejamento() {
+      const plano = {
+        seg: document.getElementById('planSeg').value,
+        ter: document.getElementById('planTer').value,
+        qua: document.getElementById('planQua').value,
+        qui: document.getElementById('planQui').value,
+        sex: document.getElementById('planSex').value,
+        sab: document.getElementById('planSab').value
+      };
+      localStorage.setItem('closetjh_agenda', JSON.stringify(plano));
+    }
+
+    function carregarPlanejamento() {
+      const plano = JSON.parse(localStorage.getItem('closetjh_agenda') || '{}');
+      if(plano.seg) document.getElementById('planSeg').value = plano.seg;
+      if(plano.ter) document.getElementById('planTer').value = plano.ter;
+      if(plano.qua) document.getElementById('planQua').value = plano.qua;
+      if(plano.qui) document.getElementById('planQui').value = plano.qui;
+      if(plano.sex) document.getElementById('planSex').value = plano.sex;
+      if(plano.sab) document.getElementById('planSab').value = plano.sab;
+    }
+
+    function salvarChaveAPI() {
+      const keyInput = document.getElementById('customApiKey').value.trim();
+      if(keyInput) {
+        localStorage.setItem('closetjh_custom_key', keyInput);
+        alert('Chave API salva com sucesso no navegador!');
+      } else {
+        localStorage.removeItem('closetjh_custom_key');
+        alert('Chave personalizada removida.');
+      }
+    }
+
+    function carregarChaveAPI() {
+      const customKey = localStorage.getItem('closetjh_custom_key');
+      if(customKey) document.getElementById('customApiKey').value = customKey;
+    }
+  </script>
+</body>
+</html>
