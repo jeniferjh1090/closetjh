@@ -93,600 +93,400 @@
       width: 100%; padding: 12px; border-radius: 8px; background: var(--card-alt); border: 1px solid #2a2a2a;
       color: #fff; font-size: 14px; transition: all 0.3s ease;
     }
-    input:focus, textarea:focus, select:focus { border-color: var(--gold-primary); outline: none; box-shadow: 0 0 8px rgba(212, 175, 55, 0.25); background: #1c1c1c; }
-    input[type="file"] { background: var(--card-alt); padding: 10px; border-radius: 8px; border: 1px dashed var(--gold-primary); width: 100%; color: #aaa; font-size: 11px; cursor: pointer; }
+    input:focus, textarea:focus, select:focus { border-color: var(--gold-primary); outline: none; box-shadow: 0 0 8px rgba(212, 175, 55, 0.2); }
+    textarea { resize: vertical; min-height: 70px; }
 
-    .checkbox-container { display: flex; align-items: center; gap: 10px; background: var(--card-alt); padding: 12px; border-radius: 8px; border: 1px solid #2a2a2a; margin-top: 10px; cursor: pointer; }
-    .checkbox-container input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--gold-primary); cursor: pointer; }
-    .checkbox-container label { margin: 0; color: #fff; font-size: 12px; cursor: pointer; text-transform: none; letter-spacing: normal; }
-
-    .btn-gold {
-      background: var(--gold-gradient); color: #000; font-weight: 800; border: none; padding: 14px;
-      border-radius: 8px; width: 100%; cursor: pointer; text-transform: uppercase; font-size: 12px;
-      margin-top: 10px; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(191, 149, 63, 0.25); transition: transform 0.1s ease, opacity 0.2s ease;
+    .btn, .btn-secondary, .btn-action, .btn-danger {
+      width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 13px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease;
+      display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px;
     }
-    .btn-gold:active { transform: scale(0.98); opacity: 0.9; }
 
-    .btn-outline {
-      background: transparent; color: var(--gold-primary); border: 1px solid var(--gold-primary); font-weight: 700;
-      padding: 12px; border-radius: 8px; width: 100%; font-size: 11px; margin-top: 8px; cursor: pointer;
-      text-transform: uppercase; letter-spacing: 0.8px; transition: background 0.2s ease, color 0.2s ease;
+    .btn { background: var(--gold-gradient); color: #000; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
+    .btn:active { transform: scale(0.97); }
+    .btn-secondary { background: #2a2a2a; color: var(--gold-light); border: 1px solid var(--gold-primary); }
+    .btn-secondary:active { background: #333; }
+    .btn-action { background: #161616; color: #ccc; border: 1px solid #333; }
+    .btn-danger { background: rgba(255, 85, 85, 0.1); color: var(--danger-color); border: 1px solid var(--danger-color); margin-top: 5px;}
+
+    .photo-area {
+      border: 2px dashed #333; border-radius: 12px; padding: 25px 15px; text-align: center;
+      margin: 12px 0; background: var(--card-alt); transition: border-color 0.3s; position: relative;
     }
-    .btn-outline:hover { background: rgba(212, 175, 55, 0.08); }
-
-    canvas, .preview-img { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--gold-primary); margin-top: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); background: #000; }
+    .photo-area:hover, .photo-area:active { border-color: var(--gold-primary); }
+    .photo-area span { display: block; margin-top: 8px; font-size: 12px; color: #888; pointer-events: none; }
     
-    .output-box { background: #141414; border-left: 3px solid var(--gold-primary); padding: 12px; font-size: 12px; white-space: pre-wrap; margin-top: 10px; min-height: 80px; line-height: 1.5; border-radius: 0 8px 8px 0; color: #dcdcdc; max-height: 300px; overflow-y: auto; }
+    .hidden-file-input {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;
+    }
 
-    .size-picker { display: flex; gap: 6px; margin-top: 6px; }
-    .size-btn { flex: 1; background: var(--card-alt); border: 1px solid #333; color: #fff; padding: 10px 0; font-size: 11px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: all 0.2s ease; }
-    .size-btn.selected { background: var(--gold-primary); color: #000; font-weight: 900; border-color: var(--gold-primary); box-shadow: 0 0 8px rgba(212, 175, 55, 0.4); }
+    .image-preview { width: 100%; border-radius: 8px; margin-top: 10px; display: none; object-fit: cover; max-height: 400px; border: 1px solid #333; }
 
-    .kpi-container { display: flex; gap: 10px; margin-top: 10px; }
-    .kpi-box { flex: 1; background: var(--card-alt); padding: 12px 8px; border-radius: 8px; text-align: center; border: 1px solid #2a2a2a; }
-    .kpi-val { font-size: 18px; font-weight: bold; color: var(--gold-primary); }
-    .kpi-lbl { font-size: 9px; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .loading { display: none; text-align: center; margin: 15px 0; }
+    .loading-spinner {
+      border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--gold-primary);
+      border-radius: 50%; width: 28px; height: 28px; animation: spin 1s linear infinite; margin: 0 auto;
+    }
+    .loading p { color: var(--gold-primary); font-size: 10px; margin-top: 8px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    .planner-row { display: flex; justify-content: space-between; align-items: center; background: var(--card-alt); padding: 8px 10px; border-radius: 8px; margin-top: 6px; border-left: 3px solid var(--gold-primary); gap: 10px; }
-    .planner-row span { font-size: 11px; font-weight: bold; color: var(--gold-primary); min-width: 60px; text-transform: uppercase; }
+    .result-box {
+      margin-top: 15px; padding: 14px; background: #0a0a0a; border-radius: 8px; border-left: 3px solid var(--gold-primary);
+      font-size: 13px; color: #e0e0e0; display: none; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6;
+    }
 
-    .history-item { background: var(--card-alt); padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid var(--gold-primary); display: flex; justify-content: space-between; align-items: center; }
+    .result-box h3 { color: var(--gold-light); font-size: 14px; margin: 12px 0 6px 0; border-bottom: 1px solid #222; padding-bottom: 4px; }
+    .result-box p { margin-bottom: 8px; }
+    .result-box strong { color: var(--gold-primary); }
+    .result-box ul { padding-left: 18px; margin-bottom: 10px; }
+    .result-box li { margin-bottom: 4px; }
 
-    .api-status-box { font-size: 11px; padding: 10px; border-radius: 6px; margin-top: 8px; text-align: center; background: #1a1a1a; border: 1px solid #333; }
-    .api-status-box.ok { color: var(--success-color); border-color: rgba(46, 204, 113, 0.3); }
-    .api-status-box.error { color: var(--danger-color); border-color: rgba(255, 85, 85, 0.3); }
+    .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+    .price-card { background: #0a0a0a; border: 1px solid #222; padding: 10px; border-radius: 8px; text-align: center; }
+    .price-label { font-size: 9px; color: #888; text-transform: uppercase; margin-bottom: 4px; }
+    .price-value { font-size: 16px; color: var(--gold-primary); font-weight: 800; }
+    .price-profit { font-size: 11px; color: var(--success-color); font-weight: bold; margin-top: 2px;}
+
+    /* Copy Button */
+    .btn-copy { background: #222; color: #fff; border: 1px solid #444; margin-top: 15px; font-size: 11px; padding: 10px; display: none; }
+    
+    /* Config Panel */
+    .config-box { background: #0a0a0a; border: 1px solid #333; padding: 12px; border-radius: 8px; margin-bottom: 15px; }
+    .config-box p { font-size: 11px; color: #888; margin-bottom: 10px; }
+    
   </style>
 </head>
 <body>
 
   <div id="toastContainer"></div>
 
-  <div class="badge-internal">🔒 PAINEL INTERNO EXCLUSIVO • CLOSETJH</div>
-  <h1>CLOSETJH</h1>
-  <p class="subtitle">SISTEMA INTEGRADO DE INTELIGÊNCIA EM VENDAS</p>
+  <div class="badge-internal">Acesso Exclusivo - Vendas</div>
+  <h1>ClosetJH</h1>
+  <p class="subtitle">Inteligência & Atacado</p>
 
-  <!-- ================= TAB 1: STUDIO DE MÍDIA & FOTOS ================= -->
-  <div id="tab1" class="tab-content active">
+  <!-- TAB 1: STUDIO IA (Análise de Peças) -->
+  <div id="tab-studio" class="tab-content active">
+    
     <div class="card">
-      <div class="card-title">📸 Studio Fotográfico & Gerador de Post</div>
+      <div class="card-title">📷 Analisar Nova Peça (IA)</div>
+      <p style="font-size: 11px; color: #888; margin-bottom:10px;">Tire uma foto da peça de roupa para gerar análise de público, precificação, sugestão de looks e textos de venda.</p>
       
-      <label>1. Carregar Foto do Manequim / Look</label>
-      <input type="file" id="imageInput" accept="image/*">
+      <div class="photo-area">
+        <span style="font-size: 24px;">📸</span>
+        <span>Toque para Fotografar ou Escolher</span>
+        <input type="file" id="imageInput" accept="image/*" class="hidden-file-input">
+      </div>
+      <img id="imagePreview" class="image-preview" alt="Preview da peça">
+      <button id="btnRemoverImg" class="btn-danger" style="display:none;">Remover Imagem</button>
+
+      <button class="btn" id="btnAnalisar" style="margin-top: 15px;">✨ Analisar Peça com IA</button>
       
-      <div class="checkbox-container">
-        <input type="checkbox" id="chkRemoveBg" checked>
-        <label for="chkRemoveBg">✂️ Ativar Remoção Inteligente de Fundo por Contraste</label>
+      <div class="loading" id="loadingStudio">
+        <div class="loading-spinner"></div>
+        <p>A Inteligência Artificial está analisando o tecido, modelagem e tendências...</p>
       </div>
 
-      <button class="btn-outline" id="btnAnalisarFoto">✨ Analisar Foto com IA (Tecido, Cores & Valor Sugerido)</button>
+      <div class="result-box" id="resultStudio"></div>
+      <button class="btn-secondary btn-copy" id="btnCopyStudio">📋 Copiar Descrição para WhatsApp/Instagram</button>
+    </div>
 
-      <label>2. Detalhes da Peça</label>
-      <input type="text" id="nomePeca" placeholder="Nome Comercial (Ex: Conjunto Alfaiataria Luxo)">
-      <input type="text" id="precoPeca" placeholder="Preço de Venda Varejo (Ex: R$ 229,90)">
-      <input type="text" id="tecidoPeca" placeholder="Tecido (Ex: Linho com Elastano Premium)">
-      <input type="text" id="cartelaCores" placeholder="Cartela de Cores (Ex: Nude / Terracota / Off-White)">
+  </div>
 
-      <label>Tamanhos Disponíveis em Estoque</label>
-      <div class="size-picker" id="sizePickerContainer">
-        <button class="size-btn selected" data-size="P">P</button>
-        <button class="size-btn selected" data-size="M">M</button>
-        <button class="size-btn selected" data-size="G">G</button>
-        <button class="size-btn" data-size="GG">GG</button>
-        <button class="size-btn" data-size="ÚNICO">ÚNICO</button>
+  <!-- TAB 2: ATACADO & FORNECEDORES -->
+  <div id="tab-atacado" class="tab-content">
+    
+    <div class="card">
+      <div class="card-title">🏭 Busca Inteligente de Fornecedores</div>
+      <p style="font-size: 11px; color: #888; margin-bottom:10px;">Encontre fábricas e atacadistas para uma peça específica usando IA e Busca na Web.</p>
+
+      <label>1. Descreva a peça que deseja comprar</label>
+      <input type="text" id="descAtacado" placeholder="Ex: Vestido midi canelado terracota...">
+
+      <label>2. Ou anexe uma foto de referência (opcional)</label>
+      <div class="photo-area" style="padding: 15px;">
+        <span style="font-size: 20px;">🖼️</span>
+        <span style="font-size: 10px;">Anexar Foto de Referência</span>
+        <input type="file" id="imageInputAtacado" accept="image/*" class="hidden-file-input">
+      </div>
+      <img id="previewAtacado" class="image-preview" alt="Referência">
+      <button id="btnRemoverImgAtacado" class="btn-danger" style="display:none; padding:8px; font-size:10px;">Remover Foto</button>
+
+      <button class="btn" id="btnBuscarAtacado" style="margin-top: 15px;">🔍 Buscar Fornecedores Atacado</button>
+      
+      <div class="loading" id="loadingAtacado">
+        <div class="loading-spinner"></div>
+        <p>Vasculhando a internet por fornecedores e estimativas de preço de fábrica...</p>
       </div>
 
-      <button class="btn-gold" id="btnGerarTemplate">🖼️ Gerar Post Profissional (Feed / Story)</button>
-      <canvas id="canvas" width="1080" height="1920" style="display:none;"></canvas>
-      <button class="btn-outline" id="downloadBtn" style="display:none;">📥 Baixar / Compartilhar Prancha (iPhone / Android)</button>
-      <button class="btn-outline" id="savePostBtn" style="display:none;">💾 Registrar no Catálogo Interno</button>
+      <div class="result-box" id="resultAtacado"></div>
     </div>
   </div>
 
-  <!-- ================= TAB 2: CALCULADORA DE MARGEM ================= -->
-  <div id="tab2" class="tab-content">
+  <!-- TAB 3: ROTINA & MARKETING -->
+  <div id="tab-rotina" class="tab-content">
     <div class="card">
-      <div class="card-title">📊 Calculadora de Custos & Margem Comercial</div>
-      <label>Preço de Custo / Atacado (R$)</label>
-      <input type="number" id="custoAtacado" placeholder="Ex: 75.00">
-      <label>Preço de Venda Planejado ao Cliente (R$)</label>
-      <input type="number" id="vendaVarejo" placeholder="Ex: 229.90">
-      <label>Despesas Operacionais Fixas / Embalagem (R$)</label>
-      <input type="number" id="despesaExtra" placeholder="Ex: 10.00">
+      <div class="card-title">📅 Planejador Semanal de Vendas</div>
+      <p style="font-size: 11px; color: #888; margin-bottom:10px;">Gere uma rotina de postagens focada em engajamento e vendas para a ClosetJH.</p>
+      
+      <label>Foco da Semana</label>
+      <select id="focoSemana">
+        <option value="Lancamento">Lançamento de Nova Coleção</option>
+        <option value="QueimaEstoque">Queima de Estoque / Promoção</option>
+        <option value="LooksFimDeSemana">Looks para o Fim de Semana</option>
+        <option value="ModaTrabalho">Moda Trabalho / Casual Chic</option>
+        <option value="Engajamento">Crescer Engajamento e Seguidores</option>
+      </select>
 
-      <div class="kpi-container">
-        <div class="kpi-box">
-          <div class="kpi-val" id="resLucro">R$ 0,00</div>
-          <div class="kpi-lbl">Lucro Líquido</div>
-        </div>
-        <div class="kpi-box">
-          <div class="kpi-val" id="resMargem">0%</div>
-          <div class="kpi-lbl">Margem %</div>
-        </div>
+      <button class="btn" id="btnGerarRotina">🗓️ Gerar Rotina de Marketing</button>
+
+      <div class="loading" id="loadingRotina">
+        <div class="loading-spinner"></div>
+        <p>Montando cronograma de stories e reels...</p>
       </div>
-      <div class="kpi-container">
-        <div class="kpi-box">
-          <div class="kpi-val" id="resMarkup">0.0x</div>
-          <div class="kpi-lbl">Markup Aplicado</div>
-        </div>
-        <div class="kpi-box">
-          <div class="kpi-val" id="resSugestao" style="font-size:14px; padding-top:4px;">R$ 0,00</div>
-          <div class="kpi-lbl">Preço Ideal (Markup 2.5x)</div>
-        </div>
+
+      <div class="result-box" id="resultRotina"></div>
+    </div>
+  </div>
+
+  <!-- TAB 4: GESTÃO & CHAVES (CONFIG) -->
+  <div id="tab-gestao" class="tab-content">
+    <div class="card">
+      <div class="card-title">⚙️ Configurações do Sistema</div>
+      
+      <div class="config-box">
+        <label>Token de Acesso ou Chave de API</label>
+        <p>Insira sua credencial. O sistema aceitará automaticamente formatos como "AQ.Ab..." ou "AIza...".</p>
+        <input type="text" id="apiKey" placeholder="Ex: AQ.Ab8RN6KJ... ou AIzaSy...">
+        <button class="btn-secondary" id="btnSalvarKey" style="margin-top:8px;">💾 Salvar Credencial</button>
+      </div>
+
+      <div class="config-box" style="border-color: #331111;">
+        <label style="color: var(--danger-color);">Zona de Risco</label>
+        <button class="btn-danger" id="btnLimparDados">🗑️ Limpar Todos os Dados do App</button>
+      </div>
+      
+      <div style="text-align: center; margin-top: 20px; opacity: 0.5;">
+        <p style="font-size: 10px;">ClosetJH v2.6 - Smart Auth</p>
+        <p style="font-size: 9px;">Criado para gestão comercial.</p>
       </div>
     </div>
   </div>
 
-  <!-- ================= TAB 3: RADAR DE FORNECEDORES ================= -->
-  <div id="tab3" class="tab-content">
-    <div class="card">
-      <div class="card-title">📍 Radar de Fornecedores & Confecções (Goiânia/44)</div>
-      <label style="color:#aaa; font-size:9px;">1. Foto da Peça para Pesquisa Visual Multimodal (Opcional)</label>
-      <input type="file" id="imageInputAtacado" accept="image/*">
-      <img id="previewAtacado" class="preview-img" style="display:none;" />
-      <button class="btn-outline" id="btnRemoverImgAtacado" style="display:none; margin-top:5px;">❌ Remover Foto da Peça</button>
-
-      <label style="margin-top:10px;">2. Termos de Busca ou Região</label>
-      <input type="text" id="buscaFornecedor" placeholder="Ex: Vestido Alfaiataria Mega Moda Parque, Goiânia">
-      <button class="btn-gold" id="btnPesquisarFornecedores">🌐 Executar Varredura com IA + Google Grounding</button>
-      <div id="fornecedoresOutput" class="output-box">Os fornecedores, endereços, redes sociais e valores de atacado aparecerão aqui...</div>
-    </div>
-  </div>
-
-  <!-- ================= TAB 4: IA DE VENDAS & CROSS-SELLING ================= -->
-  <div id="tab4" class="tab-content">
-    <div class="card">
-      <div class="card-title">👗 Consultoria de Vendas & Copywriting</div>
-      <button class="btn-gold" id="btnCrossSelling">👗 Sugerir Combinações de Look (Cross-Selling)</button>
-      <button class="btn-gold" id="btnLegendaFeed">📝 Criar Legenda de Alta Conversão para Feed</button>
-      <button class="btn-gold" id="btnRoteiroStories">🔥 Roteiro Estratégico de 3 Stories de Oferta</button>
-      <button class="btn-outline" id="btnLinkZap">📱 Gerar Mensagem Pronta para WhatsApp</button>
-      <div id="aiOutput" class="output-box">Os argumentos comerciais e textos persuasivos serão gerados aqui...</div>
-    </div>
-  </div>
-
-  <!-- ================= TAB 5: AGENDA, CATÁLOGO & CONFIG ================= -->
-  <div id="tab5" class="tab-content">
-    <div class="card">
-      <div class="card-title">⚙️ Configuração da Chave de API</div>
-      <label>Chave de API do Google AI Studio (`AIza...`)</label>
-      <input type="text" id="inputApiKeyConfig" placeholder="Cole sua chave AIza... aqui">
-      <div id="apiStatusBox" class="api-status-box error">⚠️ Nenhuma chave AIza detectada. Configure acima para ativar a IA.</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">📆 Planejador Estratégico Semanal da Loja</div>
-      <button class="btn-gold" id="btnRotinaSemanal">🧠 Gerar Sugestão de Rotina com IA</button>
-      <div class="planner-row"><span>Segunda:</span> <input type="text" id="planSeg" placeholder="Ação estratégica..."></div>
-      <div class="planner-row"><span>Terça:</span> <input type="text" id="planTer" placeholder="Ação estratégica..."></div>
-      <div class="planner-row"><span>Quarta:</span> <input type="text" id="planQua" placeholder="Ação estratégica..."></div>
-      <div class="planner-row"><span>Quinta:</span> <input type="text" id="planQui" placeholder="Ação estratégica..."></div>
-      <div class="planner-row"><span>Sexta:</span> <input type="text" id="planSex" placeholder="Ação estratégica..."></div>
-      <div class="planner-row"><span>Sábado:</span> <input type="text" id="planSab" placeholder="Ação estratégica..."></div>
-      <button class="btn-outline" id="btnSalvarCronograma">💾 Salvar Cronograma</button>
-    </div>
-
-    <div class="card">
-      <div class="card-title">📦 Catálogo de Looks Salvos</div>
-      <div id="historicoLista">Nenhum look salvo no acervo ainda.</div>
-      <button class="btn-outline" id="btnLimparHistorico" style="margin-top: 10px; color: var(--danger-color); border-color: var(--danger-color);">🗑️ Limpar Acervo do Catálogo</button>
-    </div>
-  </div>
-
-  <!-- MENU INFERIOR DE ABAS -->
-  <div class="tab-bar">
-    <button class="tab-item active" data-tab="tab1"><span>📸</span>Studio</button>
-    <button class="tab-item" data-tab="tab2"><span>📊</span>Margem</button>
-    <button class="tab-item" data-tab="tab3"><span>📍</span>Atacado</button>
-    <button class="tab-item" data-tab="tab4"><span>👗</span>Vendas</button>
-    <button class="tab-item" data-tab="tab5"><span>⚙️</span>Gestão</button>
-  </div>
+  <!-- NAVEGAÇÃO INFERIOR -->
+  <nav class="tab-bar">
+    <button class="tab-item active" onclick="switchTab('studio')">
+      <span>✨</span>Studio IA
+    </button>
+    <button class="tab-item" onclick="switchTab('atacado')">
+      <span>🏭</span>Fornecedores
+    </button>
+    <button class="tab-item" onclick="switchTab('rotina')">
+      <span>📱</span>Marketing
+    </button>
+    <button class="tab-item" onclick="switchTab('gestao')">
+      <span>⚙️</span>Gestão
+    </button>
+  </nav>
 
   <script>
-    // === 1. UTILITÁRIOS E UI ===
-    function mostrarToast(mensagem, duracao = 3000) {
+    /* COMPRESSOR DE IMAGENS INTELIGENTE */
+    function comprimirImagem(file, maxSize = 1000) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = event => {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > maxSize) {
+                height = Math.round((height * maxSize) / width);
+                width = maxSize;
+              }
+            } else {
+              if (height > maxSize) {
+                width = Math.round((width * maxSize) / height);
+                height = maxSize;
+              }
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+            const base64 = dataUrl.split(',')[1];
+            resolve({ dataUrl, base64 });
+          };
+          img.onerror = error => reject(error);
+        };
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    // ==========================================
+    // ESTADOS GLOBAIS
+    // ==========================================
+    let base64Image = null;
+    let base64ImageAtacado = null;
+    let analiseAtualParaCopia = "";
+
+    // ==========================================
+    // FUNÇÕES DE UI
+    // ==========================================
+    function mostrarToast(msg) {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
       toast.className = 'toast';
-      toast.innerText = mensagem;
+      toast.innerText = msg;
       container.appendChild(toast);
-      setTimeout(() => toast.classList.add('show'), 10);
+      
+      requestAnimationFrame(() => toast.classList.add('show'));
+      
       setTimeout(() => {
         toast.classList.remove('show');
-        setTimeout(() => container.removeChild(toast), 300);
-      }, duracao);
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
     }
 
-    function obterChaveAPI() {
-      return localStorage.getItem('closetjh_apikey') || "";
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + tabName).classList.add('active');
+      event.currentTarget.classList.add('active');
+      window.scrollTo(0,0);
     }
 
-    function safeLocalStorageSet(key, val) {
+    // ==========================================
+    // CARREGAMENTO DE IMAGENS
+    // ==========================================
+    const imgInput = document.getElementById('imageInput');
+    const imgPreview = document.getElementById('imagePreview');
+    const btnRemoverImg = document.getElementById('btnRemoverImg');
+
+    imgInput.addEventListener('change', async function(e) {
+      const file = e.target.files[0];
+      if(!file) return;
+      mostrarToast("Otimizando imagem para a IA... ⏳");
       try {
-        localStorage.setItem(key, val);
-        return true;
-      } catch (e) {
-        mostrarToast("⚠️ Armazenamento cheio. Limpe o acervo.");
-        return false;
-      }
-    }
-
-    function verificarStatusAPI() {
-      const k = obterChaveAPI();
-      const box = document.getElementById('apiStatusBox');
-      if (k.startsWith('AIza')) {
-        box.className = "api-status-box ok";
-        box.innerText = "✅ Chave AIza configurada e pronta para uso.";
-      } else {
-        box.className = "api-status-box error";
-        box.innerText = "⚠️ Chave não detectada. Insira uma chave AIza válida.";
-      }
-    }
-
-    // === 2. VARIÁVEIS GLOBAIS DE IMAGEM ===
-    let imgElement = new Image();
-    let base64Image = "";
-    let base64ImageAtacado = "";
-
-    // === 3. INICIALIZAÇÃO DE EVENTOS ===
-    document.addEventListener('DOMContentLoaded', () => {
-      // Recupera chave da memória
-      const salva = localStorage.getItem('closetjh_apikey');
-      if (salva) document.getElementById('inputApiKeyConfig').value = salva;
-      verificarStatusAPI();
-      
-      // Carrega históricos
-      carregarHistorico();
-      carregarPlanejamento();
-
-      // Navegação das abas (Muda a tela visível)
-      document.querySelectorAll('.tab-item').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const targetTab = e.currentTarget.getAttribute('data-tab');
-          document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-          document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
-          document.getElementById(targetTab).classList.add('active');
-          e.currentTarget.classList.add('active');
-        });
-      });
-
-      // Seleção de tamanho visual (Botões P, M, G)
-      document.querySelectorAll('.size-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.currentTarget.classList.toggle('selected');
-        });
-      });
-
-      // Input de Imagem - Studio
-      document.getElementById('imageInput').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          imgElement.src = event.target.result;
-          base64Image = event.target.result.split(',')[1];
-          mostrarToast("Foto carregada. Agora você pode analisar com IA!");
-        }
-        reader.readAsDataURL(file);
-      });
-
-      // Input de Imagem - Fornecedores
-      document.getElementById('imageInputAtacado').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          const preview = document.getElementById('previewAtacado');
-          preview.src = event.target.result;
-          preview.style.display = 'block';
-          document.getElementById('btnRemoverImgAtacado').style.display = 'block';
-          base64ImageAtacado = event.target.result.split(',')[1];
-          mostrarToast("Foto de referência anexada.");
-        }
-        reader.readAsDataURL(file);
-      });
-
-      // Remover Imagem de Fornecedores
-      document.getElementById('btnRemoverImgAtacado').addEventListener('click', () => {
-        document.getElementById('imageInputAtacado').value = "";
-        document.getElementById('previewAtacado').style.display = 'none';
-        document.getElementById('btnRemoverImgAtacado').style.display = 'none';
-        base64ImageAtacado = "";
-      });
-
-      // Salvar Chave API Automaticamente
-      document.getElementById('inputApiKeyConfig').addEventListener('input', (e) => {
-        const val = e.target.value.trim();
-        if(val) {
-          safeLocalStorageSet('closetjh_apikey', val);
-          verificarStatusAPI();
-        }
-      });
-
-      // === CONECTANDO BOTÕES ÀS SUAS AÇÕES ===
-      
-      // ABA 1: Studio
-      document.getElementById('btnAnalisarFoto').addEventListener('click', analisarFotoComIA);
-      document.getElementById('btnGerarTemplate').addEventListener('click', gerarTemplateStudio);
-      document.getElementById('downloadBtn').addEventListener('click', baixarTemplate);
-      document.getElementById('savePostBtn').addEventListener('click', salvarNoHistorico);
-
-      // ABA 2: Calculadora
-      ['custoAtacado', 'vendaVarejo', 'despesaExtra'].forEach(id => {
-        document.getElementById(id).addEventListener('input', calcularLucro);
-      });
-
-      // ABA 3: Fornecedores
-      document.getElementById('btnPesquisarFornecedores').addEventListener('click', pesquisarFornecedores);
-
-      // ABA 4: Vendas e Copy
-      document.getElementById('btnCrossSelling').addEventListener('click', gerarCrossSelling);
-      document.getElementById('btnLegendaFeed').addEventListener('click', gerarLegendaFeed);
-      document.getElementById('btnRoteiroStories').addEventListener('click', gerarRoteiroStories);
-      document.getElementById('btnLinkZap').addEventListener('click', gerarLinkZap);
-
-      // ABA 5: Gestão
-      document.getElementById('btnRotinaSemanal').addEventListener('click', gerarRotinaSemanalIA);
-      document.getElementById('btnSalvarCronograma').addEventListener('click', salvarPlanejamento);
-      document.getElementById('btnLimparHistorico').addEventListener('click', limparHistorico);
+        const imgs = await comprimirImagem(file, 800);
+        imgPreview.src = imgs.dataUrl; imgPreview.style.display = 'block'; btnRemoverImg.style.display = 'block';
+        base64Image = imgs.base64;
+        mostrarToast("✅ Foto pronta para análise!");
+      } catch (err) { alert("Erro ao processar a foto."); }
     });
 
+    btnRemoverImg.addEventListener('click', () => {
+      imgPreview.src = ""; imgPreview.style.display = 'none'; base64Image = null; imgInput.value = ""; btnRemoverImg.style.display = 'none';
+    });
 
-    // === 4. COMUNICAÇÃO COM A API DO GOOGLE GEMINI ===
+    const imgInputAtacado = document.getElementById('imageInputAtacado');
+    const previewAtacado = document.getElementById('previewAtacado');
+    const btnRemoverImgAtacado = document.getElementById('btnRemoverImgAtacado');
+
+    imgInputAtacado.addEventListener('change', async function(e) {
+      const file = e.target.files[0];
+      if(!file) return;
+      mostrarToast("Otimizando foto de referência... ⏳");
+      try {
+        const imgs = await comprimirImagem(file, 800);
+        previewAtacado.src = imgs.dataUrl; previewAtacado.style.display = 'block'; btnRemoverImgAtacado.style.display = 'block';
+        base64ImageAtacado = imgs.base64;
+        mostrarToast("✅ Foto de referência anexada.");
+      } catch (err) { alert("Erro ao processar a foto."); }
+    });
+
+    btnRemoverImgAtacado.addEventListener('click', () => {
+      previewAtacado.src = ""; previewAtacado.style.display = 'none'; base64ImageAtacado = null; imgInputAtacado.value = ""; btnRemoverImgAtacado.style.display = 'none';
+    });
+
+    // ==========================================
+    // SISTEMA DE AUTENTICAÇÃO INTELIGENTE (SMART AUTH)
+    // ==========================================
+    function obterChaveAPI() { return localStorage.getItem('closetjh_apikey') || ''; }
+
+    document.getElementById('btnSalvarKey').addEventListener('click', () => {
+      const k = document.getElementById('apiKey').value.trim();
+      if(k) { localStorage.setItem('closetjh_apikey', k); mostrarToast("✅ Credencial salva com sucesso!"); }
+      else { mostrarToast("⚠️ O campo está vazio."); }
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const k = obterChaveAPI();
+      if(k) document.getElementById('apiKey').value = k;
+    });
+
+    document.getElementById('btnLimparDados').addEventListener('click', () => {
+      if(confirm("Tem certeza que deseja apagar a credencial e resetar o app?")) { localStorage.clear(); location.reload(); }
+    });
+
     async function chamarGemini(promptText, base64Img = null, usarBusca = false) {
       let keyToUse = obterChaveAPI();
-      if (!keyToUse) throw new Error("Vá na aba 'Gestão' e insira sua chave da API do Google.");
+      if (!keyToUse) throw new Error("Aviso: Vá na aba 'Gestão' e insira sua credencial de acesso antes de usar.");
 
       const parts = [{ text: promptText }];
-      if (base64Img) {
-        parts.push({ inline_data: { mime_type: "image/jpeg", data: base64Img } });
-      }
+      if (base64Img) parts.push({ inline_data: { mime_type: "image/jpeg", data: base64Img } });
 
       const requestBody = { contents: [{ parts }] };
-      if (usarBusca) {
-        requestBody.tools = [{ googleSearch: {} }];
+      if (usarBusca) requestBody.tools = [{ googleSearch: {} }];
+
+      let url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+      let headers = { 'Content-Type': 'application/json' };
+
+      // LÓGICA SMART AUTH: Verifica qual é o formato da sua chave
+      if (keyToUse.startsWith('AIza')) {
+        // Formato padrão: envia via URL
+        url += `?key=${keyToUse}`;
+      } else {
+        // Formato Customizado/Token (AQ.Ab...): envia via Cabeçalho Bearer
+        headers['Authorization'] = `Bearer ${keyToUse}`;
+        // Como alternativa/backup, alguns proxies aceitam na URL mesmo não sendo AIza:
+        // url += `?key=${keyToUse}`; <-- Descomente se o Bearer falhar.
       }
 
-      const res = await fetch(`[https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$](https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$){keyToUse}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
-      });
+      const res = await fetch(url, { method: 'POST', headers: headers, body: JSON.stringify(requestBody) });
+
+      if (!res.ok) {
+        let errorMsg = `Erro na API (${res.status}).`;
+        try {
+          const errText = await res.text();
+          if (errText.includes('<html') || errText.includes('<!DOCTYPE')) {
+             errorMsg = "O servidor falhou (sobrecarga ou bloqueio). Tente novamente.";
+          } else {
+             const errJson = JSON.parse(errText);
+             if (errJson.error && errJson.error.message) errorMsg = errJson.error.message;
+          }
+        } catch (e) { }
+        throw new Error(errorMsg);
+      }
 
       const data = await res.json();
       if (data.error) throw new Error(data.error.message);
-      if (!data.candidates || !data.candidates[0]) throw new Error("A Inteligência Artificial não enviou resposta.");
+      if (!data.candidates || !data.candidates[0]) throw new Error("A IA não enviou resposta.");
       
       return data.candidates[0].content.parts.map(p => p.text).join('\n');
     }
 
-    // === 5. FUNÇÕES DE INTELIGÊNCIA ARTIFICIAL E LÓGICA ===
-
-    // Função que foi cortada ao meio: Analisar Foto e preencher os inputs
-    async function analisarFotoComIA() {
-      if(!base64Image) return alert('Selecione uma foto da peça no Studio primeiro!');
-      mostrarToast("A IA está analisando a foto...");
+    // ==========================================
+    // CHAMADAS E FUNÇÕES DAS ABAS
+    // ==========================================
+    
+    // TAB STUDIO
+    document.getElementById('btnAnalisar').addEventListener('click', async () => {
+      if (!base64Image) return alert("Por favor, carregue a foto da peça primeiro.");
+      const btn = document.getElementById('btnAnalisar'); const loader = document.getElementById('loadingStudio');
+      const resultBox = document.getElementById('resultStudio'); const copyBtn = document.getElementById('btnCopyStudio');
       
+      btn.style.display = 'none'; loader.style.display = 'block'; resultBox.style.display = 'none'; copyBtn.style.display = 'none';
+      
+      const prompt = `Analise detalhadamente esta roupa feminina (foco comercial para a loja ClosetJH).
+Me retorne APENAS um objeto JSON válido (sem blocos de código markdown), com esta estrutura exata:
+{ "nomeDaPeca": "Nome comercial elegante", "descricaoEstilo": "Frase persuasiva", "tecidoModelagem": "Descrição", "ocasioes": ["ocasiao 1", "ocasiao 2"], "precoSugeridoVenda": "Valor em reais", "textoParaInstagram": "Texto pronto com emojis" }`;
+
       try {
-        const prompt = 'Analise esta roupa feminina. Me retorne APENAS um objeto JSON válido (sem blocos de código ```). Chaves obrigatórias: "nome" (sugira um nome comercial chique), "tecido" (tecido provável), "cores" (principais cores vistas), "preco_medio" (estime um valor de venda em BRL).';
         const resposta = await chamarGemini(prompt, base64Image, false);
-        
-        // Limpar resposta para garantir que seja JSON
-        let rawJson = resposta.replace(/```json/g, '').replace(/```/g, '').trim();
-        const info = JSON.parse(rawJson);
-
-        document.getElementById('nomePeca').value = info.nome || '';
-        document.getElementById('tecidoPeca').value = info.tecido || '';
-        document.getElementById('cartelaCores').value = info.cores || '';
-        document.getElementById('precoPeca').value = info.preco_medio || '';
-        
-        mostrarToast("Análise concluída com sucesso!");
-      } catch (err) {
-        alert("Erro ao analisar foto: " + err.message);
-      }
-    }
-
-    // Calculadora de Margem de Lucro
-    function calcularLucro() {
-      const custo = parseFloat(document.getElementById('custoAtacado').value) || 0;
-      const venda = parseFloat(document.getElementById('vendaVarejo').value) || 0;
-      const despesa = parseFloat(document.getElementById('despesaExtra').value) || 0;
-
-      const lucro = venda - custo - despesa;
-      const margem = venda > 0 ? (lucro / venda) * 100 : 0;
-      const markup = custo > 0 ? (venda / custo) : 0;
-      const sugestao = custo * 2.5;
-
-      document.getElementById('resLucro').innerText = `R$ ${lucro.toFixed(2).replace('.',',')}`;
-      document.getElementById('resLucro').style.color = lucro >= 0 ? 'var(--success-color)' : 'var(--danger-color)';
-      document.getElementById('resMargem').innerText = `${margem.toFixed(1)}%`;
-      document.getElementById('resMarkup').innerText = `${markup.toFixed(2)}x`;
-      document.getElementById('resSugestao').innerText = `R$ ${sugestao.toFixed(2).replace('.',',')}`;
-    }
-
-    // Criar Template no Canvas (Postagem)
-    function gerarTemplateStudio() {
-      if(!imgElement.src) return alert('Carregue uma imagem no passo 1!');
-      
-      const canvas = document.getElementById('canvas');
-      const ctx = canvas.getContext('2d');
-      const nome = document.getElementById('nomePeca').value || "Look Exclusivo";
-      const preco = document.getElementById('precoPeca').value || "";
-      
-      canvas.style.display = 'block';
-      document.getElementById('downloadBtn').style.display = 'block';
-      document.getElementById('savePostBtn').style.display = 'block';
-
-      // Fundo preto luxo
-      ctx.fillStyle = '#121212';
-      ctx.fillRect(0, 0, 1080, 1920);
-
-      // Desenhar Imagem Centralizada (Tamanho adaptativo)
-      const ratio = Math.min(1000 / imgElement.width, 1400 / imgElement.height);
-      const newWidth = imgElement.width * ratio;
-      const newHeight = imgElement.height * ratio;
-      const offsetX = (1080 - newWidth) / 2;
-      const offsetY = (1920 - newHeight) / 2 - 100;
-
-      // Moldura e bordas
-      ctx.strokeStyle = '#D4AF37';
-      ctx.lineWidth = 10;
-      ctx.strokeRect(offsetX - 10, offsetY - 10, newWidth + 20, newHeight + 20);
-      
-      // Imagem
-      ctx.drawImage(imgElement, offsetX, offsetY, newWidth, newHeight);
-
-      // Textos Superiores
-      ctx.fillStyle = '#D4AF37';
-      ctx.font = 'bold 70px "Segoe UI", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText("CLOSETJH", 540, 120);
-
-      // Textos Inferiores (Nome e Preço)
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = '60px Arial';
-      ctx.fillText(nome.toUpperCase(), 540, 1680);
-      
-      if(preco) {
-        ctx.fillStyle = '#D4AF37';
-        ctx.font = 'bold 80px Arial';
-        ctx.fillText(preco, 540, 1780);
-      }
-      
-      mostrarToast("Design de postagem gerado!");
-    }
-
-    // Download do Canvas para o Celular
-    function baixarTemplate() {
-      const canvas = document.getElementById('canvas');
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-      const a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = `Look_ClosetJH_${Date.now()}.jpg`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      mostrarToast("Download em andamento...");
-    }
-
-    // Fornecedores
-    async function pesquisarFornecedores() {
-      const termo = document.getElementById('buscaFornecedor').value || 'moda feminina';
-      const output = document.getElementById('fornecedoresOutput');
-      output.innerText = "🔍 Buscando referências com a IA. Aguarde...";
-      
-      try {
-        const prompt = `Atue como um comprador atacadista. Preciso que liste informações sobre fornecedores ou confecções reais que vendem: "${termo}". Foco em Goiânia (Região da 44). Se eu tiver enviado foto, analise o estilo dela. Forneça uma lista com pelo menos 3 opções prováveis e faixa de preço.`;
-        const res = await chamarGemini(prompt, base64ImageAtacado);
-        output.innerText = res;
-      } catch (err) {
-        output.innerText = "Erro: " + err.message;
-      }
-    }
-
-    // Vendas e Copywriting
-    async function gerarCrossSelling() {
-      const nome = document.getElementById('nomePeca').value || "este look";
-      const output = document.getElementById('aiOutput');
-      output.innerText = "Gerando sugestões...";
-      try {
-        const prompt = `Atuando como consultora de estilo da ClosetJH, quais são 3 peças de roupa ou acessórios adicionais (Cross-sell) que a cliente deveria comprar junto com '${nome}' para montar o look perfeito? Justifique brevemente.`;
-        output.innerText = await chamarGemini(prompt, base64Image);
-      } catch(e) { output.innerText = "Erro: " + e.message; }
-    }
-
-    async function gerarLegendaFeed() {
-      const nome = document.getElementById('nomePeca').value || "Lançamento Exclusivo";
-      const output = document.getElementById('aiOutput');
-      output.innerText = "Escrevendo legenda...";
-      try {
-        const prompt = `Crie uma legenda super persuasiva para o Instagram da loja ClosetJH vendendo a peça: ${nome}. Use gatilhos mentais de exclusividade e urgência. Adicione hashtags relevantes. Não inclua informações falsas sobre preço se eu não forneci.`;
-        output.innerText = await chamarGemini(prompt, base64Image);
-      } catch(e) { output.innerText = "Erro: " + e.message; }
-    }
-
-    async function gerarRoteiroStories() {
-      const nome = document.getElementById('nomePeca').value || "esta peça";
-      const output = document.getElementById('aiOutput');
-      output.innerText = "Criando roteiro de 3 stories...";
-      try {
-        const prompt = `Crie um roteiro prático para 3 stories consecutivos vendendo a peça '${nome}'. Story 1: Chamar atenção. Story 2: Mostrar detalhe/tecido. Story 3: CTA (Chamada de ação para o direct/whatsapp).`;
-        output.innerText = await chamarGemini(prompt, base64Image);
-      } catch(e) { output.innerText = "Erro: " + e.message; }
-    }
-
-    function gerarLinkZap() {
-      const nome = document.getElementById('nomePeca').value || "este look";
-      const output = document.getElementById('aiOutput');
-      const text = `Oie! Vi o look ${nome} no Instagram da ClosetJH e amei. Ainda tem disponível?`;
-      const zapLink = `https://wa.me/?text=${encodeURIComponent(text)}`;
-      output.innerHTML = `Envie isso para os clientes clicarem ou use na Bio:<br><br><a href="${zapLink}" target="_blank" style="color:var(--gold-light)">${zapLink}</a>`;
-    }
-
-    // Gestão de Rotina e Histórico
-    async function gerarRotinaSemanalIA() {
-      mostrarToast("A IA está planejando a semana...");
-      try {
-        const prompt = 'Atue como gestor de loja feminina. Crie um planejamento rápido de ações de vendas/marketing para a semana (Segunda a Sábado). Responda APENAS em JSON estrito (sem código markdown, sem explicações). Formato: {"Seg": "texto curto", "Ter": "texto curto", "Qua": "texto curto", "Qui": "texto curto", "Sex": "texto curto", "Sab": "texto curto"}';
-        const resposta = await chamarGemini(prompt);
-        let rawJson = resposta.replace(/```json/g, '').replace(/```/g, '').trim();
-        const dias = JSON.parse(rawJson);
-        
-        document.getElementById('planSeg').value = dias.Seg || '';
-        document.getElementById('planTer').value = dias.Ter || '';
-        document.getElementById('planQua').value = dias.Qua || '';
-        document.getElementById('planQui').value = dias.Qui || '';
-        document.getElementById('planSex').value = dias.Sex || '';
-        document.getElementById('planSab').value = dias.Sab || '';
-        
-        salvarPlanejamento();
-      } catch(e) {
-        alert("Erro ao gerar planejamento: " + e.message);
-      }
-    }
-
-    function carregarPlanejamento() {
-      const plan = JSON.parse(localStorage.getItem('closetjh_planner') || '{}');
-      ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'].forEach(d => {
-        if(plan[d]) document.getElementById('plan' + d).value = plan[d];
-      });
-    }
-
-    function salvarPlanejamento() {
-      const plan = {};
-      ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'].forEach(d => {
-        plan[d] = document.getElementById('plan' + d).value;
-      });
-      safeLocalStorageSet('closetjh_planner', JSON.stringify(plan));
-      mostrarToast("Cronograma salvo!");
-    }
-
-    function salvarNoHistorico() {
-      const nome = document.getElementById('nomePeca').value || 'Look Salvo';
-      const preco = document.getElementById('precoPeca').value || 'R$ 0,00';
-      let history = JSON.parse(localStorage.getItem('closetjh_history') || '[]');
-      history.unshift({ nome, preco, data: new Date().toLocaleDateString() });
-      safeLocalStorageSet('closetjh_history', JSON.stringify(history.slice(0, 30)));
-      carregarHistorico();
-      mostrarToast("Post registrado no catálogo!");
-    }
-
-    function carregarHistorico() {
-      const lista = document.getElementById('historicoLista');
-      let history = JSON.parse(localStorage.getItem('closetjh_history') || '[]');
-      if(history.length === 0) {
-        lista.innerHTML = "Nenhum look salvo no acervo ainda.";
-        return;
-      }
-      lista.innerHTML = history.map(h => `<div class="history-item"><span>👗 ${h.nome}</span> <span style="color:var(--gold-primary); font-weight:bold;">${h.preco}</span> <span style="color:#666; font-size:9px;">${h.data}</span></div>`).join('');
-    }
-
-    function limparHistorico() {
-      if(confirm('Tem certeza que deseja apagar todo o acervo?')) {
-        localStorage.removeItem('closetjh_history');
-        carregarHistorico();
-        mostrarToast("Acervo limpo.");
-      }
-    }
-  </script>
-</body>
-</html>
+        let rawJson = resposta.replace(/```json/g, '').replace(/
