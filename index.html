@@ -357,6 +357,27 @@
   </div>
 
   <script>
+    // =========================================================================
+    // CHAVE API GLOBAL EMBUTIDA (Cole sua chave abaixo para não precisar digitar)
+    // =========================================================================
+    const CHAVE_API_PADRAO = ""; // Ex: "AIzaSy..."
+
+    // Polyfill seguro para roundRect caso o navegador móvel não suporte nativamente
+    if (CanvasRenderingContext2D && !CanvasRenderingContext2D.prototype.roundRect) {
+      CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+        if (w < 2 * r) r = w / 2;
+        if (h < 2 * r) r = h / 2;
+        this.beginPath();
+        this.moveTo(x + r, y);
+        this.arcTo(x + w, y, x + w, y + h, r);
+        this.arcTo(x + w, y + h, x, y + h, r);
+        this.arcTo(x, y + h, x, y, r);
+        this.arcTo(x, y, x + w, y, r);
+        this.closePath();
+        return this;
+      };
+    }
+
     let imgElement = new Image();
     let base64Image = "";
     let base64ImageAtacado = "";
@@ -377,16 +398,18 @@
 
     document.getElementById('imageInput').addEventListener('change', function(e) {
       const file = e.target.files[0];
+      if(!file) return;
       const reader = new FileReader();
       reader.onload = function(event) {
         imgElement.src = event.target.result;
         base64Image = event.target.result.split(',')[1];
       }
-      if(file) reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
     });
 
     document.getElementById('imageInputAtacado').addEventListener('change', function(e) {
       const file = e.target.files[0];
+      if(!file) return;
       const reader = new FileReader();
       reader.onload = function(event) {
         const preview = document.getElementById('previewAtacado');
@@ -395,7 +418,7 @@
         document.getElementById('btnRemoverImgAtacado').style.display = 'block';
         base64ImageAtacado = event.target.result.split(',')[1];
       }
-      if(file) reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
     });
 
     function limparImagemAtacado() {
@@ -406,10 +429,11 @@
     }
 
     async function chamarGemini(promptText, base64Img = null, usarBuscaGoogle = false) {
-      const keyToUse = localStorage.getItem('closetjh_custom_key');
+      // Prioriza a chave salva no navegador ou usa a CHAVE_API_PADRAO embutida acima
+      const keyToUse = localStorage.getItem('closetjh_custom_key') || CHAVE_API_PADRAO;
       
       if (!keyToUse) {
-        throw new Error("Chave de API não configurada! Vá na aba 'Agenda/Configurações' e salve sua chave obtida no Google AI Studio.");
+        throw new Error("Chave de API não configurada! Cole sua chave na constante 'CHAVE_API_PADRAO' no topo do script ou salve na aba Agenda/Configurações.");
       }
 
       const controller = new AbortController();
@@ -430,7 +454,7 @@
         const requestBody = { contents: [{ parts }] };
         
         if (usarBuscaGoogle) {
-          requestBody.tools = [{ google_search: {} }];
+          requestBody.tools = [{ googleSearch: {} }];
         }
 
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${keyToUse}`, {
@@ -479,28 +503,31 @@
 
     function processarImagemSemFundo(img) {
       const tempCanvas = document.createElement('canvas');
-      tempCanvas.width = img.naturalWidth || img.width;
-      tempCanvas.height = img.naturalHeight || img.height;
+      tempCanvas.width = img.naturalWidth || img.width || 800;
+      tempCanvas.height = img.naturalHeight || img.height || 1180;
       const tCtx = tempCanvas.getContext('2d');
-      tCtx.drawImage(img, 0, 0);
+      tCtx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
       
-      const imgData = tCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-      const data = imgData.data;
-      const cornerR = data[0], cornerG = data[1], cornerB = data[2];
+      try {
+        const imgData = tCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+        const data = imgData.data;
+        const cornerR = data[0], cornerG = data[1], cornerB = data[2];
 
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const isWhiteOrLight = (r > 215 && g > 215 && b > 215);
-        const diffCorner = Math.abs(r - cornerR) + Math.abs(g - cornerG) + Math.abs(b - cornerB);
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          const isWhiteOrLight = (r > 215 && g > 215 && b > 215);
+          const diffCorner = Math.abs(r - cornerR) + Math.abs(g - cornerG) + Math.abs(b - cornerB);
 
-        if (isWhiteOrLight || (diffCorner < 45 && cornerR > 180)) {
-          data[i + 3] = 0;
+          if (isWhiteOrLight || (diffCorner < 45 && cornerR > 180)) {
+            data[i + 3] = 0;
+          }
         }
+        tCtx.putImageData(imgData, 0, 0);
+      } catch (e) {
+        console.warn("Aviso na remoção de fundo (CORS/tainted canvas evitado):", e);
       }
-      
-      tCtx.putImageData(imgData, 0, 0);
       return tempCanvas;
     }
 
@@ -521,7 +548,7 @@
       ctx.fillStyle = "#0b0b0b";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      if (imgElement.src) {
+      if (imgElement.src && imgElement.complete) {
         if (removerFundo) {
           const imgProcessada = processarImagemSemFundo(imgElement);
           ctx.drawImage(imgProcessada, 140, 210, 800, 1180);
@@ -783,7 +810,7 @@ Responda APENAS em JSON estrito com as chaves: "segunda", "terca", "quarta", "qu
     }
 
     function carregarChaveAPI() {
-      const customKey = localStorage.getItem('closetjh_custom_key');
+      const customKey = localStorage.getItem('closetjh_custom_key') || CHAVE_API_PADRAO;
       if(customKey) document.getElementById('customApiKey').value = customKey;
     }
   </script>
