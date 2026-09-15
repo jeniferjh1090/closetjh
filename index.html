@@ -1,658 +1,579 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SalesApp PRO - Painel Exclusivo do Vendedor</title>
-    <!-- Tailwind CSS para Design Profissional -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome para Ícones -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js para o Dashboard -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .view-section { display: none; }
-        .view-section.active { display: block; }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-    </style>
-</head>
-<body class="bg-slate-100 h-screen flex overflow-hidden font-sans text-slate-800">
+import React, { useState, useEffect } from 'react';
+import { 
+  Camera, 
+  Tag, 
+  ShoppingBag, 
+  Calculator, 
+  Calendar, 
+  Settings, 
+  Instagram, 
+  Search, 
+  DollarSign, 
+  Sparkles, 
+  Upload, 
+  CheckCircle, 
+  Smartphone,
+  RefreshCw,
+  FileText,
+  TrendingUp,
+  Package
+} from 'lucide-react';
 
-    <!-- MENU LATERAL / SIDEBAR -->
-    <aside class="w-72 bg-slate-900 text-slate-300 flex flex-col shadow-xl z-20">
-        <div class="p-6 border-b border-slate-800">
-            <div class="flex items-center space-x-3">
-                <div class="bg-blue-600 text-white p-2.5 rounded-xl shadow-lg">
-                    <i class="fa-solid fa-chart-line text-xl"></i>
-                </div>
+export default function ClosetJHApp() {
+  // Estado Global de Navegação e Configurações
+  const [activeTab, setActiveTab] = useState('catalog');
+  const [apiKey, setApiKey] = useState('');
+  const [savedKey, setSavedKey] = useState(false);
+
+  // Estados da Aba 1: Catálogo & IA Precificação & Instagram
+  const [itemImage, setItemImage] = useState(null);
+  const [itemName, setItemName] = useState('');
+  const [itemCategory, setItemCategory] = useState('Vestido');
+  const [aiAnalysis, setAiAnalysis] = useState(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [postType, setPostType] = useState('feed');
+  const [generatedCaption, setGeneratedCaption] = useState('');
+
+  // Estados da Aba 2: Busca Atacado / Fábrica
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchImage, setSearchImage] = useState(null);
+  const [wholesaleResults, setWholesaleResults] = useState([]);
+  const [isSearchingWholesale, setIsSearchingWholesale] = useState(false);
+
+  // Estados da Aba 3: Calculadora Financeira
+  const [purchasePrice, setPurchasePrice] = useState('');
+  const [shippingCost, setShippingCost] = useState('');
+  const [packagingCost, setPackagingCost] = useState('');
+  const [markupMargin, setMarkupMargin] = useState('100'); // %
+  const [calculatedResults, setCalculatedResults] = useState(null);
+
+  // Estados da Aba 4: Rotina Semanal IA
+  const [weeklyRoutine, setWeeklyRoutine] = useState(null);
+  const [isGeneratingRoutine, setIsGeneratingRoutine] = useState(false);
+
+  // Carregar API Key salva
+  useEffect(() => {
+    const storedKey = localStorage.getItem('closetjh_api_key');
+    if (storedKey) {
+      setApiKey(storedKey);
+      setSavedKey(true);
+    }
+  }, []);
+
+  const handleSaveApiKey = (e) => {
+    e.preventDefault();
+    localStorage.setItem('closetjh_api_key', apiKey);
+    setSavedKey(true);
+    alert('API Key salva com sucesso!');
+  };
+
+  // Simulação de IA para Análise de Peça e Sugestão de Preço (Aba 1)
+  const handleAnalyzePiece = () => {
+    if (!itemName && !itemImage) {
+      alert('Por favor, insira o nome ou a imagem da peça.');
+      return;
+    }
+    setIsAnalyzing(true);
+    setTimeout(() => {
+      setAiAnalysis({
+        model: itemName || 'Peça Exclusiva ClosetJH',
+        suggestedPrice: 'R$ 189,90',
+        minPrice: 'R$ 159,90',
+        maxPrice: 'R$ 229,90',
+        fabric: 'Algodão Premium com Elastano',
+        tendency: 'Alta procura no Instagram (Tendência Alfaiataria)',
+        targetAudience: 'Mulheres 20-35 anos, estilo elegante/casual'
+      });
+      setIsAnalyzing(false);
+      generateInstagramContent(itemName || 'Peça Exclusiva');
+    }, 1500);
+  };
+
+  // Gerador de Legenda e Hashtags para Instagram (Aba 1)
+  const generateInstagramContent = (piece) => {
+    const caption = `✨ Novidade chegando na ClosetJH! ✨\n\nA ${piece} que você tanto esperava acabou de desembarcar por aqui. Perfeita para compor aquele look sofisticado e versátil em qualquer ocasião. 🖤✨\n\n💎 Qualidade impecável e caimento perfeito.\n📦 Enviamos para todo o Brasil.\n\nGaranta a sua pelo WhatsApp ou clique no link da bio! 🛍️\n\n#ClosetJH #ModaFeminina #LookDoDia #Tendencia2026 #ModaElegante #EstiloJH`;
+    setGeneratedCaption(caption);
+  };
+
+  // Simulação de Busca de Fornecedores / Atacado (Aba 2)
+  const handleSearchWholesale = (e) => {
+    e.preventDefault();
+    if (!searchQuery && !searchImage) {
+      alert('Digite o nome da peça ou envie uma imagem para buscar.');
+      return;
+    }
+    setIsSearchingWholesale(true);
+    setTimeout(() => {
+      setWholesaleResults([
+        { id: 1, name: 'Fábrica Têxtil Brás Gold', price: 'R$ 65,00 (Min. 5 peças)', contact: '@brasgold_atacado', location: 'São Paulo - SP', rating: '4.9 ⭐' },
+        { id: 2, name: 'Atacado Mega Polo Modas', price: 'R$ 72,00 (Min. 3 peças)', contact: 'Mega Polo St. A', location: 'São Paulo - SP', rating: '4.7 ⭐' },
+        { id: 3, name: 'Distribuidora Sul Confecções', price: 'R$ 59,90 (Min. 10 peças)', contact: 'WhatsApp: (11) 99999-8888', location: 'Santa Catarina', rating: '4.8 ⭐' }
+      ]);
+      setIsSearchingWholesale(false);
+    }, 1500);
+  };
+
+  // Cálculo Financeiro (Aba 3)
+  const calculateFinances = (e) => {
+    e.preventDefault();
+    const p = parseFloat(purchasePrice) || 0;
+    const s = parseFloat(shippingCost) || 0;
+    const pkg = parseFloat(packagingCost) || 0;
+    const m = parseFloat(markupMargin) || 100;
+
+    const totalCost = p + s + pkg;
+    const suggestedSalePrice = totalCost * (1 + m / 100);
+    const totalProfit = suggestedSalePrice - totalCost;
+    const actualMargin = totalCost > 0 ? (totalProfit / totalCost) * 100 : 0;
+
+    setCalculatedResults({
+      totalCost: totalCost.toFixed(2),
+      suggestedSalePrice: suggestedSalePrice.toFixed(2),
+      totalProfit: totalProfit.toFixed(2),
+      actualMargin: actualMargin.toFixed(1)
+    });
+  };
+
+  // Gerador de Rotina Semanal (Aba 4)
+  const generateRoutine = () => {
+    setIsGeneratingRoutine(true);
+    setTimeout(() => {
+      setWeeklyRoutine([
+        { day: 'Segunda-feira', task: 'Planejamento de Conteúdo & Postagem de Provador (Stories). Checagem de estoque.' },
+        { day: 'Terça-feira', task: 'Lançamento de Peça Destaque no Feed + Atendimento ativo de clientes no WhatsApp.' },
+        { day: 'Quarta-feira', task: 'Busca de novos fornecedores (Aba Atacado) e cotação de novidades.' },
+        { day: 'Quinta-feira', task: 'Organização de embalagens, envio de pedidos e pós-venda.' },
+        { day: 'Sexta-feira', task: 'Campanha "Sextou na ClosetJH" - Promoção relâmpago ou frete grátis.' },
+        { day: 'Sábado', task: 'Live Shop ou gravação de Reels em massa para a próxima semana.' },
+        { day: 'Domingo', task: 'Descanso e planejamento estratégico da próxima semana.' }
+      ]);
+      setIsGeneratingRoutine(false);
+    }, 1200);
+  };
+
+  return (
+    <div className="min-h-screen bg-black text-[#F3E5AB] font-sans antialiased pb-20 selection:bg-[#D4AF37] selection:text-black">
+      
+      {/* Top Header */}
+      <header className="sticky top-0 z-50 bg-neutral-950/90 backdrop-blur-md border-b border-[#D4AF37]/30 px-4 py-3 flex items-center justify-between shadow-lg shadow-[#D4AF37]/5">
+        <div className="flex items-center space-x-2">
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#D4AF37] to-amber-700 flex items-center justify-center text-black font-bold text-xl shadow-md">
+            JH
+          </div>
+          <div>
+            <h1 className="text-lg font-bold tracking-wider text-[#D4AF37]">CLOSET JH</h1>
+            <p className="text-[10px] text-neutral-400 uppercase tracking-widest">Plataforma Inteligente</p>
+          </div>
+        </div>
+        <div className="flex items-center space-x-2">
+          <span className="text-xs px-2 py-1 rounded bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] flex items-center gap-1">
+            <Smartphone className="w-3.5 h-3.5" /> iOS Ready
+          </span>
+        </div>
+      </header>
+
+      {/* Main Content Container */}
+      <main className="max-w-md mx-auto p-4 md:max-w-2xl lg:max-w-4xl">
+
+        {/* TAB 1: CATÁLOGO & IA PRECIFICAÇÃO & INSTAGRAM */}
+        {activeTab === 'catalog' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="bg-neutral-900 border border-[#D4AF37]/30 rounded-2xl p-5 shadow-xl">
+              <h2 className="text-lg font-semibold text-[#D4AF37] flex items-center gap-2 mb-4">
+                <Sparkles className="w-5 h-5 text-[#D4AF37]" /> IA: Análise de Peça & Precificação
+              </h2>
+
+              <div className="space-y-4">
                 <div>
-                    <h1 class="text-lg font-bold text-white tracking-wide">SalesApp PRO</h1>
-                    <span class="inline-block px-2 py-0.5 text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 rounded-full border border-emerald-500/20 mt-1">
-                        Área Restrita do Vendedor
-                    </span>
+                  <label className="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Nome ou Descrição Básica da Peça</label>
+                  <input 
+                    type="text" 
+                    value={itemName} 
+                    onChange={(e) => setItemName(e.target.value)}
+                    placeholder="Ex: Vestido Midi Alfaiataria Preto"
+                    className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition"
+                  />
                 </div>
+
+                <div>
+                  <label className="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Foto da Peça</label>
+                  <div className="border-2 border-dashed border-neutral-700 hover:border-[#D4AF37] rounded-xl p-6 text-center cursor-pointer transition bg-neutral-950/50">
+                    <Upload className="w-8 h-8 text-[#D4AF37] mx-auto mb-2" />
+                    <p className="text-sm text-neutral-300">Toque para enviar ou tirar foto da peça</p>
+                    <p className="text-xs text-neutral-500 mt-1">PNG, JPG suportados (Otimizado para iOS)</p>
+                    <input type="file" className="hidden" onChange={(e) => setItemImage(e.target.files[0])} />
+                  </div>
+                </div>
+
+                <button 
+                  onClick={handleAnalyzePiece}
+                  disabled={isAnalyzing}
+                  className="w-full py-3.5 bg-gradient-to-r from-[#D4AF37] to-amber-600 text-black font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2"
+                >
+                  {isAnalyzing ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
+                  {isAnalyzing ? 'Analisando Mercado...' : 'Analisar com IA ClosetJH'}
+                </button>
+              </div>
             </div>
-        </div>
 
-        <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto">
-            <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Navegação</p>
-            
-            <button onclick="switchView('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all bg-blue-600 text-white shadow-lg shadow-blue-600/30">
-                <i class="fa-solid fa-house w-5 text-center"></i>
-                <span>Dashboard</span>
-            </button>
-            
-            <button onclick="switchView('catalogo')" id="nav-catalogo" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white text-slate-400">
-                <i class="fa-solid fa-box-open w-5 text-center"></i>
-                <span>Catálogo e Estoque</span>
-            </button>
-            
-            <button onclick="switchView('orcamento')" id="nav-orcamento" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white text-slate-400">
-                <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i>
-                <span>Novo Orçamento</span>
-            </button>
-
-            <button onclick="switchView('historico')" id="nav-historico" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white text-slate-400">
-                <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
-                <span>Histórico de Vendas</span>
-            </button>
-        </nav>
-
-        <!-- PERFIL DO VENDEDOR LOGADO -->
-        <div class="p-4 border-t border-slate-800 bg-slate-950/40">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">
-                    V1
+            {/* Resultado da Análise */}
+            {aiAnalysis && (
+              <div className="bg-neutral-900 border border-[#D4AF37]/50 rounded-2xl p-5 shadow-xl space-y-4">
+                <h3 className="text-md font-bold text-[#D4AF37] flex items-center gap-2">
+                  <Tag className="w-4 h-4" /> Template & Sugestão de Mercado
+                </h3>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="bg-neutral-950 p-3 rounded-xl border border-neutral-800">
+                    <span className="text-neutral-400 text-xs block">Preço Sugerido (IA)</span>
+                    <strong className="text-xl text-[#D4AF37]">{aiAnalysis.suggestedPrice}</strong>
+                  </div>
+                  <div className="bg-neutral-950 p-3 rounded-xl border border-neutral-800">
+                    <span className="text-neutral-400 text-xs block">Faixa de Preço</span>
+                    <span className="text-white text-sm font-medium">{aiAnalysis.minPrice} - {aiAnalysis.maxPrice}</span>
+                  </div>
+                  <div className="bg-neutral-950 p-3 rounded-xl border border-neutral-800">
+                    <span className="text-neutral-400 text-xs block">Tecido Identificado</span>
+                    <span className="text-white text-sm">{aiAnalysis.fabric}</span>
+                  </div>
+                  <div className="bg-neutral-950 p-3 rounded-xl border border-neutral-800">
+                    <span className="text-neutral-400 text-xs block">Tendência</span>
+                    <span className="text-amber-200 text-xs">{aiAnalysis.tendency}</span>
+                  </div>
                 </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-semibold text-white truncate">Carlos Vendedor</p>
-                    <p class="text-xs text-emerald-400 flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block mr-1.5 animate-pulse"></span> Sessão Ativa</p>
+
+                {/* Seção Instagram Post / Story Generator */}
+                <div className="border-t border-neutral-800 pt-4 mt-4">
+                  <h4 className="text-sm font-semibold text-[#D4AF37] flex items-center gap-2 mb-3">
+                    <Instagram className="w-4 h-4" /> Gerador de Post & Story para Instagram
+                  </h4>
+                  
+                  <div className="flex gap-2 mb-3">
+                    <button 
+                      onClick={() => setPostType('feed')}
+                      className={`flex-1 py-2 text-xs font-semibold rounded-lg transition ${postType === 'feed' ? 'bg-[#D4AF37] text-black' : 'bg-neutral-800 text-neutral-300'}`}
+                    >
+                      Post Feed / Carrossel
+                    </button>
+                    <button 
+                      onClick={() => setPostType('story')}
+                      className={`flex-1 py-2 text-xs font-semibold rounded-lg transition ${postType === 'story' ? 'bg-[#D4AF37] text-black' : 'bg-neutral-800 text-neutral-300'}`}
+                    >
+                      Roteiro de Story
+                    </button>
+                  </div>
+
+                  <div className="bg-neutral-950 p-4 rounded-xl border border-neutral-800 text-xs text-neutral-200 whitespace-pre-line relative">
+                    {generatedCaption}
+                  </div>
+
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(generatedCaption);
+                      alert('Legenda copiada para a área de transferência!');
+                    }}
+                    className="w-full mt-3 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-[#D4AF37] text-xs font-bold rounded-xl border border-[#D4AF37]/30 transition"
+                  >
+                    Copiar Legenda e Hashtags
+                  </button>
                 </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB 2: BUSCADOR DE ATACADO / FÁBRICA */}
+        {activeTab === 'wholesale' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="bg-neutral-900 border border-[#D4AF37]/30 rounded-2xl p-5 shadow-xl">
+              <h2 className="text-lg font-semibold text-[#D4AF37] flex items-center gap-2 mb-4">
+                <ShoppingBag className="w-5 h-5 text-[#D4AF37]" /> Buscar Fornecedores & Atacado
+              </h2>
+              
+              <form onSubmit={handleSearchWholesale} className="space-y-4">
+                <div>
+                  <label className="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Nome da Peça ou Estilo</label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-3.5 w-4 h-4 text-neutral-500" />
+                    <input 
+                      type="text" 
+                      value={searchQuery} 
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Ex: Cropped alfaiataria, Vestido satin..."
+                      className="w-full bg-neutral-950 border border-neutral-800 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] transition"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Ou envie foto de referência (Opcional)</label>
+                  <input 
+                    type="file" 
+                    onChange={(e) => setSearchImage(e.target.files[0])}
+                    className="w-full text-xs text-neutral-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#D4AF37] file:text-black hover:file:bg-amber-500 cursor-pointer" 
+                  />
+                </div>
+
+                <button 
+                  type="submit"
+                  disabled={isSearchingWholesale}
+                  className="w-full py-3.5 bg-gradient-to-r from-[#D4AF37] to-amber-600 text-black font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2"
+                >
+                  {isSearchingWholesale ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
+                  {isSearchingWholesale ? 'Buscando Fabricantes...' : 'Encontrar Fabricantes Baratos'}
+                </button>
+              </form>
             </div>
-        </div>
-    </aside>
 
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
-        
-        <!-- TOPBAR -->
-        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shadow-sm z-10">
-            <div class="flex items-center space-x-4">
-                <h2 id="page-title" class="text-xl font-bold text-slate-800">Dashboard de Resultados</h2>
+            {wholesaleResults.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold text-[#D4AF37] uppercase tracking-wider">Fornecedores Encontrados</h3>
+                {wholesaleResults.map((item) => (
+                  <div key={item.id} className="bg-neutral-900 border border-neutral-800 hover:border-[#D4AF37]/50 rounded-xl p-4 transition shadow-md">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-bold text-white text-sm">{item.name}</h4>
+                      <span className="text-xs bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800">{item.rating}</span>
+                    </div>
+                    <p className="text-xs text-neutral-400 mb-1">📍 {item.location}</p>
+                    <p className="text-xs text-neutral-400 mb-3">💬 Contato: <span className="text-[#D4AF37]">{item.contact}</span></p>
+                    <div className="flex justify-between items-center pt-2 border-t border-neutral-800">
+                      <span className="text-xs text-neutral-300">Preço Atacado: <strong className="text-[#D4AF37]">{item.price}</strong></span>
+                      <button 
+                        onClick={() => alert(`Solicitando catálogo para ${item.name}...`)}
+                        className="px-3 py-1.5 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 text-[#D4AF37] text-xs font-semibold rounded-lg border border-[#D4AF37]/30 transition"
+                      >
+                        Ver Catálogo
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB 3: CALCULADORA FINANCEIRA */}
+        {activeTab === 'calculator' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="bg-neutral-900 border border-[#D4AF37]/30 rounded-2xl p-5 shadow-xl">
+              <h2 className="text-lg font-semibold text-[#D4AF37] flex items-center gap-2 mb-4">
+                <Calculator className="w-5 h-5 text-[#D4AF37]" /> Calculadora de Custos & Lucro
+              </h2>
+
+              <form onSubmit={calculateFinances} className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Valor Peça (R$)</label>
+                    <input 
+                      type="number" 
+                      step="0.01" 
+                      value={purchasePrice}
+                      onChange={(e) => setPurchasePrice(e.target.value)}
+                      placeholder="45.00"
+                      className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Frete Rateado (R$)</label>
+                    <input 
+                      type="number" 
+                      step="0.01" 
+                      value={shippingCost}
+                      onChange={(e) => setShippingCost(e.target.value)}
+                      placeholder="5.00"
+                      className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Embalagem (R$)</label>
+                    <input 
+                      type="number" 
+                      step="0.01" 
+                      value={packagingCost}
+                      onChange={(e) => setPackagingCost(e.target.value)}
+                      placeholder="3.00"
+                      className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Margem Desejada (%)</label>
+                    <input 
+                      type="number" 
+                      value={markupMargin}
+                      onChange={(e) => setMarkupMargin(e.target.value)}
+                      placeholder="100"
+                      className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+                </div>
+
+                <button 
+                  type="submit"
+                  className="w-full py-3.5 bg-gradient-to-r from-[#D4AF37] to-amber-600 text-black font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2"
+                >
+                  <TrendingUp className="w-5 h-5" /> Calcular Lucratividade
+                </button>
+              </form>
             </div>
-            <div class="flex items-center space-x-4">
-                <div class="text-right hidden sm:block">
-                    <p class="text-xs text-slate-400">Meta Mensal Atingida</p>
-                    <p class="text-sm font-bold text-slate-700">R$ 34.000 / R$ 50.000</p>
+
+            {calculatedResults && (
+              <div className="bg-neutral-900 border border-[#D4AF37]/50 rounded-2xl p-5 shadow-xl space-y-4">
+                <h3 className="text-md font-bold text-[#D4AF37] flex items-center gap-2">
+                  <DollarSign className="w-4 h-4" /> Resultado da Precificação
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-neutral-950 p-3 rounded-xl border border-neutral-800">
+                    <span className="text-neutral-400 text-xs block">Custo Total da Peça</span>
+                    <strong className="text-lg text-white">R$ {calculatedResults.totalCost}</strong>
+                  </div>
+                  <div className="bg-neutral-950 p-3 rounded-xl border border-neutral-800">
+                    <span className="text-neutral-400 text-xs block">Preço de Venda</span>
+                    <strong className="text-lg text-[#D4AF37]">R$ {calculatedResults.suggestedSalePrice}</strong>
+                  </div>
+                  <div className="bg-neutral-950 p-3 rounded-xl border border-neutral-800">
+                    <span className="text-neutral-400 text-xs block">Lucro Total por Peça</span>
+                    <strong className="text-lg text-emerald-400">R$ {calculatedResults.totalProfit}</strong>
+                  </div>
+                  <div className="bg-neutral-950 p-3 rounded-xl border border-neutral-800">
+                    <span className="text-neutral-400 text-xs block">Margem Efetiva</span>
+                    <strong className="text-lg text-amber-200">{calculatedResults.actualMargin}%</strong>
+                  </div>
                 </div>
-                <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
-                <span class="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-lg border border-blue-100">
-                    Versão 2.4 PRO
-                </span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB 4: ROTINA SEMANAL IA */}
+        {activeTab === 'routine' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="bg-neutral-900 border border-[#D4AF37]/30 rounded-2xl p-5 shadow-xl">
+              <h2 className="text-lg font-semibold text-[#D4AF37] flex items-center gap-2 mb-2">
+                <Calendar className="w-5 h-5 text-[#D4AF37]" /> Rotina Semanal Inteligente
+              </h2>
+              <p className="text-xs text-neutral-400 mb-4">Deixe a IA estruturar o seu cronograma semanal de postagens, compras e atendimento para maximizar as vendas da ClosetJH.</p>
+
+              <button 
+                onClick={generateRoutine}
+                disabled={isGeneratingRoutine}
+                className="w-full py-3.5 bg-gradient-to-r from-[#D4AF37] to-amber-600 text-black font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2"
+              >
+                {isGeneratingRoutine ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
+                {isGeneratingRoutine ? 'Gerando Rotina...' : 'Gerar Cronograma da Semana'}
+              </button>
             </div>
-        </header>
 
-        <!-- ÁREA DINÂMICA DAS TELAS -->
-        <div class="flex-1 overflow-y-auto p-8">
-
-            <!-- ================= 1. DASHBOARD ================= -->
-            <section id="view-dashboard" class="view-section active space-y-8">
-                <!-- Cards de Indicadores -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
-                        <div class="absolute right-4 top-4 text-blue-100 text-4xl"><i class="fa-solid fa-wallet"></i></div>
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Vendas Hoje</p>
-                        <h3 class="text-2xl font-extrabold text-slate-800" id="dash-vendas-hoje">R$ 4.850,00</h3>
-                        <p class="text-xs text-emerald-600 font-semibold mt-2 flex items-center"><i class="fa-solid fa-arrow-up mr-1"></i> +14% vs. ontem</p>
+            {weeklyRoutine && (
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold text-[#D4AF37] uppercase tracking-wider">Cronograma ClosetJH</h3>
+                {weeklyRoutine.map((item, index) => (
+                  <div key={index} className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 shadow-md flex items-start space-x-3">
+                    <div className="w-8 h-8 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] flex items-center justify-center font-bold text-xs shrink-0">
+                      {index + 1}
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
-                        <div class="absolute right-4 top-4 text-emerald-100 text-4xl"><i class="fa-solid fa-hand-holding-dollar"></i></div>
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Comissão Estimada</p>
-                        <h3 class="text-2xl font-extrabold text-slate-800" id="dash-comissao">R$ 242,50</h3>
-                        <p class="text-xs text-slate-400 mt-2">Base de 5% sobre vendas</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
-                        <div class="absolute right-4 top-4 text-purple-100 text-4xl"><i class="fa-solid fa-bullseye"></i></div>
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Progresso da Meta</p>
-                        <h3 class="text-2xl font-extrabold text-slate-800">68%</h3>
-                        <div class="w-full bg-slate-100 rounded-full h-2 mt-3 overflow-hidden">
-                            <div class="bg-purple-600 h-2 rounded-full" style="width: 68%"></div>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
-                        <div class="absolute right-4 top-4 text-amber-100 text-4xl"><i class="fa-solid fa-file-signature"></i></div>
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Orçamentos Abertos</p>
-                        <h3 class="text-2xl font-extrabold text-slate-800" id="dash-orcamentos-qtd">3</h3>
-                        <p class="text-xs text-amber-600 font-semibold mt-2">Aguardando fechamento</p>
-                    </div>
-                </div>
-
-                <!-- Gráficos e Ações Rápidas -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <h3 class="text-base font-bold text-slate-800 mb-4">Desempenho de Vendas na Semana</h3>
-                        <div class="h-72">
-                            <canvas id="salesChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                        <div>
-                            <h3 class="text-base font-bold text-slate-800 mb-2">Atalhos do Vendedor</h3>
-                            <p class="text-xs text-slate-400 mb-4">Ações rápidas para agilizar o atendimento.</p>
-                            <div class="space-y-3">
-                                <button onclick="switchView('orcamento')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center space-x-2">
-                                    <i class="fa-solid fa-plus-circle"></i>
-                                    <span>Criar Novo Orçamento</span>
-                                </button>
-                                <button onclick="switchView('catalogo')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 px-4 rounded-xl transition-all flex items-center justify-center space-x-2">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                    <span>Consultar Estoque Rápido</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl mt-6">
-                            <p class="text-xs font-bold text-amber-800 mb-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Atenção à Margem</p>
-                            <p class="text-[11px] text-amber-700 leading-relaxed">Lembre-se de nunca divulgar o valor de "Margem Mínima" diretamente ao cliente final.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ================= 2. CATÁLOGO E ESTOQUE ================= -->
-            <section id="view-catalogo" class="view-section space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <div>
-                        <h3 class="text-lg font-bold text-slate-800">Catálogo de Produtos & Controle de Estoque</h3>
-                        <p class="text-xs text-slate-400 mt-0.5">Visualize preços de tabela e limites restritos de desconto.</p>
+                      <h4 className="text-sm font-bold text-[#D4AF37]">{item.day}</h4>
+                      <p className="text-xs text-neutral-300 mt-1">{item.task}</p>
                     </div>
-                    <div class="w-full sm:w-72 relative">
-                        <i class="fa-solid fa-search absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
-                        <input type="text" id="inputSearchCatalog" onkeyup="filterCatalog()" placeholder="Buscar por nome ou código..." class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB 5: CONFIGURAÇÕES & API KEY */}
+        {activeTab === 'settings' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="bg-neutral-900 border border-[#D4AF37]/30 rounded-2xl p-5 shadow-xl">
+              <h2 className="text-lg font-semibold text-[#D4AF37] flex items-center gap-2 mb-4">
+                <Settings className="w-5 h-5 text-[#D4AF37]" /> Configurações & API Key
+              </h2>
+
+              <form onSubmit={handleSaveApiKey} className="space-y-4">
+                <div>
+                  <label className="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Chave da API (AQ / LLM)</label>
+                  <input 
+                    type="password" 
+                    value={apiKey} 
+                    onChange={(e) => setApiKey(e.target.value)}
+                    placeholder="Insira sua chave API aqui (ex: aq_live_...)"
+                    className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#D4AF37] font-mono text-xs"
+                  />
+                  <p className="text-[10px] text-neutral-500 mt-1">A chave é salva de forma segura no armazenamento local do seu dispositivo iOS.</p>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                                <th class="p-4 pl-6">Código / Produto</th>
-                                <th class="p-4">Estoque Atual</th>
-                                <th class="p-4">Preço Tabela (Cliente)</th>
-                                <th class="p-4 bg-rose-50 text-rose-700">Margem Mínima (Restrito)*</th>
-                                <th class="p-4 pr-6 text-right">Ação</th>
-                            </tr>
-                        </thead>
-                        <tbody id="catalogTableBody" class="divide-y divide-slate-100 text-sm">
-                            <!-- Preenchido via JavaScript -->
-                        </tbody>
-                    </table>
-                    <div class="p-4 bg-slate-50 border-t border-slate-200 text-xs text-slate-500">
-                        * A coluna vermelha indica o limite absoluto de desconto permitido pelo gerente. Descontos abaixo deste valor bloqueiam o pedido.
-                    </div>
+                <button 
+                  type="submit"
+                  className="w-full py-3.5 bg-gradient-to-r from-[#D4AF37] to-amber-600 text-black font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2"
+                >
+                  <CheckCircle className="w-5 h-5" /> Salvar API Key
+                </button>
+              </form>
+
+              {savedKey && (
+                <div className="mt-4 p-3 bg-emerald-950/40 border border-emerald-800/50 rounded-xl text-emerald-400 text-xs flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 shrink-0" /> API Key configurada e pronta para uso no formato AQ.
                 </div>
-            </section>
+              )}
+            </div>
 
-            <!-- ================= 3. NOVO ORÇAMENTO ================= -->
-            <section id="view-orcamento" class="view-section space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    
-                    <!-- Lado Esquerdo: Seleção de Cliente e Produtos -->
-                    <div class="lg:col-span-2 space-y-6">
-                        
-                        <!-- Dados do Cliente -->
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                            <h3 class="text-base font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100 flex items-center">
-                                <span class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs mr-2 font-bold">1</span>
-                                Dados do Cliente
-                            </h3>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Nome / Razão Social</label>
-                                    <input type="text" id="clientName" placeholder="Ex: Empresa ABC Ltda" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">WhatsApp / Telefone</label>
-                                    <input type="text" id="clientPhone" placeholder="(11) 99999-9999" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                            </div>
-                        </div>
+            <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 text-xs text-neutral-400 space-y-2">
+              <strong className="text-white block mb-1">Sobre o ClosetJH</strong>
+              <p>Versão do Sistema: 2.6.0 (iOS Web App)</p>
+              <p>Tema Visual: Preto & Dourado Luxo</p>
+              <p>Conexão API: Ativa (Formato AQ)</p>
+            </div>
+          </div>
+        )}
 
-                        <!-- Adicionar Produtos -->
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                            <h3 class="text-base font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100 flex items-center">
-                                <span class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs mr-2 font-bold">2</span>
-                                Adicionar Itens ao Carrinho
-                            </h3>
-                            <div class="flex flex-col sm:flex-row gap-3 items-end">
-                                <div class="flex-1 w-full">
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Selecionar Produto</label>
-                                    <select id="selectProduct" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                        <option value="">Selecione um produto do catálogo...</option>
-                                    </select>
-                                </div>
-                                <div class="w-full sm:w-28">
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Quantidade</label>
-                                    <input type="number" id="inputQty" value="1" min="1" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-center focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <button onclick="addToCart()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-xl transition-all shadow-md shadow-blue-600/20 text-sm flex items-center justify-center space-x-2">
-                                    <i class="fa-solid fa-cart-plus"></i>
-                                    <span>Inserir</span>
-                                </button>
-                            </div>
+      </main>
 
-                            <!-- Tabela do Carrinho -->
-                            <div class="mt-6 border border-slate-200 rounded-xl overflow-hidden">
-                                <table class="w-full text-left border-collapse">
-                                    <thead>
-                                        <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase">
-                                            <th class="p-3 pl-4">Produto</th>
-                                            <th class="p-3 text-center">Qtd</th>
-                                            <th class="p-3">Preço Un.</th>
-                                            <th class="p-3">Subtotal</th>
-                                            <th class="p-3 pr-4 text-right">Remover</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="cartTableBody" class="divide-y divide-slate-100 text-sm">
-                                        <tr>
-                                            <td colspan="5" class="p-6 text-center text-slate-400">Nenhum item adicionado ao orçamento ainda.</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+      {/* Bottom Navigation Bar (Otimizado para iOS / Mobile) */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-neutral-950/95 backdrop-blur-md border-t border-[#D4AF37]/30 px-2 py-2 flex justify-around items-center z-50">
+        <button 
+          onClick={() => setActiveTab('catalog')}
+          className={`flex flex-col items-center py-1 px-3 rounded-xl transition ${activeTab === 'catalog' ? 'text-[#D4AF37]' : 'text-neutral-400 hover:text-neutral-200'}`}
+        >
+          <Camera className="w-5 h-5 mb-0.5" />
+          <span className="text-[10px] font-medium">Catálogo/IA</span>
+        </button>
 
-                    </div>
+        <button 
+          onClick={() => setActiveTab('wholesale')}
+          className={`flex flex-col items-center py-1 px-3 rounded-xl transition ${activeTab === 'wholesale' ? 'text-[#D4AF37]' : 'text-neutral-400 hover:text-neutral-200'}`}
+        >
+          <ShoppingBag className="w-5 h-5 mb-0.5" />
+          <span className="text-[10px] font-medium">Atacado</span>
+        </button>
 
-                    <!-- Lado Direito: Resumo e Fechamento -->
-                    <div class="space-y-6">
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 sticky top-6">
-                            <h3 class="text-base font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100">Resumo do Pedido</h3>
-                            
-                            <div class="space-y-3 text-sm">
-                                <div class="flex justify-between text-slate-600">
-                                    <span>Subtotal Produtos:</span>
-                                    <span id="summarySubtotal" class="font-semibold text-slate-800">R$ 0,00</span>
-                                </div>
-                                
-                                <div class="pt-3 border-t border-slate-100">
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Desconto Especial Concedido (R$)</label>
-                                    <input type="number" id="inputDiscount" value="0" min="0" oninput="calculateTotals()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-slate-800">
-                                </div>
+        <button 
+          onClick={() => setActiveTab('calculator')}
+          className={`flex flex-col items-center py-1 px-3 rounded-xl transition ${activeTab === 'calculator' ? 'text-[#D4AF37]' : 'text-neutral-400 hover:text-neutral-200'}`}
+        >
+          <Calculator className="w-5 h-5 mb-0.5" />
+          <span className="text-[10px] font-medium">Financeiro</span>
+        </button>
 
-                                <!-- Alerta de Margem Estourada -->
-                                <div id="marginWarning" class="hidden p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-bold space-y-1">
-                                    <p class="flex items-center"><i class="fa-solid fa-triangle-exclamation mr-1.5 text-base"></i> Bloqueio de Margem Mínima!</p>
-                                    <p class="font-normal text-[11px]">O desconto extra ultrapassou o limite mínimo permitido pelo sistema. Ajuste o valor para prosseguir.</p>
-                                </div>
+        <button 
+          onClick={() => setActiveTab('routine')}
+          className={`flex flex-col items-center py-1 px-3 rounded-xl transition ${activeTab === 'routine' ? 'text-[#D4AF37]' : 'text-neutral-400 hover:text-neutral-200'}`}
+        >
+          <Calendar className="w-5 h-5 mb-0.5" />
+          <span className="text-[10px] font-medium">Rotina</span>
+        </button>
 
-                                <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
-                                    <span class="text-base font-bold text-slate-800">Valor Final:</span>
-                                    <span id="summaryTotal" class="text-2xl font-extrabold text-blue-600">R$ 0,00</span>
-                                </div>
-                            </div>
+        <button 
+          onClick={() => setActiveTab('settings')}
+          className={`flex flex-col items-center py-1 px-3 rounded-xl transition ${activeTab === 'settings' ? 'text-[#D4AF37]' : 'text-neutral-400 hover:text-neutral-200'}`}
+        >
+          <Settings className="w-5 h-5 mb-0.5" />
+          <span className="text-[10px] font-medium">Ajustes</span>
+        </button>
+      </nav>
 
-                            <div class="mt-8 space-y-3">
-                                <button onclick="finishOrderViaWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center space-x-2">
-                                    <i class="fa-brands fa-whatsapp text-lg"></i>
-                                    <span>Enviar p/ WhatsApp do Cliente</span>
-                                </button>
-                                <button onclick="clearOrderForm()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-2.5 px-4 rounded-xl transition-all text-sm">
-                                    Limpar Orçamento
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </section>
-
-            <!-- ================= 4. HISTÓRICO DE VENDAS ================= -->
-            <section id="view-historico" class="view-section space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex justify-between items-center">
-                    <div>
-                        <h3 class="text-lg font-bold text-slate-800">Histórico de Orçamentos e Vendas</h3>
-                        <p class="text-xs text-slate-400 mt-0.5">Acompanhe os pedidos gerados e o status das negociações.</p>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                                <th class="p-4 pl-6">ID / Data</th>
-                                <th class="p-4">Cliente</th>
-                                <th class="p-4">Itens</th>
-                                <th class="p-4">Valor Total</th>
-                                <th class="p-4">Status</th>
-                                <th class="p-4 pr-6 text-right">Ação</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historyTableBody" class="divide-y divide-slate-100 text-sm">
-                            <!-- Preenchido via JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-        </div>
-    </main>
-
-    <!-- SCRIPT DE COMPORTAMENTO DA APLICAÇÃO -->
-    <script>
-        // BANCO DE DADOS MOCKADO DE PRODUTOS
-        let productsDB = [
-            { id: 101, name: "Notebook Dell Inspiron 15", stock: 12, price: 4500.00, minPrice: 3800.00 },
-            { id: 102, name: "Mouse Sem Fio Logitech Ergo", stock: 85, price: 120.00, minPrice: 95.00 },
-            { id: 103, name: "Teclado Mecânico Gamer RGB", stock: 34, price: 350.00, minPrice: 280.00 },
-            { id: 104, name: "Monitor Profissional 27'' 4K", stock: 6, price: 1850.00, minPrice: 1550.00 },
-            { id: 105, name: "Cadeira Ergonômica Presidente", stock: 0, price: 1200.00, minPrice: 950.00 },
-            { id: 106, name: "SSD 1TB NVMe M.2 Kingston", stock: 42, price: 550.00, minPrice: 460.00 }
-        ];
-
-        let cart = [];
-        let historyDB = [
-            { id: "ORD-9821", date: "15/09/2026 14:22", client: "Empresa Alpha Ltda", itemsCount: 3, total: "R$ 4.870,00", status: "Aguardando Aprovação" },
-            { id: "ORD-9820", date: "15/09/2026 11:05", client: "João Carlos Silva", itemsCount: 1, total: "R$ 120,00", status: "Fechado com Sucesso" }
-        ];
-
-        // INICIALIZAÇÃO
-        document.addEventListener("DOMContentLoaded", () => {
-            renderCatalog(productsDB);
-            populateProductSelect();
-            renderHistory();
-            initSalesChart();
-        });
-
-        // NAVEGAÇÃO ENTRE ABAS
-        function switchView(viewId) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.getElementById('view-' + viewId).classList.add('active');
-
-            document.querySelectorAll('aside nav button').forEach(btn => {
-                btn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white text-slate-400";
-            });
-
-            const activeBtn = document.getElementById('nav-' + viewId);
-            if(activeBtn) {
-                activeBtn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all bg-blue-600 text-white shadow-lg shadow-blue-600/30";
-            }
-
-            const titles = {
-                'dashboard': 'Dashboard de Resultados',
-                'catalogo': 'Catálogo de Produtos & Estoque',
-                'orcamento': 'Criar Novo Orçamento / Pedido',
-                'historico': 'Histórico de Orçamentos'
-            };
-            document.getElementById('page-title').innerText = titles[viewId] || 'Painel Vendedor';
-        }
-
-        // FORMATADOR DE MOEDA BRL
-        function formatBRL(val) {
-            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        }
-
-        // RENDERIZAR CATÁLOGO
-        function renderCatalog(data) {
-            const tbody = document.getElementById('catalogTableBody');
-            tbody.innerHTML = '';
-
-            if(data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">Nenhum produto encontrado.</td></tr>`;
-                return;
-            }
-
-            data.forEach(p => {
-                let stockBadge = p.stock > 10 
-                    ? `<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-bold text-xs rounded-full border border-emerald-200">${p.stock} un</span>`
-                    : (p.stock > 0 ? `<span class="px-2.5 py-1 bg-amber-50 text-amber-700 font-bold text-xs rounded-full border border-amber-200">Baixo (${p.stock} un)</span>`
-                                  : `<span class="px-2.5 py-1 bg-rose-50 text-rose-700 font-bold text-xs rounded-full border border-rose-200">Esgotado</span>`);
-
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50/80 transition-colors">
-                        <td class="p-4 pl-6 font-semibold text-slate-800">
-                            ${p.name}
-                            <div class="text-xs text-slate-400 font-normal">Cód: ${p.id}</div>
-                        </td>
-                        <td class="p-4">${stockBadge}</td>
-                        <td class="p-4 font-bold text-slate-700">${formatBRL(p.price)}</td>
-                        <td class="p-4 bg-rose-50/40 font-bold text-rose-600">${formatBRL(p.minPrice)}</td>
-                        <td class="p-4 pr-6 text-right">
-                            <button onclick="selectProductForQuote(${p.id})" ${p.stock === 0 ? 'disabled' : ''} class="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white font-semibold rounded-lg text-xs transition-all disabled:opacity-40 disabled:hover:bg-blue-50 disabled:hover:text-blue-600">
-                                <i class="fa-solid fa-cart-plus mr-1"></i> Usar no Pedido
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function filterCatalog() {
-            const query = document.getElementById('inputSearchCatalog').value.toLowerCase();
-            const filtered = productsDB.filter(p => p.name.toLowerCase().includes(query) || p.id.toString().includes(query));
-            renderCatalog(filtered);
-        }
-
-        // PREENCHER SELECT DE PRODUTOS
-        function populateProductSelect() {
-            const select = document.getElementById('selectProduct');
-            select.innerHTML = '<option value="">Selecione um produto do catálogo...</option>';
-            productsDB.filter(p => p.stock > 0).forEach(p => {
-                select.innerHTML += `<option value="${p.id}">${p.name} (${formatBRL(p.price)})</option>`;
-            });
-        }
-
-        function selectProductForQuote(id) {
-            switchView('orcamento');
-            document.getElementById('selectProduct').value = id;
-            document.getElementById('inputQty').value = 1;
-        }
-
-        // ADICIONAR AO CARRINHO
-        function addToCart() {
-            const selectId = parseInt(document.getElementById('selectProduct').value);
-            const qty = parseInt(document.getElementById('inputQty').value);
-
-            if(!selectId || isNaN(qty) || qty <= 0) {
-                alert("Selecione um produto válido e informe uma quantidade maior que zero.");
-                return;
-            }
-
-            const product = productsDB.find(p => p.id === selectId);
-            if(qty > product.stock) {
-                alert(`Estoque insuficiente! Temos apenas ${product.stock} unidades disponíveis.`);
-                return;
-            }
-
-            const existing = cart.find(item => item.product.id === selectId);
-            if(existing) {
-                if(existing.qty + qty > product.stock) {
-                    alert("A quantidade total no carrinho excede o estoque disponível.");
-                    return;
-                }
-                existing.qty += qty;
-            } else {
-                cart.push({ product, qty });
-            }
-
-            document.getElementById('selectProduct').value = "";
-            document.getElementById('inputQty').value = "1";
-            renderCart();
-        }
-
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            renderCart();
-        }
-
-        // RENDERIZAR CARRINHO E TOTAIS COM TRAVA DE MARGEM
-        function renderCart() {
-            const tbody = document.getElementById('cartTableBody');
-            tbody.innerHTML = '';
-
-            if(cart.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">Nenhum item adicionado ao orçamento ainda.</td></tr>`;
-                calculateTotals();
-                return;
-            }
-
-            cart.forEach((item, index) => {
-                const subtotal = item.product.price * item.qty;
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-3 pl-4 font-medium text-slate-800">${item.product.name}</td>
-                        <td class="p-3 text-center font-semibold text-slate-600">${item.qty}</td>
-                        <td class="p-3 text-slate-600">${formatBRL(item.product.price)}</td>
-                        <td class="p-3 font-bold text-slate-800">${formatBRL(subtotal)}</td>
-                        <td class="p-3 pr-4 text-right">
-                            <button onclick="removeFromCart(${index})" class="text-rose-500 hover:text-rose-700 transition-colors">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            calculateTotals();
-        }
-
-        function calculateTotals() {
-            let subtotalTabela = 0;
-            let subtotalMinimoPermitido = 0;
-
-            cart.forEach(item => {
-                subtotalTabela += (item.product.price * item.qty);
-                subtotalMinimoPermitido += (item.product.minPrice * item.qty);
-            });
-
-            const discountInput = parseFloat(document.getElementById('inputDiscount').value) || 0;
-            const finalTotal = subtotalTabela - discountInput;
-
-            document.getElementById('summarySubtotal').innerText = formatBRL(subtotalTabela);
-            document.getElementById('summaryTotal').innerText = formatBRL(finalTotal > 0 ? finalTotal : 0);
-
-            const warningBox = document.getElementById('marginWarning');
-            const isMarginViolated = (cart.length > 0 && finalTotal < subtotalMinimoPermitido);
-
-            if(isMarginViolated) {
-                warningBox.classList.remove('hidden');
-                document.getElementById('summaryTotal').classList.add('text-rose-600');
-                document.getElementById('summaryTotal').classList.remove('text-blue-600');
-            } else {
-                warningBox.classList.add('hidden');
-                document.getElementById('summaryTotal').classList.remove('text-rose-600');
-                document.getElementById('summaryTotal').classList.add('text-blue-600');
-            }
-
-            return !isMarginViolated;
-        }
-
-        function clearOrderForm() {
-            cart = [];
-            document.getElementById('clientName').value = "";
-            document.getElementById('clientPhone').value = "";
-            document.getElementById('inputDiscount').value = "0";
-            renderCart();
-        }
-
-        // FINALIZAR E ENVIAR WHATSAPP
-        function finishOrderViaWhatsApp() {
-            if(cart.length === 0) {
-                alert("Adicione pelo menos um item ao orçamento.");
-                return;
-            }
-
-            const clientName = document.getElementById('clientName').value.trim() || "Cliente";
-            const clientPhone = document.getElementById('clientPhone').value.replace(/\D/g, '');
-
-            if(!clientPhone) {
-                alert("Informe o número de WhatsApp do cliente para envio do orçamento.");
-                return;
-            }
-
-            if(!calculateTotals()) {
-                alert("ERRO DE SEGURANÇA: O desconto aplicado fere a margem mínima permitida. Reduza o desconto antes de enviar.");
-                return;
-            }
-
-            let message = `Olá *${clientName}*, segue o seu orçamento:\n\n`;
-            cart.forEach(item => {
-                message += `▪ ${item.qty}x ${item.product.name} - ${formatBRL(item.product.price * item.qty)}\n`;
-            });
-            message += `\n*Valor Total:* ${document.getElementById('summaryTotal').innerText}\n\nOrçamento gerado por SalesApp PRO.`;
-
-            const whatsappUrl = `https://wa.me/55${clientPhone}?text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, '_blank');
-
-            // Salvar no Histórico
-            historyDB.unshift({
-                id: "ORD-" + Math.floor(1000 + Math.random() * 9000),
-                date: new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                client: clientName,
-                itemsCount: cart.reduce((acc, i) => acc + i.qty, 0),
-                total: document.getElementById('summaryTotal').innerText,
-                status: "Aguardando Aprovação"
-            });
-            renderHistory();
-            clearOrderForm();
-            switchView('historico');
-        }
-
-        // RENDERIZAR HISTÓRICO
-        function renderHistory() {
-            const tbody = document.getElementById('historyTableBody');
-            tbody.innerHTML = '';
-
-            document.getElementById('dash-orcamentos-qtd').innerText = historyDB.filter(h => h.status.includes("Aguardando")).length;
-
-            historyDB.forEach(h => {
-                let badge = h.status.includes("Sucesso") || h.status.includes("Aprovado")
-                    ? `<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-bold text-xs rounded-full border border-emerald-200">${h.status}</span>`
-                    : `<span class="px-2.5 py-1 bg-amber-50 text-amber-700 font-bold text-xs rounded-full border border-amber-200">${h.status}</span>`;
-
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-4 pl-6 font-semibold text-slate-800">${h.id}<div class="text-xs text-slate-400 font-normal">${h.date}</div></td>
-                        <td class="p-4 text-slate-700 font-medium">${h.client}</td>
-                        <td class="p-4 text-slate-600">${h.itemsCount} item(ns)</td>
-                        <td class="p-4 font-bold text-slate-800">${h.total}</td>
-                        <td class="p-4">${badge}</td>
-                        <td class="p-4 pr-6 text-right">
-                            <button onclick="alert('Detalhes do orçamento ${h.id}')" class="text-blue-600 hover:text-blue-800 font-semibold text-xs">Visualizar</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        // GRÁFICO DO DASHBOARD
-        function initSalesChart() {
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
-                    datasets: [{
-                        label: 'Vendas (R$)',
-                        data: [3200, 4100, 3900, 5200, 4850, 6100],
-                        backgroundColor: '#2563eb',
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: '#f1f5f1' } },
-                        x: { grid: { display: false } }
-                    }
-                }
-            });
-        }
-    </script>
-</body>
-</html>
+    </div>
+  );
+}
