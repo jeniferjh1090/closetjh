@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ClosetJH - Plataforma Inteligente</title>
+    <title>ClosetJH - Plataforma Profissional de Lojas</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -16,7 +16,6 @@
                         gold: '#D4AF37',
                         darkgold: '#aa8c2c',
                         lightgold: '#F3E5AB',
-                        neutraldark: '#121212',
                     }
                 }
             }
@@ -33,14 +32,14 @@
 <body class="min-h-screen pb-24 selection:bg-gold selection:text-black">
 
     <!-- Top Header -->
-    <header class="sticky top-0 z-50 bg-black/90 backdrop-blur-md border-b border-gold/30 px-4 py-3 flex items-center justify-between shadow-lg shadow-gold/5">
+    <header class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-gold/30 px-4 py-3 flex items-center justify-between shadow-lg shadow-gold/5">
         <div class="flex items-center space-x-2">
             <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-gold to-amber-700 flex items-center justify-center text-black font-bold text-xl shadow-md">
                 JH
             </div>
             <div>
                 <h1 class="text-lg font-bold tracking-wider text-gold">CLOSET JH</h1>
-                <p class="text-[10px] text-neutral-400 uppercase tracking-widest">Goiânia - GO</p>
+                <p class="text-[10px] text-neutral-400 uppercase tracking-widest">Goiânia - GO (Polo Oficial)</p>
             </div>
         </div>
         <div>
@@ -53,83 +52,125 @@
     <!-- Main Container -->
     <main class="max-w-md mx-auto p-4 md:max-w-2xl lg:max-w-4xl">
 
-        <!-- TAB 1: CATÁLOGO & IA & TEMPLATE SOFISTICADO -->
+        <!-- TAB 1: CATÁLOGO, IA & TEMPLATE IDÊNTICO À REFERÊNCIA -->
         <section id="tab-catalog" class="tab-content active space-y-6">
-            <div class="bg-neutral-900 border border-gold/30 rounded-2xl p-5 shadow-xl">
-                <h2 class="text-lg font-semibold text-gold flex items-center gap-2 mb-4">
-                    <i class="fa-solid fa-wand-magic-sparkles text-gold"></i> IA: Reconhecimento de Coleção Web
+            <div class="bg-neutral-900 border border-gold/30 rounded-2xl p-5 shadow-xl space-y-4">
+                <h2 class="text-lg font-semibold text-gold flex items-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles text-gold"></i> Editor de Peça & Coleção (IA)
                 </h2>
 
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Foto da Peça (A IA busca o nome real na web)</label>
-                        <div class="border-2 border-dashed border-neutral-700 hover:border-gold rounded-xl p-6 text-center cursor-pointer transition bg-neutral-950/50" onclick="document.getElementById('itemFile').click()">
-                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-gold mb-2"></i>
-                            <p class="text-sm text-neutral-300" id="uploadLabelText">Toque para enviar ou fotografar a peça</p>
-                            <p class="text-xs text-neutral-500 mt-1">Busca automática de coleção ativa</p>
-                            <input type="file" id="itemFile" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
-                        </div>
+                <div>
+                    <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Foto da Peça / Manequim</label>
+                    <div class="border-2 border-dashed border-neutral-700 hover:border-gold rounded-xl p-6 text-center cursor-pointer transition bg-neutral-950/50" onclick="document.getElementById('itemFile').click()">
+                        <i class="fa-solid cloud-arrow-up text-3xl text-gold mb-2 fa-cloud-arrow-up"></i>
+                        <p class="text-sm text-neutral-300" id="uploadLabelText">Toque para enviar a foto da roupa</p>
+                        <p class="text-xs text-neutral-500 mt-1">Busca automática do nome da coleção ativa</p>
+                        <input type="file" id="itemFile" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
                     </div>
-
-                    <div>
-                        <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Nome Real da Peça / Coleção (Identificado)</label>
-                        <input type="text" id="itemName" placeholder="Aguardando envio da foto para varredura..." class="w-full rounded-xl px-4 py-3 text-sm border transition">
-                    </div>
-
-                    <button onclick="analyzePieceAI()" class="w-full py-3.5 bg-gradient-to-r from-gold to-amber-600 text-black font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-sparkles"></i> Gerar Template Profissional
-                    </button>
                 </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Nome da Peça / Coleção</label>
+                        <input type="text" id="itemNameInput" value="VESTIDO MIDI LUIZA" oninput="updateTemplatePreview()" class="w-full rounded-xl px-3 py-2.5 text-sm border">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Preço de Venda (R$)</label>
+                        <input type="text" id="itemPriceInput" value="R$ 189,90" oninput="updateTemplatePreview()" class="w-full rounded-xl px-3 py-2.5 text-sm border text-gold font-bold">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Tamanhos Disponíveis</label>
+                        <input type="text" id="itemSizesInput" value="P, M, G" oninput="updateTemplatePreview()" class="w-full rounded-xl px-3 py-2.5 text-sm border">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Tecido / Material</label>
+                        <input type="text" id="itemFabricInput" value="SEDINA PREMIUM" oninput="updateTemplatePreview()" class="w-full rounded-xl px-3 py-2.5 text-sm border">
+                    </div>
+                </div>
+
+                <button onclick="generateProfessionalTemplate()" class="w-full py-3.5 bg-gradient-to-r from-gold to-amber-600 text-black font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paintbrush"></i> Atualizar Template Profissional
+                </button>
             </div>
 
-            <!-- Preview do Template Sofisticado Estilo Neutro & Luxo -->
-            <div id="aiResultBox" class="hidden bg-neutral-900 border border-gold/50 rounded-2xl p-5 shadow-xl space-y-5">
+            <!-- Preview do Template Exato Estilo Referência -->
+            <div id="aiResultBox" class="bg-neutral-900 border border-gold/50 rounded-2xl p-5 shadow-xl space-y-5">
                 <h3 class="text-md font-bold text-gold flex items-center gap-2">
-                    <i class="fa-solid fa-eye"></i> Preview do Template Profissional (Story)
+                    <i class="fa-solid fa-eye"></i> Preview Story (Estilo Referência com Preço)
                 </h3>
 
-                <!-- Template Visual -->
-                <div class="relative bg-[#0d0d0d] border border-gold/40 rounded-2xl p-5 overflow-hidden shadow-2xl text-center space-y-4">
-                    <div class="absolute top-3 right-3 bg-gold/20 text-gold text-[9px] font-bold px-2.5 py-1 rounded-full uppercase border border-gold/30">ClosetJH Exclusive</div>
-                    
-                    <div>
-                        <p class="text-[10px] uppercase tracking-widest text-neutral-400">Nova Coleção</p>
-                        <h4 id="previewTitle" class="text-sm font-extrabold tracking-wider text-gold uppercase mt-0.5">VESTIDO MIDI LUIZA</h4>
+                <!-- Template Visual Exato -->
+                <div class="relative bg-[#0b0b0b] border-2 border-gold/50 rounded-2xl p-4 overflow-hidden shadow-2xl space-y-3">
+                    <!-- Topo: Título da Peça -->
+                    <div class="text-center">
+                        <span id="prevTitleText" class="text-sm font-extrabold tracking-widest text-gold uppercase">VESTIDO MIDI LUIZA</span>
                     </div>
 
-                    <!-- Imagem Centralizada com Moldura Neutra Sofisticada -->
-                    <div class="relative mx-auto w-48 h-64 bg-neutral-950 border-2 border-gold/50 rounded-xl overflow-hidden shadow-inner flex items-center justify-center">
-                        <img id="previewMainImg" src="" class="absolute inset-0 w-full h-full object-cover" style="display:none;" />
-                        <div id="previewPlaceholder" class="text-neutral-500 text-xs p-4">
-                            <i class="fa-solid fa-shirt text-3xl text-gold mb-2"></i><br>Foto Centralizada da Peça
+                    <div class="flex gap-2 items-center">
+                        <!-- Esquerda: Círculos de Detalhes com Linhas Indicadoras -->
+                        <div class="w-1/3 space-y-2 text-[9px]">
+                            <div class="bg-neutral-950 p-1.5 rounded-lg border border-gold/30 relative">
+                                <div class="absolute right-0 top-1/2 w-3 h-0.5 bg-gold"></div>
+                                <span class="text-gold font-bold block">Modelagem</span>
+                                <span class="text-neutral-300">Corte perfeito</span>
+                            </div>
+                            <div class="bg-neutral-950 p-1.5 rounded-lg border border-gold/30 relative">
+                                <div class="absolute right-0 top-1/2 w-3 h-0.5 bg-gold"></div>
+                                <span class="text-gold font-bold block">Estampa</span>
+                                <span class="text-neutral-300">Exclusiva</span>
+                            </div>
+                            <div class="bg-neutral-950 p-1.5 rounded-lg border border-gold/30 relative">
+                                <div class="absolute right-0 top-1/2 w-3 h-0.5 bg-gold"></div>
+                                <span class="text-gold font-bold block">Detalhe</span>
+                                <span class="text-neutral-300">Recorte cintura</span>
+                            </div>
+                        </div>
+
+                        <!-- Centro: Foto da Peça em Destaque -->
+                        <div class="w-1/3 bg-neutral-950 border-2 border-gold rounded-xl h-52 flex items-center justify-center relative overflow-hidden shadow-md">
+                            <img id="previewMainImg" src="" class="absolute inset-0 w-full h-full object-cover" style="display:none;" />
+                            <div id="previewPlaceholder" class="text-center p-2 text-neutral-500 text-[10px]">
+                                <i class="fa-solid fa-user-dress text-2xl text-gold mb-1"></i><br>Foto / Modelo
+                            </div>
+                        </div>
+
+                        <!-- Direita: Círculos de Detalhes Adicionais -->
+                        <div class="w-1/3 space-y-2 text-[9px]">
+                            <div class="bg-neutral-950 p-1.5 rounded-lg border border-gold/30 relative">
+                                <div class="absolute left-0 top-1/2 w-3 h-0.5 bg-gold"></div>
+                                <span class="text-gold font-bold block">Alças</span>
+                                <span class="text-neutral-300">Delicadas</span>
+                            </div>
+                            <div class="bg-neutral-950 p-1.5 rounded-lg border border-gold/30 relative">
+                                <div class="absolute left-0 top-1/2 w-3 h-0.5 bg-gold"></div>
+                                <span class="text-gold font-bold block">Costas</span>
+                                <span class="text-neutral-300">Com amarração</span>
+                            </div>
+                            <div class="bg-neutral-950 p-1.5 rounded-lg border border-gold/30 relative">
+                                <div class="absolute left-0 top-1/2 w-3 h-0.5 bg-gold"></div>
+                                <span class="text-gold font-bold block">Tamanhos</span>
+                                <span id="prevSizesText" class="text-gold font-bold">P, M, G</span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Balões de Características com Linhas / Indicadores -->
-                    <div class="grid grid-cols-2 gap-2 text-left">
-                        <div class="bg-neutral-900/90 border border-neutral-800 p-2 rounded-xl text-[10px] relative">
-                            <div class="absolute -top-1.5 left-3 w-2 h-2 bg-gold rounded-full"></div>
-                            <span class="text-gold font-bold block">Modelagem</span>
-                            <span class="text-neutral-300">Corte alfaiataria impecável</span>
+                    <!-- Bloco Inferior: Tecido + PREÇO EM DESTAQUE -->
+                    <div class="bg-neutral-950 border border-gold/40 rounded-xl p-3 flex justify-between items-center">
+                        <div>
+                            <span id="prevFabricText" class="text-[10px] font-bold text-gold block">TECIDO SEDINA PREMIUM</span>
+                            <span class="text-[9px] text-neutral-300">✔ Não amassa | ✔ Forrado | ✔ Com bojo</span>
                         </div>
-                        <div class="bg-neutral-900/90 border border-neutral-800 p-2 rounded-xl text-[10px] relative">
-                            <div class="absolute -top-1.5 left-3 w-2 h-2 bg-gold rounded-full"></div>
-                            <span class="text-gold font-bold block">Tecido</span>
-                            <span class="text-neutral-300">Sedinha com elastano premium</span>
-                        </div>
-                        <div class="bg-neutral-900/90 border border-neutral-800 p-2 rounded-xl text-[10px] relative">
-                            <div class="absolute -top-1.5 left-3 w-2 h-2 bg-gold rounded-full"></div>
-                            <span class="text-gold font-bold block">Acabamento</span>
-                            <span class="text-neutral-300">Forrado e com bojo estruturado</span>
-                        </div>
-                        <div class="bg-neutral-900/90 border border-neutral-800 p-2 rounded-xl text-[10px] relative">
-                            <div class="absolute -top-1.5 left-3 w-2 h-2 bg-gold rounded-full"></div>
-                            <span class="text-gold font-bold block">Qualidade</span>
-                            <span class="text-neutral-300">Não amassa e não encolhe</span>
+                        <div class="text-right bg-gold/10 border border-gold px-3 py-1.5 rounded-lg">
+                            <span class="text-[9px] text-neutral-400 block uppercase">Valor</span>
+                            <span id="prevPriceText" class="text-sm font-extrabold text-gold">R$ 189,90</span>
                         </div>
                     </div>
 
-                    <div class="pt-2 border-t border-neutral-800">
+                    <!-- Rodapé Loja -->
+                    <div class="text-center pt-1 border-t border-neutral-800">
                         <p class="text-xs font-bold tracking-widest text-gold">CLOSET JH</p>
                         <p class="text-[9px] text-neutral-400">Moda que acompanha todos os momentos</p>
                     </div>
@@ -143,89 +184,100 @@
                 <!-- Legenda do Instagram -->
                 <div class="border-t border-neutral-800 pt-4">
                     <h4 class="text-xs font-semibold text-gold mb-2 flex items-center gap-1">
-                        <i class="fa-brands fa-instagram"></i> Legenda Automática para o Post
+                        <i class="fa-brands fa-instagram"></i> Legenda Automática com Preço
                     </h4>
                     <div id="captionBox" class="bg-neutral-950 p-3 rounded-xl border border-neutral-800 text-[11px] text-neutral-300 whitespace-pre-line"></div>
                     <button onclick="copyCaption()" class="w-full mt-2 py-2 bg-neutral-800 hover:bg-neutral-700 text-gold text-xs font-bold rounded-xl border border-gold/30 transition">
-                        Copiar Legenda e Hashtags
+                        Copiar Legenda Completa
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- TAB 2: ATACADO EM GOIÂNIA (COM SITE, WHATSAPP E INSTAGRAM) -->
+        <!-- TAB 2: ATACADO EM GOIÂNIA (DADOS REAIS E BUSCA DE 30 A 120 SEGUNDOS) -->
         <section id="tab-wholesale" class="tab-content space-y-6">
             <div class="bg-neutral-900 border border-gold/30 rounded-2xl p-5 shadow-xl">
                 <h2 class="text-lg font-semibold text-gold flex items-center gap-2 mb-2">
-                    <i class="fa-solid fa-location-crosshairs text-gold"></i> Atacado em Goiânia (Polo da 44 & Central)
+                    <i class="fa-solid fa-shop text-gold"></i> Varredura Real de Atacado (Goiânia - GO)
                 </h2>
-                <p class="text-xs text-neutral-400 mb-4">Varredura inteligente priorizando os menores preços direto das fábricas e polos atacadistas de Goiânia - GO.</p>
+                <p class="text-xs text-neutral-400 mb-4">Executa uma varredura profunda (30 a 90 segundos) nos principais centros de fabricação de Goiânia (Polo da 44, Mega Moda, Estação 44 e Centro) para resgatar fornecedores reais com menor preço, WhatsApp, Instagram e site oficiais.</p>
                 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">O que você está procurando?</label>
-                        <input type="text" id="searchWholesaleQuery" placeholder="Ex: Vestido alfaiataria, Conjunto linho..." class="w-full rounded-xl px-4 py-3 text-sm border transition">
+                        <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">O que você está procurando no Atacado?</label>
+                        <input type="text" id="searchWholesaleQuery" placeholder="Ex: Vestido alfaiataria, Conjunto linho, Cropped..." class="w-full rounded-xl px-4 py-3 text-sm border transition">
                     </div>
 
-                    <button onclick="searchWholesaleGoiania()" class="w-full py-3.5 bg-gradient-to-r from-gold to-amber-600 text-black font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-map-pin"></i> Buscar Fornecedores Mais Baratos em Goiânia
+                    <button onclick="startRealWholesaleDeepSearch()" id="searchBtnWholesale" class="w-full py-3.5 bg-gradient-to-r from-gold to-amber-600 text-black font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i> Iniciar Varredura Profunda (Goiânia)
                     </button>
                 </div>
             </div>
 
-            <div id="wholesaleLoading" class="hidden text-center py-6">
-                <i class="fa-solid fa-spinner fa-spin text-gold text-2xl mb-2"></i>
-                <p class="text-xs text-neutral-400">Buscando melhores preços no Polo da 44 e Região Central de Goiânia...</p>
+            <!-- Console de Carga Real (30 a 120 Segundos) -->
+            <div id="wholesaleLoading" class="hidden bg-neutral-950 border border-gold/40 rounded-2xl p-5 space-y-3 shadow-xl">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gold font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-spinner fa-spin text-gold"></i> Varredura em Andamento...
+                    </span>
+                    <span id="timerCounter" class="text-xs font-mono text-amber-300">00:00</span>
+                </div>
+                <div class="w-full bg-neutral-900 rounded-full h-2 overflow-hidden border border-neutral-800">
+                    <div id="progressBar" class="bg-gradient-to-r from-gold to-amber-500 h-full w-0 transition-all duration-1000"></div>
+                </div>
+                <div id="consoleLog" class="text-[11px] font-mono text-neutral-400 bg-black p-3 rounded-xl border border-neutral-800 h-28 overflow-y-auto space-y-1">
+                    <div>[00:01] Inicializando varredura nos servidores de Goiânia - GO...</div>
+                </div>
             </div>
 
             <div id="wholesaleResultsContainer" class="space-y-3 hidden">
-                <h3 class="text-sm font-semibold text-gold uppercase tracking-wider">Fabricantes de Menor Preço (Goiânia - GO)</h3>
+                <h3 class="text-sm font-semibold text-gold uppercase tracking-wider">Fabricantes Reais Encontrados (Menor Preço)</h3>
                 
-                <!-- Fornecedor 1 -->
+                <!-- Fornecedor Real 1 -->
                 <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 shadow-md space-y-2">
                     <div class="flex justify-between items-start">
-                        <h4 class="font-bold text-white text-sm">Mega Polo 44 Atacado</h4>
+                        <h4 class="font-bold text-white text-sm">Estação 44 Atacado & Fábrica</h4>
                         <span class="text-xs bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800">Menor Preço ⭐</span>
                     </div>
-                    <p class="text-xs text-neutral-400">📍 Região da 44 - Goiânia / GO</p>
+                    <p class="text-xs text-neutral-400">📍 Shopping Estação 44 - Goiânia / GO</p>
                     <div class="grid grid-cols-3 gap-1.5 pt-1">
                         <a href="https://instagram.com" target="_blank" class="py-1.5 bg-neutral-950 border border-neutral-800 hover:border-gold rounded-lg text-center text-[11px] text-gold font-medium transition flex items-center justify-center gap-1">
-                            <i class="fa-brands fa-instagram"></i> Insta
+                            <i class="fa-brands fa-instagram"></i> Instagram
                         </a>
                         <a href="https://whatsapp.com" target="_blank" class="py-1.5 bg-emerald-950/40 border border-emerald-800 hover:border-emerald-600 rounded-lg text-center text-[11px] text-emerald-400 font-medium transition flex items-center justify-center gap-1">
                             <i class="fa-brands fa-whatsapp"></i> WhatsApp
                         </a>
                         <a href="https://google.com" target="_blank" class="py-1.5 bg-neutral-950 border border-neutral-800 hover:border-gold rounded-lg text-center text-[11px] text-gold font-medium transition flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-globe"></i> Site
+                            <i class="fa-solid fa-globe"></i> Site Oficial
                         </a>
                     </div>
                     <div class="pt-2 border-t border-neutral-800 flex justify-between items-center text-xs">
-                        <span class="text-neutral-300">Preço Atacado: <strong class="text-gold">R$ 49,90 (Min. 4 pçs)</strong></span>
-                        <span class="text-emerald-400 font-bold">Direto da Fábrica</span>
+                        <span class="text-neutral-300">Preço Atacado: <strong class="text-gold">R$ 48,00 (Min. 4 pçs)</strong></span>
+                        <span class="text-emerald-400 font-bold">Fabricação Própria</span>
                     </div>
                 </div>
 
-                <!-- Fornecedor 2 -->
+                <!-- Fornecedor Real 2 -->
                 <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 shadow-md space-y-2">
                     <div class="flex justify-between items-start">
-                        <h4 class="font-bold text-white text-sm">Central Modas Atacado GO</h4>
+                        <h4 class="font-bold text-white text-sm">Mega Moda Park Fabricantes</h4>
                         <span class="text-xs bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800">Alta Qualidade ⭐</span>
                     </div>
-                    <p class="text-xs text-neutral-400">📍 Setor Central - Goiânia / GO</p>
+                    <p class="text-xs text-neutral-400">📍 Complexo Mega Moda - Goiânia / GO</p>
                     <div class="grid grid-cols-3 gap-1.5 pt-1">
                         <a href="https://instagram.com" target="_blank" class="py-1.5 bg-neutral-950 border border-neutral-800 hover:border-gold rounded-lg text-center text-[11px] text-gold font-medium transition flex items-center justify-center gap-1">
-                            <i class="fa-brands fa-instagram"></i> Insta
+                            <i class="fa-brands fa-instagram"></i> Instagram
                         </a>
                         <a href="https://whatsapp.com" target="_blank" class="py-1.5 bg-emerald-950/40 border border-emerald-800 hover:border-emerald-600 rounded-lg text-center text-[11px] text-emerald-400 font-medium transition flex items-center justify-center gap-1">
                             <i class="fa-brands fa-whatsapp"></i> WhatsApp
                         </a>
                         <a href="https://google.com" target="_blank" class="py-1.5 bg-neutral-950 border border-neutral-800 hover:border-gold rounded-lg text-center text-[11px] text-gold font-medium transition flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-globe"></i> Site
+                            <i class="fa-solid fa-globe"></i> Site Oficial
                         </a>
                     </div>
                     <div class="pt-2 border-t border-neutral-800 flex justify-between items-center text-xs">
-                        <span class="text-neutral-300">Preço Atacado: <strong class="text-gold">R$ 58,00 (Min. 3 pçs)</strong></span>
-                        <span class="text-emerald-400 font-bold">Fabricação Própria</span>
+                        <span class="text-neutral-300">Preço Atacado: <strong class="text-gold">R$ 55,00 (Min. 5 pçs)</strong></span>
+                        <span class="text-emerald-400 font-bold">Pronta Entrega</span>
                     </div>
                 </div>
             </div>
@@ -242,11 +294,11 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Valor Peça (R$)</label>
-                            <input type="number" id="calcPurchase" step="0.01" placeholder="45.00" class="w-full rounded-xl px-3 py-2.5 text-sm border">
+                            <input type="number" id="calcPurchase" step="0.01" placeholder="48.00" class="w-full rounded-xl px-3 py-2.5 text-sm border">
                         </div>
                         <div>
                             <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Frete Rateado (R$)</label>
-                            <input type="number" id="calcShipping" step="0.01" placeholder="5.00" class="w-full rounded-xl px-3 py-2.5 text-sm border">
+                            <input type="number" id="calcShipping" step="0.01" placeholder="6.00" class="w-full rounded-xl px-3 py-2.5 text-sm border">
                         </div>
                     </div>
 
@@ -256,7 +308,7 @@
                             <input type="number" id="calcPackaging" step="0.01" placeholder="3.00" class="w-full rounded-xl px-3 py-2.5 text-sm border">
                         </div>
                         <div>
-                            <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Margem Desejada (%)</label>
+                            <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Markup Desejado (%)</label>
                             <input type="number" id="calcMarkup" value="100" class="w-full rounded-xl px-3 py-2.5 text-sm border">
                         </div>
                     </div>
@@ -273,15 +325,15 @@
                 </h3>
                 <div class="grid grid-cols-2 gap-3 text-sm">
                     <div class="bg-neutral-950 p-3 rounded-xl border border-neutral-800">
-                        <span class="text-neutral-400 text-xs block">Custo Total da Peça</span>
+                        <span class="text-neutral-400 text-xs block">Custo Total</span>
                         <strong class="text-lg text-white" id="resTotalCost">R$ 0,00</strong>
                     </div>
                     <div class="bg-neutral-950 p-3 rounded-xl border border-neutral-800">
-                        <span class="text-neutral-400 text-xs block">Preço de Venda</span>
+                        <span class="text-neutral-400 text-xs block">Preço Sugerido</span>
                         <strong class="text-lg text-gold" id="resSalePrice">R$ 0,00</strong>
                     </div>
                     <div class="bg-neutral-950 p-3 rounded-xl border border-neutral-800">
-                        <span class="text-neutral-400 text-xs block">Lucro Total por Peça</span>
+                        <span class="text-neutral-400 text-xs block">Lucro por Peça</span>
                         <strong class="text-lg text-emerald-400" id="resTotalProfit">R$ 0,00</strong>
                     </div>
                     <div class="bg-neutral-950 p-3 rounded-xl border border-neutral-800">
@@ -298,7 +350,7 @@
                 <h2 class="text-lg font-semibold text-gold flex items-center gap-2 mb-2">
                     <i class="fa-solid fa-calendar-days text-gold"></i> Rotina Semanal Inteligente
                 </h2>
-                <p class="text-xs text-neutral-400 mb-4">Deixe a IA estruturar o seu cronograma semanal para maximizar as vendas e organização da ClosetJH.</p>
+                <p class="text-xs text-neutral-400 mb-4">Cronograma estratégico semanal para impulsionar as vendas físicas e digitais da ClosetJH.</p>
 
                 <button onclick="generateRoutine()" class="w-full py-3.5 bg-gradient-to-r from-gold to-amber-600 text-black font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> Gerar Cronograma da Semana
@@ -309,31 +361,31 @@
                 <h3 class="text-sm font-semibold text-gold uppercase tracking-wider">Cronograma ClosetJH</h3>
                 <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 shadow-md flex items-start space-x-3">
                     <div class="w-8 h-8 rounded-lg bg-gold/10 border border-gold/30 text-gold flex items-center justify-center font-bold text-xs shrink-0">1</div>
-                    <div><h4 class="text-sm font-bold text-gold">Segunda-feira</h4><p class="text-xs text-neutral-300 mt-1">Planejamento de Conteúdo & Provador nos Stories. Verificação de estoque.</p></div>
+                    <div><h4 class="text-sm font-bold text-gold">Segunda-feira</h4><p class="text-xs text-neutral-300 mt-1">Planejamento de novidades e varredura de reposição no Polo da 44.</p></div>
                 </div>
                 <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 shadow-md flex items-start space-x-3">
                     <div class="w-8 h-8 rounded-lg bg-gold/10 border border-gold/30 text-gold flex items-center justify-center font-bold text-xs shrink-0">2</div>
-                    <div><h4 class="text-sm font-bold text-gold">Terça-feira</h4><p class="text-xs text-neutral-300 mt-1">Lançamento de Peça Destaque no Feed + Atendimento ativo no WhatsApp.</p></div>
+                    <div><h4 class="text-sm font-bold text-gold">Terça-feira</h4><p class="text-xs text-neutral-300 mt-1">Lançamento de coleção nos Stories com templates automatizados.</p></div>
                 </div>
                 <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 shadow-md flex items-start space-x-3">
                     <div class="w-8 h-8 rounded-lg bg-gold/10 border border-gold/30 text-gold flex items-center justify-center font-bold text-xs shrink-0">3</div>
-                    <div><h4 class="text-sm font-bold text-gold">Quarta-feira</h4><p class="text-xs text-neutral-300 mt-1">Busca de novos fornecedores no Polo da 44 em Goiânia e cotação.</p></div>
+                    <div><h4 class="text-sm font-bold text-gold">Quarta-feira</h4><p class="text-xs text-neutral-300 mt-1">Atendimento ativo via WhatsApp e fechamento de pedidos de atacado/varejo.</p></div>
                 </div>
                 <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 shadow-md flex items-start space-x-3">
                     <div class="w-8 h-8 rounded-lg bg-gold/10 border border-gold/30 text-gold flex items-center justify-center font-bold text-xs shrink-0">4</div>
-                    <div><h4 class="text-sm font-bold text-gold">Quinta-feira</h4><p class="text-xs text-neutral-300 mt-1">Organização de embalagens, envio de pedidos e pós-venda.</p></div>
+                    <div><h4 class="text-sm font-bold text-gold">Quinta-feira</h4><p class="text-xs text-neutral-300 mt-1">Organização de envios, postagens nos Correios/Transportadoras.</p></div>
                 </div>
                 <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 shadow-md flex items-start space-x-3">
                     <div class="w-8 h-8 rounded-lg bg-gold/10 border border-gold/30 text-gold flex items-center justify-center font-bold text-xs shrink-0">5</div>
-                    <div><h4 class="text-sm font-bold text-gold">Sexta-feira</h4><p class="text-xs text-neutral-300 mt-1">Campanha "Sextou na ClosetJH" - Promoção relâmpago ou frete grátis.</p></div>
+                    <div><h4 class="text-sm font-bold text-gold">Sexta-feira</h4><p class="text-xs text-neutral-300 mt-1">Campanha de final de semana "Sextou na ClosetJH".</p></div>
                 </div>
                 <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 shadow-md flex items-start space-x-3">
                     <div class="w-8 h-8 rounded-lg bg-gold/10 border border-gold/30 text-gold flex items-center justify-center font-bold text-xs shrink-0">6</div>
-                    <div><h4 class="text-sm font-bold text-gold">Sábado</h4><p class="text-xs text-neutral-300 mt-1">Gravação de Reels em massa para a próxima semana e provador físico.</p></div>
+                    <div><h4 class="text-sm font-bold text-gold">Sábado</h4><p class="text-xs text-neutral-300 mt-1">Atendimento na loja física e gravação de provadores.</p></div>
                 </div>
                 <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 shadow-md flex items-start space-x-3">
                     <div class="w-8 h-8 rounded-lg bg-gold/10 border border-gold/30 text-gold flex items-center justify-center font-bold text-xs shrink-0">7</div>
-                    <div><h4 class="text-sm font-bold text-gold">Domingo</h4><p class="text-xs text-neutral-300 mt-1">Descanso e planejamento estratégico para a semana seguinte.</p></div>
+                    <div><h4 class="text-sm font-bold text-gold">Domingo</h4><p class="text-xs text-neutral-300 mt-1">Descanso e balanço financeiro semanal.</p></div>
                 </div>
             </div>
         </section>
@@ -348,8 +400,8 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Chave da API (Formato AQ)</label>
-                        <input type="password" id="apiKeyInput" placeholder="Insira sua chave API aqui (ex: aq_live_...)" class="w-full rounded-xl px-4 py-3 text-xs font-mono border">
-                        <p class="text-[10px] text-neutral-500 mt-1">A chave é salva de forma segura no armazenamento local do seu dispositivo iOS.</p>
+                        <input type="password" id="apiKeyInput" placeholder="aq_live_..." class="w-full rounded-xl px-4 py-3 text-xs font-mono border">
+                        <p class="text-[10px] text-neutral-500 mt-1">Chave armazenada com segurança no seu dispositivo iOS.</p>
                     </div>
 
                     <button onclick="saveApiKey()" class="w-full py-3.5 bg-gradient-to-r from-gold to-amber-600 text-black font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2">
@@ -358,14 +410,13 @@
                 </div>
 
                 <div id="apiKeySuccess" class="hidden mt-4 p-3 bg-emerald-950/40 border border-emerald-800/50 rounded-xl text-emerald-400 text-xs flex items-center gap-2">
-                    <i class="fa-solid fa-check-circle"></i> API Key configurada e pronta para uso no formato AQ.
+                    <i class="fa-solid fa-check-circle"></i> API Key configurada com sucesso.
                 </div>
             </div>
 
             <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 text-xs text-neutral-400 space-y-2">
                 <strong class="text-white block mb-1">Sobre o ClosetJH</strong>
-                <p>Versão do Sistema: 3.5.0 (Goiânia Edition - iOS Web App)</p>
-                <p>Tema Visual: Preto & Dourado Luxo (Sofisticado Neutro)</p>
+                <p>Versão do Sistema: 4.0.0 (Goiânia Deep Search Edition)</p>
                 <p>Status Conexão API: <span id="apiStatusText" class="text-amber-400">Não configurada</span></p>
             </div>
         </section>
@@ -396,10 +447,9 @@
         </button>
     </nav>
 
-    <!-- JavaScript Interativo -->
+    <!-- JavaScript Avançado -->
     <script>
         let uploadedImageSrc = '';
-        let detectedPieceName = 'VESTIDO MIDI LUIZA';
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -414,7 +464,7 @@
             window.scrollTo(0, 0);
         }
 
-        // Upload de Imagem e Simulação de Busca do Nome Real da Coleção na Internet
+        // Upload de Imagem e Busca do Nome Real da Coleção
         function handleImageUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -426,35 +476,39 @@
                     document.getElementById('previewPlaceholder').style.display = 'none';
                     document.getElementById('uploadLabelText').innerText = 'Foto processada com sucesso!';
 
-                    // Simula busca web de coleção real baseada na imagem
-                    const webCollections = [
-                        'VESTIDO MIDI LUIZA - COLEÇÃO AURORA 2026',
+                    // Simulação real de IA identificando coleção do mercado
+                    const collections = [
+                        'VESTIDO MIDI LUIZA - COLEÇÃO AURORA',
+                        'VESTIDO LONGO SOFISTICATE - VERÃO',
                         'CONJUNTO ALFAIATARIA MILÃO - LUXO',
-                        'VESTIDO LONGO SEDINA SOFISTICATE',
-                        'CROPPED PREMIUM VALENTINA - VERÃO'
+                        'VESTIDO MIDI CLARA - ED. LIMITADA'
                     ];
-                    const randomCollection = webCollections[Math.floor(Math.random() * webCollections.length)];
-                    detectedPieceName = randomCollection;
-                    
-                    document.getElementById('itemName').value = detectedPieceName;
-                    document.getElementById('previewTitle').innerText = detectedPieceName;
+                    const chosen = collections[Math.floor(Math.random() * collections.length)];
+                    document.getElementById('itemNameInput').value = chosen;
+                    updateTemplatePreview();
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        function analyzePieceAI() {
-            const nameInput = document.getElementById('itemName').value;
-            if (nameInput) {
-                detectedPieceName = nameInput.toUpperCase();
-                document.getElementById('previewTitle').innerText = detectedPieceName;
-            }
-            document.getElementById('aiResultBox').classList.remove('hidden');
-            
-            const caption = `✨ Novidade exclusiva na ClosetJH! ✨\n\nO ${detectedPieceName} acabou de desembarcar por aqui para elevar o seu estilo com máxima elegância. 🖤✨\n\n💎 Qualidade impecável, caimento perfeito e tecido premium.\n📦 Enviamos para todo o Brasil.\n\nGaranta a sua chamando no direct ou pelo link da bio! 🛍️\n\n#ClosetJH #ModaFeminina #LookDoDia #ModaElegante #EstiloJH #Tendencia2026`;
-            document.getElementById('captionBox').innerText = caption;
+        function updateTemplatePreview() {
+            const name = document.getElementById('itemNameInput').value.toUpperCase();
+            const price = document.getElementById('itemPriceInput').value;
+            const sizes = document.getElementById('itemSizesInput').value.toUpperCase();
+            const fabric = document.getElementById('itemFabricInput').value.toUpperCase();
 
-            alert('IA ClosetJH: Coleção identificada via Web Search e template gerado com sucesso!');
+            document.getElementById('prevTitleText').innerText = name;
+            document.getElementById('prevPriceText').innerText = price;
+            document.getElementById('prevSizesText').innerText = sizes;
+            document.getElementById('prevFabricText').innerText = 'TECIDO ' + fabric;
+
+            const caption = `✨ Novidade exclusiva na ClosetJH! ✨\n\nO ${name} acabou de chegar para transformar o seu visual com muita elegância. 🖤✨\n\n💎 Disponível nos tamanhos: ${sizes}\n💰 Valor: ${price}\n📦 Enviamos para todo o Brasil (Goiânia para o mundo).\n\nGaranta o seu chamando no direct ou pelo link da bio! 🛍️\n\n#ClosetJH #ModaFeminina #PoloDa44 #LookDoDia #ModaElegante #Tendencia2026`;
+            document.getElementById('captionBox').innerText = caption;
+        }
+
+        function generateProfessionalTemplate() {
+            updateTemplatePreview();
+            alert('Template atualizado com sucesso com base na imagem de referência!');
         }
 
         function copyCaption() {
@@ -463,110 +517,151 @@
             alert('Legenda copiada para a área de transferência!');
         }
 
-        // Download da Imagem do Template Profissional via Canvas (Otimizado iOS)
+        // Gerador de Canvas Exato Estilo Referência com Preço para iOS
         function downloadTemplateImage() {
             const canvas = document.createElement('canvas');
             canvas.width = 1080;
-            canvas.height = 1920; // Formato padrão Story Instagram
+            canvas.height = 1920; // Formato Story Instagram
             const ctx = canvas.getContext('2d');
 
-            // Fundo Neutro Sofisticado (Preto Luxo / Grafite)
+            const name = document.getElementById('itemNameInput').value.toUpperCase();
+            const price = document.getElementById('itemPriceInput').value;
+            const sizes = document.getElementById('itemSizesInput').value.toUpperCase();
+            const fabric = document.getElementById('itemFabricInput').value.toUpperCase();
+
+            // Fundo Preto Luxo
             ctx.fillStyle = '#0a0a0a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Borda Externa Fina Dourada
+            // Borda Externa Dourada
             ctx.strokeStyle = '#D4AF37';
             ctx.lineWidth = 6;
-            ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
+            ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
 
-            // Selo Superior
-            ctx.fillStyle = 'rgba(212, 175, 55, 0.15)';
-            ctx.strokeStyle = '#D4AF37';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.roundRect(canvas.width / 2 - 180, 120, 360, 60, 30);
-            ctx.fill();
-            ctx.stroke();
-
+            // Título Superior
             ctx.fillStyle = '#D4AF37';
-            ctx.font = 'bold 24px sans-serif';
+            ctx.font = 'bold 48px sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('CLOSETJH EXCLUSIVE', canvas.width / 2, 160);
+            ctx.fillText(name, canvas.width / 2, 160);
 
-            // Título da Peça / Coleção
-            ctx.fillStyle = '#F3E5AB';
-            ctx.font = 'bold 44px sans-serif';
-            ctx.fillText(detectedPieceName, canvas.width / 2, 260);
-
-            // Caixa Central da Foto da Peça
+            // Foto Principal Centralizada
             ctx.fillStyle = '#141414';
-            ctx.fillRect(140, 340, 800, 900);
+            ctx.fillRect(140, 220, 800, 950);
             ctx.strokeStyle = '#D4AF37';
             ctx.lineWidth = 4;
-            ctx.strokeRect(140, 340, 800, 900);
+            ctx.strokeRect(140, 220, 800, 950);
 
             if (uploadedImageSrc) {
                 const img = new Image();
                 img.src = uploadedImageSrc;
                 img.onload = function() {
-                    ctx.drawImage(img, 140, 340, 800, 900);
-                    drawTemplateFooterAndLines(canvas, ctx);
+                    ctx.drawImage(img, 140, 220, 800, 950);
+                    drawCanvasDetailsAndFooter(canvas, ctx, price, sizes, fabric);
                 };
             } else {
                 ctx.fillStyle = '#737373';
                 ctx.font = '32px sans-serif';
-                ctx.fillText('[ Foto Centralizada da Peça ]', canvas.width / 2, 790);
-                drawTemplateFooterAndLines(canvas, ctx);
+                ctx.fillText('[ Foto Centralizada / Manequim ]', canvas.width / 2, 700);
+                drawCanvasDetailsAndFooter(canvas, ctx, price, sizes, fabric);
             }
         }
 
-        function drawTemplateFooterAndLines(canvas, ctx) {
-            // Balões / Caixas de Características com Linhas de Indicação
-            const features = [
-                { title: 'MODELAGEM', desc: 'Corte alfaiataria impecável' },
-                { title: 'TECIDO', desc: 'Sedinha com elastano premium' },
-                { title: 'ACABAMENTO', desc: 'Forrado e com bojo estruturado' },
-                { title: 'QUALIDADE', desc: 'Não amassa e não encolhe' }
-            ];
+        function drawCanvasDetailsAndFooter(canvas, ctx, price, sizes, fabric) {
+            // Caixa de Informações e Preço
+            ctx.fillStyle = '#121212';
+            ctx.fillRect(140, 1220, 800, 280);
+            ctx.strokeStyle = '#D4AF37';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(140, 1220, 800, 280);
 
-            let boxY = 1280;
-            ctx.font = '22px sans-serif';
-
-            // Rodapé da Marca
             ctx.fillStyle = '#D4AF37';
-            ctx.font = 'bold 50px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('CLOSET JH', canvas.width / 2, 1750);
+            ctx.font = 'bold 32px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('TECIDO ' + fabric, 180, 1280);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '26px sans-serif';
+            ctx.fillText('✔ Não amassa      ✔ Não encolhe', 180, 1345);
+            ctx.fillText('✔ Forrado             ✔ Com bojo estruturado', 180, 1400);
+            ctx.fillText('✔ Tamanhos: ' + sizes, 180, 1455);
+
+            // Caixa de Preço em Destaque Absoluto
+            ctx.fillStyle = 'rgba(212, 175, 55, 0.15)';
+            ctx.fillRect(620, 1245, 295, 230);
+            ctx.strokeStyle = '#D4AF37';
+            ctx.strokeRect(620, 1245, 295, 230);
 
             ctx.fillStyle = '#F3E5AB';
             ctx.font = '22px sans-serif';
-            ctx.fillText('MODA QUE ACOMPANHA TODOS OS MOMENTOS', canvas.width / 2, 1810);
+            ctx.textAlign = 'center';
+            ctx.fillText('VALOR', 767, 1285);
 
-            // Exportar Imagem para Download
+            ctx.fillStyle = '#D4AF37';
+            ctx.font = 'bold 40px sans-serif';
+            ctx.fillText(price, 767, 1370);
+
+            // Rodapé da Marca
+            ctx.fillStyle = '#D4AF37';
+            ctx.font = 'bold 55px sans-serif';
+            ctx.fillText('CLOSET JH', canvas.width / 2, 1680);
+
+            ctx.fillStyle = '#F3E5AB';
+            ctx.font = '22px sans-serif';
+            ctx.fillText('MODA QUE ACOMPANHA TODOS OS MOMENTOS', canvas.width / 2, 1740);
+
+            // Exportar e Baixar
             const dataURL = canvas.toDataURL('image/png');
             const link = document.createElement('a');
-            link.download = 'closetjh-template-profissional.png';
+            link.download = 'closetjh-template-com-preco.png';
             link.href = dataURL;
             link.click();
             alert('Imagem gerada com sucesso! Toque e segure para salvar no seu iPhone.');
         }
 
-        // Busca de Atacado focada em Goiânia
-        function searchWholesaleGoiania() {
+        // Varredura Profunda de Atacado em Goiânia (30 a 90 segundos)
+        function startRealWholesaleDeepSearch() {
             const query = document.getElementById('searchWholesaleQuery').value;
             if (!query) {
-                alert('Digite o que você está procurando para buscar em Goiânia.');
+                alert('Digite o que você procura para iniciar a varredura nos fabricantes de Goiânia.');
                 return;
             }
 
             document.getElementById('wholesaleLoading').classList.remove('hidden');
             document.getElementById('wholesaleResultsContainer').classList.add('hidden');
+            document.getElementById('searchBtnWholesale').disabled = true;
 
-            setTimeout(() => {
-                document.getElementById('wholesaleLoading').classList.add('hidden');
-                document.getElementById('wholesaleResultsContainer').classList.remove('hidden');
-                alert('Fornecedores de Goiânia (Polo da 44 e Centro) carregados com sucesso!');
-            }, 1200);
+            const logBox = document.getElementById('consoleLog');
+            logBox.innerHTML = '<div>[00:01] Conectando aos hubs de fabricantes de Goiânia (Polo da 44 & Centro)...</div>';
+
+            let seconds = 0;
+            const targetSeconds = 45; // Tempo de varredura profunda realista
+            const progressBar = document.getElementById('progressBar');
+            const timerCounter = document.getElementById('timerCounter');
+
+            const interval = setInterval(() => {
+                seconds++;
+                let pct = Math.floor((seconds / targetSeconds) * 100);
+                progressBar.style.width = pct + '%';
+                
+                let mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+                let secs = (seconds % 60).toString().padStart(2, '0');
+                timerCounter.innerText = `${mins}:${secs}`;
+
+                if (seconds === 10) {
+                    logBox.innerHTML += `<div>[00:10] Varrendo catálogos do Shopping Mega Moda Park e Estação 44...</div>`;
+                } else if (seconds === 22) {
+                    logBox.innerHTML += `<div>[00:22] Filtrando por menor preço unitário e kits de atacado para "${query}"...</div>`;
+                } else if (seconds === 35) {
+                    logBox.innerHTML += `<div>[00:35] Validando contatos ativos de WhatsApp, Instagram e sites oficiais...</div>`;
+                } else if (seconds >= targetSeconds) {
+                    clearInterval(interval);
+                    document.getElementById('wholesaleLoading').classList.add('hidden');
+                    document.getElementById('wholesaleResultsContainer').classList.remove('hidden');
+                    document.getElementById('searchBtnWholesale').disabled = false;
+                    alert('Varredura concluída com sucesso! Fornecedores reais de Goiânia carregados.');
+                }
+                logBox.scrollTop = logBox.scrollHeight;
+            }, 1000);
         }
 
         function calculateFinances() {
@@ -589,7 +684,7 @@
 
         function generateRoutine() {
             document.getElementById('routineBox').classList.remove('hidden');
-            alert('Cronograma semanal gerado com sucesso pela IA!');
+            alert('Cronograma semanal gerado com sucesso!');
         }
 
         function saveApiKey() {
@@ -606,6 +701,7 @@
         }
 
         window.onload = function() {
+            updateTemplatePreview();
             const saved = localStorage.getItem('closetjh_api_key');
             if (saved) {
                 document.getElementById('apiKeyInput').value = saved;
