@@ -609,15 +609,15 @@
       }
     }
 
-    function verificarStatusAPI() {
+   function verificarStatusAPI() {
       const k = obterChaveAPI();
       const box = document.getElementById('apiStatusBox');
-      if (k.startsWith('AIza')) {
+      if (k.startsWith('AIza') || k.startsWith('AQ.')) {
         box.className = "api-status-box ok";
-        box.innerText = "✅ Chave AIza configurada e pronta para uso a 100%.";
+        box.innerText = "✅ Token/Chave configurada e pronta para uso a 100%.";
       } else {
         box.className = "api-status-box error";
-        box.innerText = "⚠️ Token temporário detectado. Insira uma chave AIza para evitar falhas.";
+        box.innerText = "⚠️ Chave inválida. Verifique o texto colado.";
       }
     }
 
