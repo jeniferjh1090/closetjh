@@ -3,490 +3,1210 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ClosetJH - Painel Interno de Vendas & Consultoria Definitivo</title>
+  <title>ClosetJH - Enterprise OS & AI</title>
   <style>
+    /* ==========================================================================
+       1. VARIÁVEIS E RESET GLOBAL
+       ========================================================================== */
     :root {
-      --bg-color: #080808;
-      --card-bg: #121212;
-      --card-alt: #181818;
+      --bg-dark: #050505;
+      --bg-panel: #101010;
+      --bg-card: #181818;
       --gold-primary: #D4AF37;
-      --gold-light: #FCF6BA;
-      --gold-dark: #B38728;
-      --gold-gradient: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728);
-      --text-color: #F5F5F5;
-      --text-muted: #999999;
-      --border-color: rgba(212, 175, 55, 0.3);
-      --border-focus: rgba(212, 175, 55, 0.8);
-      --danger-color: #ff5555;
-      --success-color: #2ecc71;
+      --gold-light: #F9E596;
+      --gold-dark: #AA8B2C;
+      --gold-gradient: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7);
+      --text-main: #EAEAEA;
+      --text-muted: #888888;
+      --border-light: rgba(212, 175, 55, 0.15);
+      --border-focus: rgba(212, 175, 55, 0.6);
+      --danger: #FF4C4C;
+      --success: #00E676;
+      --info: #2196F3;
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.5);
+      --shadow-glow: 0 0 15px rgba(212, 175, 55, 0.2);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
+    
     body {
-      background-color: var(--bg-color); color: var(--text-color);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      padding: 12px 12px 110px 12px; -webkit-font-smoothing: antialiased; line-height: 1.4;
+      background-color: var(--bg-dark); color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      padding: 0 0 90px 0; -webkit-font-smoothing: antialiased; line-height: 1.5; overflow-x: hidden;
     }
 
-    #toastContainer {
-      position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999;
-      display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 400px; pointer-events: none;
+    /* Barra de Rolagem Customizada */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-dark); }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--gold-primary); }
+
+    /* ==========================================================================
+       2. COMPONENTES DE UI GERAIS
+       ========================================================================== */
+    .header-main {
+      padding: 20px; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-light); position: sticky; top: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
     }
-
-    .toast {
-      background: rgba(20, 20, 20, 0.95); color: #fff; padding: 12px 16px; border-radius: 8px;
-      border: 1px solid var(--gold-primary); box-shadow: 0 5px 20px rgba(0,0,0,0.8);
-      font-size: 12px; text-align: center; opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease;
-      transform: translateY(-10px); pointer-events: auto;
-    }
-
-    .toast.show { opacity: 1; transform: translateY(0); }
-
-    .badge-internal {
-      background: linear-gradient(90deg, #161616, #222222); color: var(--gold-primary);
-      font-size: 10px; text-align: center; padding: 8px; border-radius: 6px; letter-spacing: 2px;
-      font-weight: 800; margin-bottom: 10px; border: 1px solid var(--border-color);
-      box-shadow: 0 3px 6px rgba(0,0,0,0.6); text-transform: uppercase;
-    }
-
-    h1 {
-      text-align: center; color: var(--gold-primary); font-size: 26px; letter-spacing: 4px;
-      margin: 6px 0 2px 0; font-family: serif; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    }
-
-    p.subtitle {
-      text-align: center; font-size: 10px; color: var(--text-muted); margin-bottom: 16px;
-      letter-spacing: 1.5px; text-transform: uppercase;
-    }
-
-    .tab-bar {
-      display: flex; justify-content: space-around; background: rgba(15, 15, 15, 0.98);
-      border-top: 1px solid var(--border-color); position: fixed; bottom: 0; left: 0; right: 0;
-      padding: 10px 4px; z-index: 1000; backdrop-filter: blur(10px); box-shadow: 0 -6px 20px rgba(0,0,0,0.9);
-    }
-
-    .tab-item {
-      color: #666; font-size: 9px; text-align: center; background: none; border: none;
-      padding: 6px 0; flex: 1; cursor: pointer; transition: color 0.3s ease, transform 0.2s ease;
-      text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
-    }
-
-    .tab-item.active { color: var(--gold-primary); font-weight: 800; transform: translateY(-2px); }
-    .tab-item span { display: block; font-size: 18px; margin-bottom: 3px; pointer-events: none; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-    .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: 0 6px 16px rgba(0,0,0,0.5); }
     
+    .brand h1 { color: var(--gold-primary); font-size: 22px; font-family: 'Georgia', serif; letter-spacing: 2px; }
+    .brand p { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+    
+    .status-badge {
+      font-size: 10px; padding: 4px 8px; border-radius: 20px; font-weight: bold; text-transform: uppercase;
+      background: rgba(212, 175, 55, 0.1); color: var(--gold-primary); border: 1px solid var(--gold-primary);
+    }
+
+    .container { padding: 15px; max-width: 800px; margin: 0 auto; }
+
+    .card {
+      background: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-light);
+      padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-soft); position: relative; overflow: hidden;
+    }
+    
+    .card::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--gold-gradient);
+    }
+
     .card-title {
-      font-size: 12px; color: var(--gold-primary); font-weight: 800; text-transform: uppercase;
-      letter-spacing: 1px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
-      border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;
+      font-size: 16px; color: var(--gold-light); font-weight: 600; margin-bottom: 5px;
+      display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px;
     }
-
-    label { font-size: 10px; color: var(--gold-primary); font-weight: 700; display: block; margin: 10px 0 4px 0; text-transform: uppercase; letter-spacing: 0.8px; }
     
-    input[type="text"], input[type="number"], textarea, select {
-      width: 100%; padding: 12px; border-radius: 8px; background: var(--card-alt); border: 1px solid #2a2a2a;
-      color: #fff; font-size: 14px; transition: all 0.3s ease;
-    }
-    input:focus, textarea:focus, select:focus { border-color: var(--gold-primary); outline: none; box-shadow: 0 0 8px rgba(212, 175, 55, 0.2); }
-    textarea { resize: vertical; min-height: 70px; }
+    .card-desc { font-size: 11px; color: var(--text-muted); margin-bottom: 15px; }
 
-    .btn, .btn-secondary, .btn-action, .btn-danger {
-      width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 13px; font-weight: 800;
-      text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease;
-      display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px;
-    }
-
-    .btn { background: var(--gold-gradient); color: #000; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
-    .btn:active { transform: scale(0.97); }
-    .btn-secondary { background: #2a2a2a; color: var(--gold-light); border: 1px solid var(--gold-primary); }
-    .btn-secondary:active { background: #333; }
-    .btn-action { background: #161616; color: #ccc; border: 1px solid #333; }
-    .btn-danger { background: rgba(255, 85, 85, 0.1); color: var(--danger-color); border: 1px solid var(--danger-color); margin-top: 5px;}
-
-    .photo-area {
-      border: 2px dashed #333; border-radius: 12px; padding: 25px 15px; text-align: center;
-      margin: 12px 0; background: var(--card-alt); transition: border-color 0.3s; position: relative;
-    }
-    .photo-area:hover, .photo-area:active { border-color: var(--gold-primary); }
-    .photo-area span { display: block; margin-top: 8px; font-size: 12px; color: #888; pointer-events: none; }
+    /* ==========================================================================
+       3. FORMULÁRIOS E BOTÕES
+       ========================================================================== */
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; font-size: 11px; color: var(--gold-primary); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; }
     
-    .hidden-file-input {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;
+    input, select, textarea {
+      width: 100%; padding: 12px 15px; border-radius: var(--radius-sm); background: #0A0A0A;
+      border: 1px solid #333; color: var(--text-main); font-size: 14px; outline: none; transition: var(--transition);
     }
+    input:focus, select:focus, textarea:focus { border-color: var(--gold-primary); box-shadow: 0 0 0 2px rgba(212,175,55,0.2); }
+    textarea { resize: vertical; min-height: 80px; }
 
-    .image-preview { width: 100%; border-radius: 8px; margin-top: 10px; display: none; object-fit: cover; max-height: 400px; border: 1px solid #333; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; }
 
-    .loading { display: none; text-align: center; margin: 15px 0; }
-    .loading-spinner {
-      border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--gold-primary);
-      border-radius: 50%; width: 28px; height: 28px; animation: spin 1s linear infinite; margin: 0 auto;
+    .btn {
+      width: 100%; padding: 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: bold;
+      text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border: none; transition: var(--transition);
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     }
-    .loading p { color: var(--gold-primary); font-size: 10px; margin-top: 8px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
+    .btn-primary { background: var(--gold-gradient); color: #000; box-shadow: var(--shadow-glow); }
+    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn-secondary { background: #222; color: var(--gold-light); border: 1px solid #444; }
+    .btn-secondary:hover { background: #333; border-color: var(--gold-primary); }
+    .btn-danger { background: rgba(255, 76, 76, 0.1); color: var(--danger); border: 1px solid var(--danger); }
+    .btn-success { background: rgba(0, 230, 118, 0.1); color: var(--success); border: 1px solid var(--success); }
+    .btn-small { padding: 8px 12px; font-size: 10px; }
+
+    /* ==========================================================================
+       4. COMPONENTES ESPECÍFICOS (FOTO, LOADING, TOAST, MODAL)
+       ========================================================================== */
+    .photo-upload-area {
+      border: 2px dashed #444; border-radius: var(--radius-md); padding: 30px 15px; text-align: center;
+      cursor: pointer; position: relative; background: #0A0A0A; transition: var(--transition);
+    }
+    .photo-upload-area:hover { border-color: var(--gold-primary); background: #111; }
+    .photo-upload-area .icon { font-size: 30px; margin-bottom: 10px; display: block; }
+    .photo-upload-area .text { font-size: 12px; color: var(--text-muted); }
+    .photo-upload-area input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+    .img-preview { width: 100%; max-height: 300px; object-fit: cover; border-radius: var(--radius-sm); margin-top: 15px; display: none; border: 1px solid #333; }
+
+    .loader-container { display: none; text-align: center; padding: 20px 0; }
+    .spinner {
+      width: 40px; height: 40px; border: 3px solid rgba(212, 175, 55, 0.2);
+      border-top: 3px solid var(--gold-primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px auto;
+    }
+    .loader-text { font-size: 11px; color: var(--gold-primary); letter-spacing: 2px; text-transform: uppercase; animation: pulse 1.5s infinite; }
+    
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     .result-box {
-      margin-top: 15px; padding: 14px; background: #0a0a0a; border-radius: 8px; border-left: 3px solid var(--gold-primary);
-      font-size: 13px; color: #e0e0e0; display: none; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6;
+      margin-top: 20px; background: #080808; border-radius: var(--radius-sm); padding: 20px;
+      border: 1px solid #222; font-size: 13px; line-height: 1.6; display: none; animation: slideUp 0.4s ease;
     }
-
-    .result-box h3 { color: var(--gold-light); font-size: 14px; margin: 12px 0 6px 0; border-bottom: 1px solid #222; padding-bottom: 4px; }
-    .result-box p { margin-bottom: 8px; }
+    .result-box h1, .result-box h2, .result-box h3 { color: var(--gold-light); margin-top: 15px; margin-bottom: 8px; border-bottom: 1px solid #222; padding-bottom: 5px; font-size: 15px; }
+    .result-box p { margin-bottom: 10px; color: #ccc; }
+    .result-box ul { padding-left: 20px; margin-bottom: 10px; color: #ccc; }
+    .result-box li { margin-bottom: 5px; }
     .result-box strong { color: var(--gold-primary); }
-    .result-box ul { padding-left: 18px; margin-bottom: 10px; }
-    .result-box li { margin-bottom: 4px; }
 
-    .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
-    .price-card { background: #0a0a0a; border: 1px solid #222; padding: 10px; border-radius: 8px; text-align: center; }
-    .price-label { font-size: 9px; color: #888; text-transform: uppercase; margin-bottom: 4px; }
-    .price-value { font-size: 16px; color: var(--gold-primary); font-weight: 800; }
-    .price-profit { font-size: 11px; color: var(--success-color); font-weight: bold; margin-top: 2px;}
+    /* TOAST NOTIFICATIONS */
+    #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+    .toast {
+      background: #111; color: #fff; padding: 15px 20px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 500;
+      border-left: 4px solid var(--gold-primary); box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      display: flex; align-items: center; gap: 10px; min-width: 250px; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.error { border-left-color: var(--danger); }
+    .toast.success { border-left-color: var(--success); }
 
-    /* Copy Button */
-    .btn-copy { background: #222; color: #fff; border: 1px solid #444; margin-top: 15px; font-size: 11px; padding: 10px; display: none; }
-    
-    /* Config Panel */
-    .config-box { background: #0a0a0a; border: 1px solid #333; padding: 12px; border-radius: 8px; margin-bottom: 15px; }
-    .config-box p { font-size: 11px; color: #888; margin-bottom: 10px; }
-    
+    /* MODAL SYSTEM */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(5px); z-index: 5000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s;
+    }
+    .modal-overlay.active { display: flex; opacity: 1; }
+    .modal-content {
+      background: var(--bg-card); width: 90%; max-width: 500px; border-radius: var(--radius-md); border: 1px solid var(--border-light);
+      max-height: 85vh; overflow-y: auto; position: relative; transform: scale(0.9); transition: transform 0.3s;
+    }
+    .modal-overlay.active .modal-content { transform: scale(1); }
+    .modal-header { padding: 15px 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; background: var(--bg-card); z-index: 2; }
+    .modal-header h3 { color: var(--gold-primary); font-size: 16px; margin: 0; }
+    .modal-close { background: none; border: none; color: #888; font-size: 24px; cursor: pointer; }
+    .modal-body { padding: 20px; }
+
+    /* ==========================================================================
+       5. LAYOUTS ESPECÍFICOS (GRÁFICOS, CHAT, LISTAS)
+       ========================================================================== */
+    .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+    .kpi-card { background: #111; border: 1px solid #222; padding: 15px; border-radius: var(--radius-sm); text-align: center; }
+    .kpi-title { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
+    .kpi-value { font-size: 20px; color: var(--gold-primary); font-weight: bold; }
+    .kpi-sub { font-size: 9px; color: var(--success); }
+
+    .chart-container { width: 100%; height: 200px; background: #0A0A0A; border: 1px solid #222; border-radius: var(--radius-sm); margin-bottom: 20px; position: relative; }
+    canvas { width: 100%; height: 100%; }
+
+    .data-list { list-style: none; }
+    .data-item {
+      background: #0A0A0A; border: 1px solid #222; padding: 12px 15px; border-radius: var(--radius-sm); margin-bottom: 8px;
+      display: flex; justify-content: space-between; align-items: center; transition: var(--transition); cursor: pointer;
+    }
+    .data-item:hover { border-color: var(--gold-primary); background: #111; }
+    .data-item-info h4 { font-size: 13px; color: var(--text-main); margin-bottom: 2px; }
+    .data-item-info p { font-size: 11px; color: var(--text-muted); }
+    .data-item-value { text-align: right; }
+    .data-item-value span { display: block; font-size: 14px; color: var(--gold-light); font-weight: bold; }
+    .data-item-value small { font-size: 9px; color: var(--success); }
+
+    /* Estilos do Chatbot */
+    .chat-box { height: 350px; overflow-y: auto; background: #080808; border: 1px solid #222; border-radius: var(--radius-sm); padding: 15px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 15px; }
+    .msg { max-width: 85%; padding: 10px 15px; border-radius: 12px; font-size: 13px; line-height: 1.4; position: relative; word-wrap: break-word;}
+    .msg.user { background: #222; color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
+    .msg.ai { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--border-light); color: #eaeaea; align-self: flex-start; border-bottom-left-radius: 2px; }
+    .chat-input-area { display: flex; gap: 10px; }
+    .chat-input-area input { flex: 1; }
+    .chat-input-area button { width: auto; padding: 0 20px; }
+
+    /* ==========================================================================
+       6. NAVEGAÇÃO INFERIOR (TABS)
+       ========================================================================== */
+    .nav-bottom {
+      position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(15px);
+      border-top: 1px solid #222; display: flex; justify-content: space-around; padding: 10px 5px 20px 5px; z-index: 1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.8);
+    }
+    .nav-item {
+      background: none; border: none; color: #666; font-size: 9px; text-transform: uppercase; font-weight: 700;
+      letter-spacing: 0.5px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; transition: var(--transition); flex: 1;
+    }
+    .nav-item .icon { font-size: 18px; margin-bottom: 2px; filter: grayscale(100%); opacity: 0.5; transition: var(--transition); }
+    .nav-item.active { color: var(--gold-primary); }
+    .nav-item.active .icon { filter: grayscale(0%); opacity: 1; transform: translateY(-3px); }
+
+    .tab-content { display: none; animation: fadeIn 0.4s ease; }
+    .tab-content.active { display: block; }
   </style>
 </head>
 <body>
 
-  <div id="toastContainer"></div>
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container"></div>
 
-  <div class="badge-internal">Acesso Exclusivo - Vendas</div>
-  <h1>ClosetJH</h1>
-  <p class="subtitle">Inteligência & Atacado</p>
+  <!-- HEADER GERAL -->
+  <header class="header-main">
+    <div class="brand">
+      <h1>ClosetJH</h1>
+      <p>Enterprise OS & AI System</p>
+    </div>
+    <div class="status-badge" id="auth-status">🔒 Smart Auth</div>
+  </header>
 
-  <!-- TAB 1: STUDIO IA (Análise de Peças) -->
-  <div id="tab-studio" class="tab-content active">
+  <div class="container">
     
-    <div class="card">
-      <div class="card-title">📷 Analisar Nova Peça (IA)</div>
-      <p style="font-size: 11px; color: #888; margin-bottom:10px;">Tire uma foto da peça de roupa para gerar análise de público, precificação, sugestão de looks e textos de venda.</p>
-      
-      <div class="photo-area">
-        <span style="font-size: 24px;">📸</span>
-        <span>Toque para Fotografar ou Escolher</span>
-        <input type="file" id="imageInput" accept="image/*" class="hidden-file-input">
-      </div>
-      <img id="imagePreview" class="image-preview" alt="Preview da peça">
-      <button id="btnRemoverImg" class="btn-danger" style="display:none;">Remover Imagem</button>
+    <!-- ==========================================
+         TAB 1: DASHBOARD (HOME)
+         ========================================== -->
+    <div id="tab-dashboard" class="tab-content active">
+      <div class="card">
+        <div class="card-title">📊 Visão Geral Financeira</div>
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-title">Faturamento Mês</div>
+            <div class="kpi-value" id="dash-faturamento">R$ 0,00</div>
+            <div class="kpi-sub">Total Recebido</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Lucro Líquido</div>
+            <div class="kpi-value" id="dash-lucro">R$ 0,00</div>
+            <div class="kpi-sub">Após custos</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Vendas Realizadas</div>
+            <div class="kpi-value" id="dash-qtd-vendas">0</div>
+            <div class="kpi-sub">Pedidos</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Ticket Médio</div>
+            <div class="kpi-value" id="dash-ticket">R$ 0,00</div>
+            <div class="kpi-sub">Por cliente</div>
+          </div>
+        </div>
 
-      <button class="btn" id="btnAnalisar" style="margin-top: 15px;">✨ Analisar Peça com IA</button>
-      
-      <div class="loading" id="loadingStudio">
-        <div class="loading-spinner"></div>
-        <p>A Inteligência Artificial está analisando o tecido, modelagem e tendências...</p>
-      </div>
+        <div class="chart-container">
+          <!-- Canvas para o motor de gráfico customizado -->
+          <canvas id="salesChart"></canvas>
+        </div>
 
-      <div class="result-box" id="resultStudio"></div>
-      <button class="btn-secondary btn-copy" id="btnCopyStudio">📋 Copiar Descrição para WhatsApp/Instagram</button>
-    </div>
-
-  </div>
-
-  <!-- TAB 2: ATACADO & FORNECEDORES -->
-  <div id="tab-atacado" class="tab-content">
-    
-    <div class="card">
-      <div class="card-title">🏭 Busca Inteligente de Fornecedores</div>
-      <p style="font-size: 11px; color: #888; margin-bottom:10px;">Encontre fábricas e atacadistas para uma peça específica usando IA e Busca na Web.</p>
-
-      <label>1. Descreva a peça que deseja comprar</label>
-      <input type="text" id="descAtacado" placeholder="Ex: Vestido midi canelado terracota...">
-
-      <label>2. Ou anexe uma foto de referência (opcional)</label>
-      <div class="photo-area" style="padding: 15px;">
-        <span style="font-size: 20px;">🖼️</span>
-        <span style="font-size: 10px;">Anexar Foto de Referência</span>
-        <input type="file" id="imageInputAtacado" accept="image/*" class="hidden-file-input">
-      </div>
-      <img id="previewAtacado" class="image-preview" alt="Referência">
-      <button id="btnRemoverImgAtacado" class="btn-danger" style="display:none; padding:8px; font-size:10px;">Remover Foto</button>
-
-      <button class="btn" id="btnBuscarAtacado" style="margin-top: 15px;">🔍 Buscar Fornecedores Atacado</button>
-      
-      <div class="loading" id="loadingAtacado">
-        <div class="loading-spinner"></div>
-        <p>Vasculhando a internet por fornecedores e estimativas de preço de fábrica...</p>
+        <button class="btn btn-primary" onclick="abrirModal('modalNovaVenda')">➕ Registrar Nova Venda</button>
       </div>
 
-      <div class="result-box" id="resultAtacado"></div>
-    </div>
-  </div>
-
-  <!-- TAB 3: ROTINA & MARKETING -->
-  <div id="tab-rotina" class="tab-content">
-    <div class="card">
-      <div class="card-title">📅 Planejador Semanal de Vendas</div>
-      <p style="font-size: 11px; color: #888; margin-bottom:10px;">Gere uma rotina de postagens focada em engajamento e vendas para a ClosetJH.</p>
-      
-      <label>Foco da Semana</label>
-      <select id="focoSemana">
-        <option value="Lancamento">Lançamento de Nova Coleção</option>
-        <option value="QueimaEstoque">Queima de Estoque / Promoção</option>
-        <option value="LooksFimDeSemana">Looks para o Fim de Semana</option>
-        <option value="ModaTrabalho">Moda Trabalho / Casual Chic</option>
-        <option value="Engajamento">Crescer Engajamento e Seguidores</option>
-      </select>
-
-      <button class="btn" id="btnGerarRotina">🗓️ Gerar Rotina de Marketing</button>
-
-      <div class="loading" id="loadingRotina">
-        <div class="loading-spinner"></div>
-        <p>Montando cronograma de stories e reels...</p>
-      </div>
-
-      <div class="result-box" id="resultRotina"></div>
-    </div>
-  </div>
-
-  <!-- TAB 4: GESTÃO & CHAVES (CONFIG) -->
-  <div id="tab-gestao" class="tab-content">
-    <div class="card">
-      <div class="card-title">⚙️ Configurações do Sistema</div>
-      
-      <div class="config-box">
-        <label>Token de Acesso ou Chave de API</label>
-        <p>Insira sua credencial. O sistema aceitará automaticamente formatos como "AQ.Ab..." ou "AIza...".</p>
-        <input type="text" id="apiKey" placeholder="Ex: AQ.Ab8RN6KJ... ou AIzaSy...">
-        <button class="btn-secondary" id="btnSalvarKey" style="margin-top:8px;">💾 Salvar Credencial</button>
-      </div>
-
-      <div class="config-box" style="border-color: #331111;">
-        <label style="color: var(--danger-color);">Zona de Risco</label>
-        <button class="btn-danger" id="btnLimparDados">🗑️ Limpar Todos os Dados do App</button>
-      </div>
-      
-      <div style="text-align: center; margin-top: 20px; opacity: 0.5;">
-        <p style="font-size: 10px;">ClosetJH v2.6 - Smart Auth</p>
-        <p style="font-size: 9px;">Criado para gestão comercial.</p>
+      <div class="card">
+        <div class="card-title">🛍️ Últimas Vendas</div>
+        <ul class="data-list" id="lista-ultimas-vendas">
+          <!-- Renderizado via JS -->
+          <p style="text-align: center; color: #555; font-size: 12px; margin-top: 10px;">Nenhuma venda registrada ainda.</p>
+        </ul>
       </div>
     </div>
+
+    <!-- ==========================================
+         TAB 2: CRM & CLIENTES
+         ========================================== -->
+    <div id="tab-crm" class="tab-content">
+      <div class="card">
+        <div class="card-title">👥 Base de Clientes (CRM)</div>
+        <p class="card-desc">Gerencie suas clientes, histórico de compras e preferências.</p>
+        
+        <div class="form-group">
+          <input type="text" id="busca-cliente" placeholder="Buscar cliente por nome ou telefone..." oninput="renderizarClientes()">
+        </div>
+
+        <button class="btn btn-secondary" onclick="abrirModal('modalNovoCliente')" style="margin-bottom: 15px;">➕ Cadastrar Cliente</button>
+
+        <ul class="data-list" id="lista-clientes">
+          <!-- Renderizado via JS -->
+        </ul>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         TAB 3: STUDIO IA (Análise Visual)
+         ========================================== -->
+    <div id="tab-studio" class="tab-content">
+      <div class="card">
+        <div class="card-title">✨ Studio IA - Análise de Produto</div>
+        <p class="card-desc">Faça upload da foto de uma peça para gerar descrições, preços e copy de vendas.</p>
+
+        <div class="photo-upload-area" id="studio-upload-box" onclick="document.getElementById('imgStudio').click()">
+          <span class="icon">📸</span>
+          <span class="text">Toque para selecionar a foto da roupa</span>
+          <input type="file" id="imgStudio" accept="image/*">
+        </div>
+        <img id="previewStudio" class="img-preview" alt="Preview">
+        
+        <div class="grid-2" style="margin-top: 15px;" id="studio-actions" style="display:none;">
+          <button class="btn btn-danger btn-small" id="btnRemoverStudio" style="display: none;">Remover Imagem</button>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+          <label>O que a IA deve gerar?</label>
+          <select id="tipoAnaliseStudio">
+            <option value="completa">Análise Completa (Preço, Tecido, Copy Insta)</option>
+            <option value="seo">Ficha Técnica e SEO para E-commerce</option>
+            <option value="looks">Sugestão de Looks e Combinações</option>
+          </select>
+        </div>
+
+        <button class="btn btn-primary" id="btnAnalisarStudio">🤖 Processar com Inteligência Artificial</button>
+
+        <div class="loader-container" id="loadStudio">
+          <div class="spinner"></div>
+          <div class="loader-text">A IA está processando a imagem...</div>
+        </div>
+
+        <div class="result-box" id="resultStudio"></div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         TAB 4: ATACADO & FORNECEDORES
+         ========================================== -->
+    <div id="tab-atacado" class="tab-content">
+      <div class="card">
+        <div class="card-title">🏭 Radar de Atacado</div>
+        <p class="card-desc">Encontre fornecedores, pólos de moda e estimativas de custo de produção.</p>
+        
+        <div class="form-group">
+          <label>Descreva a peça que deseja comprar em atacado:</label>
+          <input type="text" id="descAtacado" placeholder="Ex: Conjunto de linho pantalona e cropped verde...">
+        </div>
+
+        <div class="form-group">
+          <label>Foto de referência (Opcional):</label>
+          <div class="photo-upload-area" id="atacado-upload-box" onclick="document.getElementById('imgAtacado').click()" style="padding: 15px;">
+            <span class="icon" style="font-size: 20px;">🖼️</span>
+            <span class="text">Anexar Referência</span>
+            <input type="file" id="imgAtacado" accept="image/*">
+          </div>
+          <img id="previewAtacado" class="img-preview" alt="Preview" style="max-height: 150px;">
+        </div>
+
+        <button class="btn btn-primary" id="btnBuscarAtacado">🔍 Vasculhar Mercado de Atacado</button>
+
+        <div class="loader-container" id="loadAtacado">
+          <div class="spinner"></div>
+          <div class="loader-text">Buscando fornecedores e calculando margens...</div>
+        </div>
+
+        <div class="result-box" id="resultAtacado"></div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         TAB 5: MARKETING & CONSULTOR
+         ========================================== -->
+    <div id="tab-mkt" class="tab-content">
+      <div class="card">
+        <div class="card-title">🧠 Consultor Virtual ClosetJH</div>
+        <p class="card-desc">Converse com a IA sobre estratégias de vendas, marketing e gestão da sua loja.</p>
+        
+        <div class="chat-box" id="chatHistory">
+          <div class="msg ai">Olá! Sou seu consultor de negócios IA. Como posso ajudar a ClosetJH a vender mais hoje?</div>
+        </div>
+
+        <div class="chat-input-area">
+          <input type="text" id="chatInput" placeholder="Ex: Crie um roteiro de reels para promoção...">
+          <button class="btn btn-primary" id="btnEnviarChat">➤</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📅 Gerador de Rotina Rápida</div>
+        <div class="form-group">
+          <select id="focoRotina">
+            <option value="lançamento">Lançamento de Coleção</option>
+            <option value="queima">Queima de Estoque</option>
+            <option value="engajamento">Aumentar Engajamento</option>
+          </select>
+        </div>
+        <button class="btn btn-secondary" id="btnGerarRotina">Gerar Calendário Semanal</button>
+        
+        <div class="loader-container" id="loadRotina">
+          <div class="spinner"></div><div class="loader-text">Criando planejamento estratégico...</div>
+        </div>
+        <div class="result-box" id="resultRotina"></div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         TAB 6: CONFIGURAÇÕES & GESTÃO
+         ========================================== -->
+    <div id="tab-config" class="tab-content">
+      <div class="card">
+        <div class="card-title">⚙️ Configurações do Sistema</div>
+        
+        <div class="form-group">
+          <label>Credencial API Gemini (Smart Auth)</label>
+          <p class="card-desc">Cole sua chave (AIza...) ou Token (AQ.Ab...). O sistema reconhece automaticamente.</p>
+          <input type="password" id="inputApiKey" placeholder="Insira a credencial aqui...">
+          <button class="btn btn-secondary" onclick="salvarConfig()" style="margin-top: 10px;">💾 Salvar Credencial</button>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #222; margin: 20px 0;">
+
+        <div class="card-title">💾 Backup e Dados Locais</div>
+        <p class="card-desc">Todo o seu CRM e histórico de vendas fica salvo no seu celular/navegador. Faça backup regularmente.</p>
+        
+        <div class="grid-2">
+          <button class="btn btn-success btn-small" onclick="exportarDados()">📥 Exportar JSON</button>
+          <button class="btn btn-secondary btn-small" onclick="document.getElementById('importFile').click()">📤 Importar JSON</button>
+          <input type="file" id="importFile" style="display:none;" accept=".json" onchange="importarDados(event)">
+        </div>
+
+        <div style="margin-top: 30px;">
+          <button class="btn btn-danger" onclick="resetarSistema()">🗑️ Apagar Todos os Dados (Reset Total)</button>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px; font-size: 10px; color: #555;">
+          <p>ClosetJH Enterprise OS v3.0</p>
+          <p>Desenvolvido para Máxima Performance</p>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- End Container -->
+
+  <!-- ==========================================================================
+       MODAIS (JANELAS SOBREPOSTAS)
+       ========================================================================== -->
+  
+  <!-- Modal: Nova Venda -->
+  <div class="modal-overlay" id="modalNovaVenda">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Registrar Nova Venda</h3>
+        <button class="modal-close" onclick="fecharModal('modalNovaVenda')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Cliente</label>
+          <select id="venda-cliente">
+            <option value="Avulso">Cliente Avulso / Instagram</option>
+            <!-- Preenchido via JS -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Produto / Descrição</label>
+          <input type="text" id="venda-produto" placeholder="Ex: Vestido Midi Preto">
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Valor de Venda (R$)</label>
+            <input type="number" id="venda-valor" placeholder="150.00" step="0.01">
+          </div>
+          <div class="form-group">
+            <label>Custo da Peça (R$)</label>
+            <input type="number" id="venda-custo" placeholder="70.00" step="0.01">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Forma de Pagamento</label>
+          <select id="venda-pagamento">
+            <option value="PIX">PIX</option>
+            <option value="Cartão de Crédito">Cartão de Crédito</option>
+            <option value="Cartão de Débito">Cartão de Débito</option>
+            <option value="Dinheiro">Dinheiro</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="salvarVenda()">Confirmar Venda</button>
+      </div>
+    </div>
   </div>
 
-  <!-- NAVEGAÇÃO INFERIOR -->
-  <nav class="tab-bar">
-    <button class="tab-item active" onclick="switchTab('studio')">
-      <span>✨</span>Studio IA
+  <!-- Modal: Novo Cliente -->
+  <div class="modal-overlay" id="modalNovoCliente">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Cadastrar Cliente</h3>
+        <button class="modal-close" onclick="fecharModal('modalNovoCliente')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Nome Completo</label>
+          <input type="text" id="cli-nome" placeholder="Maria da Silva">
+        </div>
+        <div class="form-group">
+          <label>Telefone / WhatsApp</label>
+          <input type="text" id="cli-telefone" placeholder="(11) 99999-9999">
+        </div>
+        <div class="form-group">
+          <label>Instagram (Opcional)</label>
+          <input type="text" id="cli-insta" placeholder="@maria.silva">
+        </div>
+        <div class="form-group">
+          <label>Preferências de Estilo / Tamanho</label>
+          <textarea id="cli-prefs" placeholder="Gosta de vestidos midi, tamanho M, cores quentes..."></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="salvarCliente()">Salvar Cliente</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==========================================================================
+       NAVEGAÇÃO INFERIOR
+       ========================================================================== -->
+  <nav class="nav-bottom">
+    <button class="nav-item active" onclick="mudarAba('dashboard')">
+      <span class="icon">📊</span>
+      <span>Painel</span>
     </button>
-    <button class="tab-item" onclick="switchTab('atacado')">
-      <span>🏭</span>Fornecedores
+    <button class="nav-item" onclick="mudarAba('crm')">
+      <span class="icon">👥</span>
+      <span>CRM</span>
     </button>
-    <button class="tab-item" onclick="switchTab('rotina')">
-      <span>📱</span>Marketing
+    <button class="nav-item" onclick="mudarAba('studio')">
+      <span class="icon">✨</span>
+      <span>Studio</span>
     </button>
-    <button class="tab-item" onclick="switchTab('gestao')">
-      <span>⚙️</span>Gestão
+    <button class="nav-item" onclick="mudarAba('atacado')">
+      <span class="icon">🏭</span>
+      <span>Atacado</span>
+    </button>
+    <button class="nav-item" onclick="mudarAba('mkt')">
+      <span class="icon">📱</span>
+      <span>Markting</span>
+    </button>
+    <button class="nav-item" onclick="mudarAba('config')">
+      <span class="icon">⚙️</span>
+      <span>Gestão</span>
     </button>
   </nav>
 
+  <!-- ==========================================================================
+       LÓGICA JAVASCRIPT (O NÚCLEO DO SISTEMA)
+       ========================================================================== -->
   <script>
-    /* COMPRESSOR DE IMAGENS INTELIGENTE */
-    function comprimirImagem(file, maxSize = 1000) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = event => {
-          const img = new Image();
-          img.src = event.target.result;
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            let width = img.width;
-            let height = img.height;
+    /* ==========================================================================
+       A. BANCO DE DADOS LOCAL (LocalStorage Wrapper)
+       ========================================================================== */
+    const DB_KEY = 'closetjh_db_v3';
+    let db = {
+      clientes: [],
+      vendas: [],
+      config: { apiKey: '' },
+      chatHistory: []
+    };
 
-            if (width > height) {
-              if (width > maxSize) {
-                height = Math.round((height * maxSize) / width);
-                width = maxSize;
-              }
-            } else {
-              if (height > maxSize) {
-                width = Math.round((width * maxSize) / height);
-                height = maxSize;
-              }
-            }
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-            const base64 = dataUrl.split(',')[1];
-            resolve({ dataUrl, base64 });
-          };
-          img.onerror = error => reject(error);
-        };
-        reader.onerror = error => reject(error);
-      });
+    function carregarDB() {
+      const saved = localStorage.getItem(DB_KEY);
+      if (saved) {
+        try { db = JSON.parse(saved); } catch (e) { console.error("Erro ao ler DB", e); }
+      }
+      if(!db.chatHistory) db.chatHistory = [];
     }
 
-    // ==========================================
-    // ESTADOS GLOBAIS
-    // ==========================================
-    let base64Image = null;
-    let base64ImageAtacado = null;
-    let analiseAtualParaCopia = "";
+    function salvarDB() {
+      localStorage.setItem(DB_KEY, JSON.stringify(db));
+      renderizarDashboard();
+    }
 
-    // ==========================================
-    // FUNÇÕES DE UI
-    // ==========================================
-    function mostrarToast(msg) {
-      const container = document.getElementById('toastContainer');
+    function gerarID() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 5); }
+
+    function formatarMoeda(valor) {
+      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+    }
+
+    function formatarData(dataStr) {
+      const d = new Date(dataStr);
+      return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+    }
+
+    /* ==========================================================================
+       B. SISTEMA DE UI E UTILITÁRIOS (Toasts, Modais, Tabs)
+       ========================================================================== */
+    function showToast(msg, tipo = 'info') {
+      const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
-      toast.className = 'toast';
-      toast.innerText = msg;
+      toast.className = `toast ${tipo}`;
+      let icon = 'ℹ️';
+      if(tipo === 'success') icon = '✅';
+      if(tipo === 'error') icon = '❌';
+      toast.innerHTML = `<span>${icon}</span> <span>${msg}</span>`;
       container.appendChild(toast);
       
-      requestAnimationFrame(() => toast.classList.add('show'));
+      requestAnimationFrame(() => { toast.classList.add('show'); });
       
       setTimeout(() => {
         toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
+        setTimeout(() => toast.remove(), 400);
       }, 3500);
     }
 
-    function switchTab(tabName) {
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
-      document.getElementById('tab-' + tabName).classList.add('active');
-      event.currentTarget.classList.add('active');
-      window.scrollTo(0,0);
+    function mudarAba(abaId) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      
+      document.getElementById(`tab-${abaId}`).classList.add('active');
+      const eventTarget = event.currentTarget;
+      if(eventTarget) eventTarget.classList.add('active');
+      window.scrollTo(0, 0);
     }
 
-    // ==========================================
-    // CARREGAMENTO DE IMAGENS
-    // ==========================================
-    const imgInput = document.getElementById('imageInput');
-    const imgPreview = document.getElementById('imagePreview');
-    const btnRemoverImg = document.getElementById('btnRemoverImg');
+    function abrirModal(modalId) { document.getElementById(modalId).classList.add('active'); }
+    function fecharModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
 
-    imgInput.addEventListener('change', async function(e) {
-      const file = e.target.files[0];
-      if(!file) return;
-      mostrarToast("Otimizando imagem para a IA... ⏳");
-      try {
-        const imgs = await comprimirImagem(file, 800);
-        imgPreview.src = imgs.dataUrl; imgPreview.style.display = 'block'; btnRemoverImg.style.display = 'block';
-        base64Image = imgs.base64;
-        mostrarToast("✅ Foto pronta para análise!");
-      } catch (err) { alert("Erro ao processar a foto."); }
-    });
+    /* Compressor de Imagens Client-Side para evitar payload grande na API */
+    function processarImagem(file, maxSize = 800) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = e => {
+          const img = new Image();
+          img.src = e.target.result;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width; let height = img.height;
+            if (width > height) { if (width > maxSize) { height = Math.round((height * maxSize) / width); width = maxSize; } } 
+            else { if (height > maxSize) { width = Math.round((width * maxSize) / height); height = maxSize; } }
+            canvas.width = width; canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+            const base64 = dataUrl.split(',')[1];
+            resolve({ dataUrl, base64 });
+          };
+          img.onerror = reject;
+        };
+        reader.onerror = reject;
+      });
+    }
 
-    btnRemoverImg.addEventListener('click', () => {
-      imgPreview.src = ""; imgPreview.style.display = 'none'; base64Image = null; imgInput.value = ""; btnRemoverImg.style.display = 'none';
-    });
+    /* ==========================================================================
+       C. SMART AUTH & GEMINI API INTEGRAÇÃO
+       ========================================================================== */
+    async function chamarIA(promptTexto, imagemBase64 = null, usarBuscaInternet = false) {
+      const apiKey = db.config.apiKey;
+      if (!apiKey) {
+        showToast("Você precisa configurar sua chave API na aba de Gestão primeiro.", "error");
+        throw new Error("API Key ausente");
+      }
 
-    const imgInputAtacado = document.getElementById('imageInputAtacado');
-    const previewAtacado = document.getElementById('previewAtacado');
-    const btnRemoverImgAtacado = document.getElementById('btnRemoverImgAtacado');
+      const parts = [{ text: promptTexto }];
+      if (imagemBase64) {
+        parts.push({ inline_data: { mime_type: "image/jpeg", data: imagemBase64 } });
+      }
 
-    imgInputAtacado.addEventListener('change', async function(e) {
-      const file = e.target.files[0];
-      if(!file) return;
-      mostrarToast("Otimizando foto de referência... ⏳");
-      try {
-        const imgs = await comprimirImagem(file, 800);
-        previewAtacado.src = imgs.dataUrl; previewAtacado.style.display = 'block'; btnRemoverImgAtacado.style.display = 'block';
-        base64ImageAtacado = imgs.base64;
-        mostrarToast("✅ Foto de referência anexada.");
-      } catch (err) { alert("Erro ao processar a foto."); }
-    });
-
-    btnRemoverImgAtacado.addEventListener('click', () => {
-      previewAtacado.src = ""; previewAtacado.style.display = 'none'; base64ImageAtacado = null; imgInputAtacado.value = ""; btnRemoverImgAtacado.style.display = 'none';
-    });
-
-    // ==========================================
-    // SISTEMA DE AUTENTICAÇÃO INTELIGENTE (SMART AUTH)
-    // ==========================================
-    function obterChaveAPI() { return localStorage.getItem('closetjh_apikey') || ''; }
-
-    document.getElementById('btnSalvarKey').addEventListener('click', () => {
-      const k = document.getElementById('apiKey').value.trim();
-      if(k) { localStorage.setItem('closetjh_apikey', k); mostrarToast("✅ Credencial salva com sucesso!"); }
-      else { mostrarToast("⚠️ O campo está vazio."); }
-    });
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const k = obterChaveAPI();
-      if(k) document.getElementById('apiKey').value = k;
-    });
-
-    document.getElementById('btnLimparDados').addEventListener('click', () => {
-      if(confirm("Tem certeza que deseja apagar a credencial e resetar o app?")) { localStorage.clear(); location.reload(); }
-    });
-
-    async function chamarGemini(promptText, base64Img = null, usarBusca = false) {
-      let keyToUse = obterChaveAPI();
-      if (!keyToUse) throw new Error("Aviso: Vá na aba 'Gestão' e insira sua credencial de acesso antes de usar.");
-
-      const parts = [{ text: promptText }];
-      if (base64Img) parts.push({ inline_data: { mime_type: "image/jpeg", data: base64Img } });
-
-      const requestBody = { contents: [{ parts }] };
-      if (usarBusca) requestBody.tools = [{ googleSearch: {} }];
+      const bodyData = { contents: [{ parts }] };
+      if (usarBuscaInternet) {
+        bodyData.tools = [{ googleSearch: {} }];
+      }
 
       let url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
       let headers = { 'Content-Type': 'application/json' };
 
-      // LÓGICA SMART AUTH: Verifica qual é o formato da sua chave
-      if (keyToUse.startsWith('AIza')) {
-        // Formato padrão: envia via URL
-        url += `?key=${keyToUse}`;
+      // Lógica principal do SMART AUTH pedida pelo usuário
+      if (apiKey.startsWith('AIza')) {
+        url += `?key=${apiKey}`;
       } else {
-        // Formato Customizado/Token (AQ.Ab...): envia via Cabeçalho Bearer
-        headers['Authorization'] = `Bearer ${keyToUse}`;
-        // Como alternativa/backup, alguns proxies aceitam na URL mesmo não sendo AIza:
-        // url += `?key=${keyToUse}`; <-- Descomente se o Bearer falhar.
+        // Chaves customizadas AQ.Ab... vão no header Bearer
+        headers['Authorization'] = `Bearer ${apiKey}`;
       }
-
-      const res = await fetch(url, { method: 'POST', headers: headers, body: JSON.stringify(requestBody) });
-
-      if (!res.ok) {
-        let errorMsg = `Erro na API (${res.status}).`;
-        try {
-          const errText = await res.text();
-          if (errText.includes('<html') || errText.includes('<!DOCTYPE')) {
-             errorMsg = "O servidor falhou (sobrecarga ou bloqueio). Tente novamente.";
-          } else {
-             const errJson = JSON.parse(errText);
-             if (errJson.error && errJson.error.message) errorMsg = errJson.error.message;
-          }
-        } catch (e) { }
-        throw new Error(errorMsg);
-      }
-
-      const data = await res.json();
-      if (data.error) throw new Error(data.error.message);
-      if (!data.candidates || !data.candidates[0]) throw new Error("A IA não enviou resposta.");
-      
-      return data.candidates[0].content.parts.map(p => p.text).join('\n');
-    }
-
-    // ==========================================
-    // CHAMADAS E FUNÇÕES DAS ABAS
-    // ==========================================
-    
-    // TAB STUDIO
-    document.getElementById('btnAnalisar').addEventListener('click', async () => {
-      if (!base64Image) return alert("Por favor, carregue a foto da peça primeiro.");
-      const btn = document.getElementById('btnAnalisar'); const loader = document.getElementById('loadingStudio');
-      const resultBox = document.getElementById('resultStudio'); const copyBtn = document.getElementById('btnCopyStudio');
-      
-      btn.style.display = 'none'; loader.style.display = 'block'; resultBox.style.display = 'none'; copyBtn.style.display = 'none';
-      
-      const prompt = `Analise detalhadamente esta roupa feminina (foco comercial para a loja ClosetJH).
-Me retorne APENAS um objeto JSON válido (sem blocos de código markdown), com esta estrutura exata:
-{ "nomeDaPeca": "Nome comercial elegante", "descricaoEstilo": "Frase persuasiva", "tecidoModelagem": "Descrição", "ocasioes": ["ocasiao 1", "ocasiao 2"], "precoSugeridoVenda": "Valor em reais", "textoParaInstagram": "Texto pronto com emojis" }`;
 
       try {
-        const resposta = await chamarGemini(prompt, base64Image, false);
-        let rawJson = resposta.replace(/```json/g, '').replace(/
+        const res = await fetch(url, { method: 'POST', headers: headers, body: JSON.stringify(bodyData) });
+        
+        if (!res.ok) {
+          const errText = await res.text();
+          console.error("Erro da API:", errText);
+          throw new Error(`Erro na comunicação com a IA (Status: ${res.status}). Verifique sua chave.`);
+        }
+
+        const data = await res.json();
+        if (data.candidates && data.candidates[0].content) {
+          return data.candidates[0].content.parts.map(p => p.text).join('\n');
+        } else {
+          throw new Error("Resposta vazia da IA.");
+        }
+      } catch (err) {
+        throw err;
+      }
+    }
+
+    /* ==========================================================================
+       D. MÓDULOS DE NEGÓCIO (Vendas, CRM, Dashboard)
+       ========================================================================== */
+    
+    // --- CRM ---
+    function salvarCliente() {
+      const nome = document.getElementById('cli-nome').value.trim();
+      if(!nome) return showToast("O nome é obrigatório", "error");
+      
+      const cliente = {
+        id: gerarID(),
+        nome: nome,
+        telefone: document.getElementById('cli-telefone').value,
+        insta: document.getElementById('cli-insta').value,
+        prefs: document.getElementById('cli-prefs').value,
+        dataCadastro: new Date().toISOString()
+      };
+      
+      db.clientes.push(cliente);
+      salvarDB();
+      fecharModal('modalNovoCliente');
+      showToast("Cliente cadastrado com sucesso!", "success");
+      
+      // Limpa os campos
+      ['cli-nome', 'cli-telefone', 'cli-insta', 'cli-prefs'].forEach(id => document.getElementById(id).value = '');
+      renderizarClientes();
+      renderizarSelectClientesVenda();
+    }
+
+    function renderizarClientes() {
+      const lista = document.getElementById('lista-clientes');
+      const termo = document.getElementById('busca-cliente').value.toLowerCase();
+      
+      const filtrados = db.clientes.filter(c => c.nome.toLowerCase().includes(termo) || c.telefone.includes(termo));
+      
+      if(filtrados.length === 0) {
+        lista.innerHTML = `<p style="text-align:center; color:#555; font-size:12px;">Nenhum cliente encontrado.</p>`;
+        return;
+      }
+
+      lista.innerHTML = filtrados.map(c => `
+        <li class="data-item">
+          <div class="data-item-info">
+            <h4>${c.nome}</h4>
+            <p>📱 ${c.telefone || 'Sem telefone'} | Insta: ${c.insta || '-'}</p>
+          </div>
+          <div class="data-item-value">
+            <button class="btn-secondary btn-small" onclick="alert('Perfil de ${c.nome}\\n\\nPreferências: ${c.prefs || 'Não informado'}')">Ver Perfil</button>
+          </div>
+        </li>
+      `).join('');
+    }
+
+    function renderizarSelectClientesVenda() {
+      const select = document.getElementById('venda-cliente');
+      let html = `<option value="Avulso">Cliente Avulso / Instagram</option>`;
+      db.clientes.forEach(c => {
+        html += `<option value="${c.id}">${c.nome}</option>`;
+      });
+      select.innerHTML = html;
+    }
+
+    // --- VENDAS ---
+    function salvarVenda() {
+      const prod = document.getElementById('venda-produto').value.trim();
+      const val = parseFloat(document.getElementById('venda-valor').value);
+      const custo = parseFloat(document.getElementById('venda-custo').value) || 0;
+      
+      if(!prod || isNaN(val)) return showToast("Preencha o produto e o valor corretamente.", "error");
+
+      const venda = {
+        id: gerarID(),
+        clienteId: document.getElementById('venda-cliente').value,
+        produto: prod,
+        valorVenda: val,
+        custo: custo,
+        lucro: val - custo,
+        pagamento: document.getElementById('venda-pagamento').value,
+        data: new Date().toISOString()
+      };
+
+      db.vendas.push(venda);
+      salvarDB();
+      fecharModal('modalNovaVenda');
+      showToast("Venda registrada com sucesso! 💰", "success");
+      
+      // Limpa campos
+      ['venda-produto', 'venda-valor', 'venda-custo'].forEach(id => document.getElementById(id).value = '');
+    }
+
+    // --- MOTOR DE GRÁFICOS CUSTOMIZADO (CANVAS RAW) ---
+    // Cria um gráfico de barras desenhando diretamente no Canvas (Para atingir o requisito sem libs)
+    function desenharGraficoVendas(canvasId, vendas) {
+      const canvas = document.getElementById(canvasId);
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d');
+      
+      // Agrupar vendas por dia (últimos 7 dias)
+      const hoje = new Date();
+      hoje.setHours(0,0,0,0);
+      let dados = [];
+      let maxValor = 0;
+
+      for (let i = 6; i >= 0; i--) {
+        let dia = new Date(hoje);
+        dia.setDate(dia.getDate() - i);
+        let diaStr = dia.toISOString().split('T')[0];
+        
+        let totalDia = vendas.filter(v => v.data.startsWith(diaStr))
+                             .reduce((acc, curr) => acc + curr.valorVenda, 0);
+        
+        dados.push({ label: `${dia.getDate()}/${dia.getMonth()+1}`, valor: totalDia });
+        if(totalDia > maxValor) maxValor = totalDia;
+      }
+
+      // Configurações do Canvas responsivo
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      const w = canvas.width; const h = canvas.height;
+      
+      ctx.clearRect(0, 0, w, h);
+      
+      const padding = 30;
+      const graphW = w - padding * 2;
+      const graphH = h - padding * 2;
+      
+      // Desenha eixos
+      ctx.beginPath();
+      ctx.moveTo(padding, padding);
+      ctx.lineTo(padding, h - padding);
+      ctx.lineTo(w - padding, h - padding);
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Se não houver vendas
+      if(maxValor === 0) {
+        ctx.fillStyle = '#666';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText("Sem dados nos últimos 7 dias.", w/2, h/2);
+        return;
+      }
+
+      // Desenha barras
+      const barWidth = (graphW / dados.length) * 0.6;
+      const gap = (graphW / dados.length) * 0.4;
+      
+      dados.forEach((d, index) => {
+        const barHeight = (d.valor / maxValor) * graphH;
+        const x = padding + gap/2 + index * (barWidth + gap);
+        const y = h - padding - barHeight;
+        
+        // Gradiente da barra
+        let gradient = ctx.createLinearGradient(x, y, x, h-padding);
+        gradient.addColorStop(0, '#D4AF37');
+        gradient.addColorStop(1, '#AA8B2C');
+        
+        ctx.fillStyle = gradient;
+        // Borda arredondada superior
+        ctx.beginPath();
+        ctx.roundRect(x, y, barWidth, barHeight, [4, 4, 0, 0]);
+        ctx.fill();
+
+        // Label do eixo X
+        ctx.fillStyle = '#888';
+        ctx.font = '10px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(d.label, x + barWidth/2, h - padding + 15);
+        
+        // Valor acima da barra
+        if(d.valor > 0) {
+          ctx.fillStyle = '#fff';
+          ctx.fillText(`R$${Math.round(d.valor)}`, x + barWidth/2, y - 5);
+        }
+      });
+    }
+
+    function renderizarDashboard() {
+      const faturamento = db.vendas.reduce((a, b) => a + b.valorVenda, 0);
+      const lucro = db.vendas.reduce((a, b) => a + (b.lucro || 0), 0);
+      const ticket = db.vendas.length > 0 ? faturamento / db.vendas.length : 0;
+
+      document.getElementById('dash-faturamento').innerText = formatarMoeda(faturamento);
+      document.getElementById('dash-lucro').innerText = formatarMoeda(lucro);
+      document.getElementById('dash-qtd-vendas').innerText = db.vendas.length;
+      document.getElementById('dash-ticket').innerText = formatarMoeda(ticket);
+
+      const lista = document.getElementById('lista-ultimas-vendas');
+      if(db.vendas.length === 0) {
+        lista.innerHTML = '<p style="text-align: center; color: #555; font-size: 12px; margin-top: 10px;">Nenhuma venda registrada.</p>';
+      } else {
+        const ultimas = [...db.vendas].reverse().slice(0, 5); // Pega as 5 últimas
+        lista.innerHTML = ultimas.map(v => {
+          let nomeCli = "Avulso";
+          if(v.clienteId !== "Avulso") {
+            const cli = db.clientes.find(c => c.id === v.clienteId);
+            if(cli) nomeCli = cli.nome;
+          }
+          return `
+          <li class="data-item">
+            <div class="data-item-info">
+              <h4>${v.produto}</h4>
+              <p>👤 ${nomeCli} | 💳 ${v.pagamento} | 📅 ${formatarData(v.data)}</p>
+            </div>
+            <div class="data-item-value">
+              <span>${formatarMoeda(v.valorVenda)}</span>
+              <small>Lucro: ${formatarMoeda(v.lucro)}</small>
+            </div>
+          </li>`;
+        }).join('');
+      }
+
+      // Redesenha o gráfico (delay pequeno para garantir que a tab esteja visível se for o caso)
+      setTimeout(() => desenharGraficoVendas('salesChart', db.vendas), 100);
+    }
+
+
+    /* ==========================================================================
+       E. LÓGICA DE INTELIGÊNCIA ARTIFICIAL (Studio, Atacado, Chatbot)
+       ========================================================================== */
+    
+    // --- STUDIO IA (FOTOS) ---
+    let b64Studio = null;
+    document.getElementById('imgStudio').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+      showToast("Otimizando imagem para IA... ⏳");
+      try {
+        const res = await processarImagem(file);
+        b64Studio = res.base64;
+        document.getElementById('previewStudio').src = res.dataUrl;
+        document.getElementById('previewStudio').style.display = 'block';
+        document.getElementById('btnRemoverStudio').style.display = 'inline-block';
+        document.getElementById('studio-upload-box').style.display = 'none';
+        showToast("Imagem pronta!", "success");
+      } catch (err) { showToast("Erro ao processar foto.", "error"); }
+    });
+
+    document.getElementById('btnRemoverStudio').addEventListener('click', () => {
+      b64Studio = null;
+      document.getElementById('previewStudio').style.display = 'none';
+      document.getElementById('previewStudio').src = '';
+      document.getElementById('btnRemoverStudio').style.display = 'none';
+      document.getElementById('studio-upload-box').style.display = 'block';
+      document.getElementById('imgStudio').value = '';
+    });
+
+    document.getElementById('btnAnalisarStudio').addEventListener('click', async () => {
+      if(!b64Studio) return showToast("Anexe a foto da peça primeiro.", "error");
+      
+      const tipo = document.getElementById('tipoAnaliseStudio').value;
+      const loader = document.getElementById('loadStudio');
+      const box = document.getElementById('resultStudio');
+      const btn = document.getElementById('btnAnalisarStudio');
+      
+      btn.style.display = 'none'; loader.style.display = 'block'; box.style.display = 'none';
+
+      let prompt = "";
+      if(tipo === 'completa') {
+        prompt = `Aja como especialista em moda e vendas online para a loja 'ClosetJH'. Analise a roupa da imagem. Formate a saída em HTML (use tags h3, p, strong, ul, li).
+        Forneça: 1. Título atrativo. 2. Descrição de tecido/caimento. 3. Sugestão de preço de venda (realista para Brasil). 4. Uma legenda pronta para o Instagram com hashtags e CTA forte.`;
+      } else if (tipo === 'seo') {
+        prompt = `Analise a peça e crie uma Ficha Técnica focada em SEO para E-commerce. Formato HTML. Inclua: Título SEO, Descrição Otimizada (150 palavras), Palavras-chave em formato de bullets, e especificações técnicas (estimadas).`;
+      } else {
+        prompt = `Analise a peça e sugira 3 looks completos montados a partir dela (Ex: Look Trabalho, Look Noite, Look Casual). Formato HTML. Para cada look, sugira calçados e acessórios.`;
+      }
+
+      try {
+        const res = await chamarIA(prompt, b64Studio, false);
+        let limpo = res.replace(/```html/g, '').replace(/```/g, '');
+        box.innerHTML = limpo;
+        box.style.display = 'block';
+        showToast("Análise concluída!", "success");
+      } catch (e) {
+        showToast(e.message, "error");
+      } finally {
+        btn.style.display = 'flex'; loader.style.display = 'none';
+      }
+    });
+
+
+    // --- RADAR DE ATACADO ---
+    let b64Atacado = null;
+    document.getElementById('imgAtacado').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+      try {
+        const res = await processarImagem(file);
+        b64Atacado = res.base64;
+        document.getElementById('previewAtacado').src = res.dataUrl;
+        document.getElementById('previewAtacado').style.display = 'block';
+      } catch (err) { showToast("Erro na foto de referência.", "error"); }
+    });
+
+    document.getElementById('btnBuscarAtacado').addEventListener('click', async () => {
+      const desc = document.getElementById('descAtacado').value.trim();
+      if(!desc && !b64Atacado) return showToast("Descreva a peça ou anexe uma foto.", "error");
+
+      const loader = document.getElementById('loadAtacado');
+      const box = document.getElementById('resultAtacado');
+      const btn = document.getElementById('btnBuscarAtacado');
+      
+      btn.style.display = 'none'; loader.style.display = 'block'; box.style.display = 'none';
+
+      let prompt = `Aja como um comprador atacadista expert de moda feminina no Brasil (Brás, Bom Retiro, Goiânia, Fortaleza). 
+      Busque informações sobre: ${desc}. `;
+      if(b64Atacado) prompt += "Use a foto enviada como referência de estilo. ";
+      
+      prompt += `Me retorne em formato HTML (h3, p, ul, strong) o seguinte dossiê:
+      1. Estimativa de Custo de Produção/Atacado (R$).
+      2. Estimativa de Preço Final de Varejo (Margem de lucro).
+      3. Principais Pólos onde encontrar (Ex: Mega Moda, Brás, etc).
+      4. Dicas de qualidade ao comprar essa peça específica.`;
+
+      try {
+        const res = await chamarIA(prompt, b64Atacado, true); // Usa busca internet (se a config da tool permitir)
+        let limpo = res.replace(/```html/g, '').replace(/```/g, '');
+        box.innerHTML = limpo;
+        box.style.display = 'block';
+      } catch (e) {
+        showToast(e.message, "error");
+      } finally {
+        btn.style.display = 'flex'; loader.style.display = 'none';
+      }
+    });
+
+    // --- MARKETING (ROTINA) ---
+    document.getElementById('btnGerarRotina').addEventListener('click', async () => {
+      const foco = document.getElementById('focoRotina').value;
+      const loader = document.getElementById('loadRotina');
+      const box = document.getElementById('resultRotina');
+      const btn = document.getElementById('btnGerarRotina');
+      
+      btn.style.display = 'none'; loader.style.display = 'block'; box.style.display = 'none';
+
+      const prompt = `Crie um cronograma estratégico de 5 dias (Segunda a Sexta) para o Instagram da loja ClosetJH. 
+      Foco da semana: ${foco.toUpperCase()}. 
+      Retorne em HTML formatado bonito. Para cada dia coloque: Manhã (Stories), Tarde (Feed/Reels), Noite (Interação/Live). Seja criativo e prático.`;
+
+      try {
+        const res = await chamarIA(prompt);
+        let limpo = res.replace(/```html/g, '').replace(/```/g, '');
+        box.innerHTML = limpo;
+        box.style.display = 'block';
+      } catch (e) { showToast(e.message, "error"); } 
+      finally { btn.style.display = 'inline-flex'; loader.style.display = 'none'; }
+    });
+
+    // --- CHATBOT CONSULTOR ---
+    function renderizarChat() {
+      const chatBox = document.getElementById('chatHistory');
+      chatBox.innerHTML = '<div class="msg ai">Olá! Sou seu consultor de negócios IA. Como posso ajudar a ClosetJH a vender mais hoje?</div>';
+      
+      db.chatHistory.forEach(msg => {
+        const div = document.createElement('div');
+        div.className = `msg ${msg.role === 'user' ? 'user' : 'ai'}`;
+        div.innerHTML = msg.text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        chatBox.appendChild(div);
+      });
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    document.getElementById('btnEnviarChat').addEventListener('click', async () => {
+      const input = document.getElementById('chatInput');
+      const txt = input.value.trim();
+      if(!txt) return;
+
+      input.value = '';
+      db.chatHistory.push({ role: 'user', text: txt });
+      renderizarChat();
+      
+      const chatBox = document.getElementById('chatHistory');
+      const loadMsg = document.createElement('div');
+      loadMsg.className = 'msg ai';
+      loadMsg.innerText = 'Digitando...';
+      chatBox.appendChild(loadMsg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // Monta contexto para IA (resumo do negócio)
+      let fat = db.vendas.reduce((a, b) => a + b.valorVenda, 0);
+      let numVendas = db.vendas.length;
+      let promptContexto = `Você é o consultor chefe da marca de roupas ClosetJH. Contexto atual da loja: Faturamento total R$ ${fat}, Vendas: ${numVendas}. Responda à dúvida do usuário de forma concisa e especialista em e-commerce.\n\nDúvida: ${txt}`;
+
+      try {
+        const resposta = await chamarIA(promptContexto);
+        db.chatHistory.push({ role: 'model', text: resposta });
+        salvarDB();
+        renderizarChat();
+      } catch (e) {
+        loadMsg.innerText = "Erro ao conectar. Verifique a chave.";
+        loadMsg.style.color = "red";
+      }
+    });
+
+    // Permitir enviar chat com Enter
+    document.getElementById('chatInput').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') document.getElementById('btnEnviarChat').click();
+    });
+
+    /* ==========================================================================
+       F. CONFIGURAÇÕES & IMPORT/EXPORT (Gestão de Dados)
+       ========================================================================== */
+    
+    function salvarConfig() {
+      const key = document.getElementById('inputApiKey').value.trim();
+      db.config.apiKey = key;
+      salvarDB();
+      showToast("Credencial salva com sucesso!", "success");
+      atualizarBadgeAuth();
+    }
+
+    function atualizarBadgeAuth() {
+      const badge = document.getElementById('auth-status');
+      if(db.config.apiKey) {
+        badge.innerText = "✅ API Conectada";
+        badge.style.color = var('--success');
+        badge.style.borderColor = var('--success');
+      } else {
+        badge.innerText = "❌ Sem API Key";
+        badge.style.color = var('--danger');
+        badge.style.borderColor = var('--danger');
+      }
+    }
+
+    function exportarDados() {
+      const str = JSON.stringify(db, null, 2);
+      const blob = new Blob([str], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `ClosetJH_Backup_${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("Backup gerado com sucesso!", "success");
+    }
+
+    function importarDados(event) {
+      const file = event.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const content = JSON.parse(e.target.result);
+          if(content.clientes !== undefined && content.vendas !== undefined) {
+            db = content;
+            salvarDB();
+            location.reload(); // Recarrega para refletir tudo
+          } else {
+            showToast("Arquivo JSON inválido para este sistema.", "error");
+          }
+        } catch (err) {
+          showToast("Erro ao ler o arquivo.", "error");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetarSistema() {
+      if(confirm("ALERTA CRÍTICO!\nIsso apagará TODOS os clientes, vendas, histórico de chat e configurações. Não pode ser desfeito. Tem certeza absoluta?")) {
+        localStorage.removeItem(DB_KEY);
+        location.reload();
+      }
+    }
+
+    /* ==========================================================================
+       G. INICIALIZAÇÃO DO SISTEMA
+       ========================================================================== */
+    window.onload = () => {
+      carregarDB();
+      
+      // Sincroniza campos de config
+      if(db.config.apiKey) {
+        document.getElementById('inputApiKey').value = db.config.apiKey;
+      }
+      
+      // Renderiza as views Iniciais
+      renderizarDashboard();
+      renderizarClientes();
+      renderizarSelectClientesVenda();
+      renderizarChat();
+      
+      // Atualiza badge visual no Header
+      const badge = document.getElementById('auth-status');
+      if(db.config.apiKey) {
+        badge.innerHTML = "✅ API Smart Auth Ativa";
+        badge.style.color = "#00E676";
+        badge.style.borderColor = "#00E676";
+      }
+      
+      // Resize listener para o Canvas do Gráfico não distorcer
+      window.addEventListener('resize', () => {
+        if(document.getElementById('tab-dashboard').classList.contains('active')) {
+          desenharGraficoVendas('salesChart', db.vendas);
+        }
+      });
+    };
+  </script>
+</body>
+</html>
