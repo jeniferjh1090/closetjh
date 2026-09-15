@@ -334,9 +334,10 @@
     </div>
 
     <div class="card">
-      <label>⚙️ Configurações da Chave IA</label>
-      <input type="password" id="customApiKey" placeholder="Chave Padrão Ativa (AQ.Ab8RN6LTWnxoi...)">
-      <button class="btn-outline" onclick="salvarChaveAPI()">💾 Salvar Chave Própria</button>
+      <label>⚙️ Configurações da Chave IA (Google AI Studio)</label>
+      <input type="password" id="customApiKey" placeholder="Cole sua chave aqui (Ex: AIzaSy...)">
+      <button class="btn-gold" onclick="salvarChaveAPI()" style="margin-top:5px;">💾 Salvar Chave Própria</button>
+      <p style="font-size:10px; color:#aaa; margin-top:5px;">Crie uma chave gratuita em: <a href="https://aistudio.google.com" target="_blank" style="color:var(--gold-primary);">aistudio.google.com</a></p>
     </div>
 
     <div class="card">
@@ -355,8 +356,6 @@
   </div>
 
   <script>
-    const DEFAULT_KEY = "AQ.Ab8RN6LTWnxoiFm44ROn2pzdTkl4Bz2O1krSmvdTqX4M5QLuUQ";
-    
     let imgElement = new Image();
     let base64Image = "";
     let base64ImageAtacado = "";
@@ -405,16 +404,19 @@
       base64ImageAtacado = "";
     }
 
-    // Suporte Completo Multimodal + Google Search Grounding em tempo real
     async function chamarGemini(promptText, base64Img = null, usarBuscaGoogle = false) {
-      const keyToUse = localStorage.getItem('closetjh_custom_key') || DEFAULT_KEY;
+      const keyToUse = localStorage.getItem('closetjh_custom_key');
+      
+      if (!keyToUse) {
+        throw new Error("Chave de API não configurada! Vá na aba 'Agenda/Configurações' e salve sua chave obtida no Google AI Studio.");
+      }
+
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 25000);
 
       try {
         const parts = [{ text: promptText }];
         
-        // Inclui a imagem se fornecida (Multimodal ativado)
         if (base64Img) {
           parts.push({ 
             inline_data: { 
@@ -426,7 +428,6 @@
 
         const requestBody = { contents: [{ parts }] };
         
-        // Ferramenta Google Search REST oficial para Gemini 1.5
         if (usarBuscaGoogle) {
           requestBody.tools = [{ google_search: {} }];
         }
@@ -471,12 +472,7 @@
         if(parsed.preco_medio) document.getElementById('precoPeca').value = parsed.preco_medio;
         alert('✨ Análise de Tecido, Cores & Valor Médio concluída com sucesso!');
       } catch (err) {
-        console.warn('IA indisponível. Aplicando preenchimento inteligente de contingência:', err);
-        document.getElementById('nomePeca').value = "Conjunto Alfaiataria Luxo ClosetJH";
-        document.getElementById('tecidoPeca').value = "Linho com Viscose Premium";
-        document.getElementById('cartelaCores').value = "Paleta Neutra / Elegante";
-        document.getElementById('precoPeca').value = "R$ 199,90";
-        alert('📷 Foto reconhecida! Dados base e valor médio da peça preenchidos automaticamente.');
+        alert(`⚠️ ${err.message}`);
       }
     }
 
@@ -629,7 +625,7 @@ Pesquise no Google em tempo real por lojas e confecções de atacado REAIS (espe
       }
 
       prompt += `\n\nRetorne informações REAIS, EXATAS E SEM ERROS encontradas na pesquisa:
-1. 🏬 Nome Oficial da Confecção / Loja Físicas Real
+1. 🏬 Nome Oficial da Confecção / Loja Física Real
 2. 📍 Endereço Completo Exato (Galeria, Shopping na 44, Rua e Número da Loja)
 3. 📸 Instagram Oficial Real (@usuario)
 4. 📱 WhatsApp / Contato Comercial
@@ -637,13 +633,11 @@ Pesquise no Google em tempo real por lojas e confecções de atacado REAIS (espe
 6. 👗 Descrição das Peças Disponíveis e Observações de Qualidade/Entrega.`;
 
       try {
-        // Envia base64ImageAtacado (se existir) + ativa Google Search Grounding (true)
         const resText = await chamarGemini(prompt, base64ImageAtacado || null, true);
         output.innerText = resText;
       } catch(err) {
         console.error("Detalhes do erro na busca de atacado:", err);
-        output.innerText = `⚠️ Erro na consulta: ${err.message}\n\n` +
-          `💡 Dica: Se o erro persistir, verifique sua conexão ou adicione sua própria Chave API do Google AI Studio na aba "Agenda/Configurações".`;
+        output.innerText = `⚠️ Erro na consulta: ${err.message}`;
       }
     }
 
@@ -657,10 +651,7 @@ Pesquise no Google em tempo real por lojas e confecções de atacado REAIS (espe
         const resText = await chamarGemini(prompt, null, false);
         output.innerText = resText;
       } catch(e) {
-        output.innerText = `💡 [SUGESTÕES PRONTAS DE COMBINAÇÃO para "${nome}"]:\n\n` +
-          `1. 👠 Calçado: Combine com salto nude fino para outro nível de elegância.\n` +
-          `2. 👜 Acessório: Clutch estruturada + cinto fino em couro no tom dourado/nude.\n` +
-          `3. 🧥 Terceira Peça: Blazer em alfaiataria sobreposto nos ombros.`;
+        output.innerText = `⚠️ ${e.message}`;
       }
     }
 
@@ -676,12 +667,7 @@ Pesquise no Google em tempo real por lojas e confecções de atacado REAIS (espe
         const resText = await chamarGemini(prompt, null, false);
         output.innerText = resText;
       } catch(e) {
-        output.innerText = `✨ [LEGENDA COMERCIAL PRONTA]:\n\n` +
-          `Elegância e presença marcante em cada detalhe. ✨\n\n` +
-          `O modelo ${nome} foi desenhado para quem valoriza sofisticação e conforto. Feito em tecido ${tecido} com caimento impecável.\n\n` +
-          `💰 Valor: ${preco}\n` +
-          `🛍️ Poucas unidades disponíveis!\n\n` +
-          `📲 Clique no link do perfil e garanta o seu diretamente no WhatsApp!`;
+        output.innerText = `⚠️ ${e.message}`;
       }
     }
 
@@ -695,16 +681,11 @@ Pesquise no Google em tempo real por lojas e confecções de atacado REAIS (espe
         const resText = await chamarGemini(prompt, null, false);
         output.innerText = resText;
       } catch(e) {
-        output.innerText = `🎬 [ROTEIRO DE 3 STORIES DE OFERTA para "${nome}"]:\n\n` +
-          `📍 Story 1 (Desejo): Mostre a peça no manequim com movimento. Texto na tela: "Aquela peça que dispensa comentários... 💎"\n\n` +
-          `📍 Story 2 (Detalhes): Dê zoom na costura e textura. Texto na tela: "Tecido fluido, caimento perfeito e acabamento impecável."\n\n` +
-          `📍 Story 3 (Ação): Coloque sticker de link para o Zap. Texto na tela: "Últimas unidades! Toque aqui para chamar nossa consultora."`;
+        output.innerText = `⚠️ ${e.message}`;
       }
     }
 
     async function gerarRotinaSemanalIA() {
-      alert('IA analisando as melhores táticas de vendas para selecionar a rotina perfeita para a semana...');
-
       const prompt = `Você é o Diretor Estratégico de Vendas da ClosetJH. Analise o momento do mercado e crie a MELHOR rotina semanal estratégica de vendas e engajamento para a loja (Segunda a Sábado). 
 Responda APENAS em JSON estrito com as chaves: "segunda", "terca", "quarta", "quinta", "sexta", "sabado". Defina ações práticas e de alta conversão para cada dia.`;
 
@@ -721,14 +702,7 @@ Responda APENAS em JSON estrito com as chaves: "segunda", "terca", "quarta", "qu
         salvarPlanejamento();
         alert('🧠 Melhor estratégia semanal analisada e preenchida pela IA com sucesso!');
       } catch (err) {
-        document.getElementById('planSeg').value = "🔥 Lançamento & Bastidores: Mostrar novidades e engajar com caixinha de perguntas";
-        document.getElementById('planTer').value = "👗 Provador Interativo: Foco no caimento das peças de maior margem";
-        document.getElementById('planQua').value = "💡 Combinações Inteligentes: Postar ideias de Looks Completos (Cross-Selling)";
-        document.getElementById('planQui').value = "📱 Oferta Relâmpago VIP: Disparo exclusivo no WhatsApp para clientes ativas";
-        document.getElementById('planSex').value = "✨ Especial Fim de Semana: Sequência de Stories com peças de festa e sair";
-        document.getElementById('planSab').value = "🛍️ Plantão de Atendimento: Foco em fechamento rápido e entregas expressas";
-        salvarPlanejamento();
-        alert('🚀 Estratégia semanal preenchida e salva com sucesso!');
+        alert(`⚠️ ${err.message}`);
       }
     }
 
@@ -800,7 +774,7 @@ Responda APENAS em JSON estrito com as chaves: "segunda", "terca", "quarta", "qu
       const keyInput = document.getElementById('customApiKey').value.trim();
       if(keyInput) {
         localStorage.setItem('closetjh_custom_key', keyInput);
-        alert('Chave API salva com sucesso!');
+        alert('Chave API salva com sucesso no navegador!');
       } else {
         localStorage.removeItem('closetjh_custom_key');
         alert('Chave personalizada removida.');
