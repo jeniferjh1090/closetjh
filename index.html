@@ -541,9 +541,9 @@
   <div id="tab5" class="tab-content">
     <div class="card">
       <div class="card-title">⚙️ Configuração da Chave de API</div>
-      <label>Chave de API do Google AI Studio (`AIza...`)</label>
-      <input type="text" id="inputApiKeyConfig" placeholder="Cole sua chave AIza... aqui">
-      <div id="apiStatusBox" class="api-status-box error">⚠️ Nenhuma chave AIza detectada. Configure acima para ativar a IA.</div>
+      <label>Chave de API do Google AI Studio (`AQ...` ou `AIza...`)</label>
+      <input type="text" id="inputApiKeyConfig" placeholder="Cole sua chave aqui">
+      <div id="apiStatusBox" class="api-status-box error">⚠️ Nenhuma chave detectada. Configure acima para ativar a IA.</div>
     </div>
 
     <div class="card">
@@ -566,7 +566,7 @@
     </div>
   </div>
 
-  <!-- MENU INFERIOR DE ABAS (CORRIGIDO COM DATA-TAB) -->
+  <!-- MENU INFERIOR DE ABAS -->
   <div class="tab-bar">
     <button class="tab-item active" data-tab="tab1"><span>📸</span>Studio</button>
     <button class="tab-item" data-tab="tab2"><span>📊</span>Margem</button>
@@ -594,7 +594,7 @@
     function obterChaveAPI() {
       let chave = localStorage.getItem('closetjh_apikey');
       if (!chave) {
-        chave = "AQ.Ab8RN6IaO5xkEJhD2InzD_d_efJX2-azPBc0b-PWMKVcYmeFMQ";
+        chave = "AQ.Ab8RN6LjK3BZP0dK2l7bNGzwHUp_L9b3SQ2eNtH6x9iv7pJAjw"; // Chave padrão fornecida
       }
       return chave.trim();
     }
@@ -609,12 +609,12 @@
       }
     }
 
-   function verificarStatusAPI() {
+    function verificarStatusAPI() {
       const k = obterChaveAPI();
       const box = document.getElementById('apiStatusBox');
       if (k.startsWith('AIza') || k.startsWith('AQ.')) {
         box.className = "api-status-box ok";
-        box.innerText = "✅ Token/Chave configurada e pronta para uso a 100%.";
+        box.innerText = "✅ Chave/Token configurada e pronta para uso a 100%.";
       } else {
         box.className = "api-status-box error";
         box.innerText = "⚠️ Chave inválida. Verifique o texto colado.";
@@ -641,7 +641,7 @@
     let base64Image = "";
     let base64ImageAtacado = "";
 
-    // INICIALIZAÇÃO E EVENT LISTENERS NATIVOS (BLINDADOS CONTRA BUGS DE CLIQUE)
+    // INICIALIZAÇÃO E EVENT LISTENERS NATIVOS
     document.addEventListener('DOMContentLoaded', () => {
       const salva = localStorage.getItem('closetjh_apikey');
       if(salva) {
@@ -705,7 +705,7 @@
         mostrarToast("Foto de atacado removida.");
       });
 
-      // Vinculação de Botões
+      // Vinculação de Botões & Config
       document.getElementById('inputApiKeyConfig').addEventListener('input', (e) => {
         const val = e.target.value.trim();
         if(val) {
@@ -739,15 +739,26 @@
       document.getElementById('btnLimparHistorico').addEventListener('click', limparHistorico);
     });
 
-    // MOTOR GEMINI API COM INDICADOR DE CARREGAMENTO
+    // MOTOR GEMINI INTEGRADO (SUPORTE COMPATÍVEL A TOKENS AQ. VIA BEARER)
     async function chamarGemini(promptText, base64Img = null, usarBuscaGoogle = false, tentativa = 1) {
-      let keyToUse = obterChaveAPI();
-      if (!keyToUse) throw new Error("Chave de API não configurada.");
+      const apiKey = obterChaveAPI();
+      if (!apiKey) throw new Error("Chave de API não configurada.");
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 35000);
 
       try {
+        let url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+        let headers = {
+          "Content-Type": "application/json"
+        };
+
+        if (apiKey.startsWith('AQ.')) {
+          headers["Authorization"] = `Bearer ${apiKey.trim()}`;
+        } else {
+          url += `?key=${apiKey.trim()}`;
+        }
+
         const parts = [{ text: promptText }];
         if (base64Img) {
           parts.push({ inline_data: { mime_type: "image/jpeg", data: base64Img } });
@@ -758,16 +769,7 @@
           requestBody.tools = [{ googleSearch: {} }];
         }
 
-        const fetchUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
-        const headers = { 'Content-Type': 'application/json' };
-        
-        if (keyToUse.startsWith('AIza')) {
-          headers['X-goog-api-key'] = keyToUse;
-        } else {
-          headers['Authorization'] = `Bearer ${keyToUse}`;
-        }
-
-        const res = await fetch(fetchUrl, {
+        const res = await fetch(url, {
           method: 'POST',
           headers: headers,
           body: JSON.stringify(requestBody),
