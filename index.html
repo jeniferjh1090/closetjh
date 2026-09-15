@@ -1,1212 +1,658 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ClosetJH - Enterprise OS & AI</title>
-  <style>
-    /* ==========================================================================
-       1. VARIÁVEIS E RESET GLOBAL
-       ========================================================================== */
-    :root {
-      --bg-dark: #050505;
-      --bg-panel: #101010;
-      --bg-card: #181818;
-      --gold-primary: #D4AF37;
-      --gold-light: #F9E596;
-      --gold-dark: #AA8B2C;
-      --gold-gradient: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7);
-      --text-main: #EAEAEA;
-      --text-muted: #888888;
-      --border-light: rgba(212, 175, 55, 0.15);
-      --border-focus: rgba(212, 175, 55, 0.6);
-      --danger: #FF4C4C;
-      --success: #00E676;
-      --info: #2196F3;
-      --radius-sm: 6px;
-      --radius-md: 12px;
-      --radius-lg: 20px;
-      --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.5);
-      --shadow-glow: 0 0 15px rgba(212, 175, 55, 0.2);
-      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    
-    body {
-      background-color: var(--bg-dark); color: var(--text-main);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      padding: 0 0 90px 0; -webkit-font-smoothing: antialiased; line-height: 1.5; overflow-x: hidden;
-    }
-
-    /* Barra de Rolagem Customizada */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg-dark); }
-    ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--gold-primary); }
-
-    /* ==========================================================================
-       2. COMPONENTES DE UI GERAIS
-       ========================================================================== */
-    .header-main {
-      padding: 20px; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border-light); position: sticky; top: 0; z-index: 100;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    
-    .brand h1 { color: var(--gold-primary); font-size: 22px; font-family: 'Georgia', serif; letter-spacing: 2px; }
-    .brand p { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-    
-    .status-badge {
-      font-size: 10px; padding: 4px 8px; border-radius: 20px; font-weight: bold; text-transform: uppercase;
-      background: rgba(212, 175, 55, 0.1); color: var(--gold-primary); border: 1px solid var(--gold-primary);
-    }
-
-    .container { padding: 15px; max-width: 800px; margin: 0 auto; }
-
-    .card {
-      background: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-light);
-      padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-soft); position: relative; overflow: hidden;
-    }
-    
-    .card::before {
-      content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--gold-gradient);
-    }
-
-    .card-title {
-      font-size: 16px; color: var(--gold-light); font-weight: 600; margin-bottom: 5px;
-      display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px;
-    }
-    
-    .card-desc { font-size: 11px; color: var(--text-muted); margin-bottom: 15px; }
-
-    /* ==========================================================================
-       3. FORMULÁRIOS E BOTÕES
-       ========================================================================== */
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; font-size: 11px; color: var(--gold-primary); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; }
-    
-    input, select, textarea {
-      width: 100%; padding: 12px 15px; border-radius: var(--radius-sm); background: #0A0A0A;
-      border: 1px solid #333; color: var(--text-main); font-size: 14px; outline: none; transition: var(--transition);
-    }
-    input:focus, select:focus, textarea:focus { border-color: var(--gold-primary); box-shadow: 0 0 0 2px rgba(212,175,55,0.2); }
-    textarea { resize: vertical; min-height: 80px; }
-
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; }
-
-    .btn {
-      width: 100%; padding: 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: bold;
-      text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border: none; transition: var(--transition);
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    }
-    .btn-primary { background: var(--gold-gradient); color: #000; box-shadow: var(--shadow-glow); }
-    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
-    .btn-secondary { background: #222; color: var(--gold-light); border: 1px solid #444; }
-    .btn-secondary:hover { background: #333; border-color: var(--gold-primary); }
-    .btn-danger { background: rgba(255, 76, 76, 0.1); color: var(--danger); border: 1px solid var(--danger); }
-    .btn-success { background: rgba(0, 230, 118, 0.1); color: var(--success); border: 1px solid var(--success); }
-    .btn-small { padding: 8px 12px; font-size: 10px; }
-
-    /* ==========================================================================
-       4. COMPONENTES ESPECÍFICOS (FOTO, LOADING, TOAST, MODAL)
-       ========================================================================== */
-    .photo-upload-area {
-      border: 2px dashed #444; border-radius: var(--radius-md); padding: 30px 15px; text-align: center;
-      cursor: pointer; position: relative; background: #0A0A0A; transition: var(--transition);
-    }
-    .photo-upload-area:hover { border-color: var(--gold-primary); background: #111; }
-    .photo-upload-area .icon { font-size: 30px; margin-bottom: 10px; display: block; }
-    .photo-upload-area .text { font-size: 12px; color: var(--text-muted); }
-    .photo-upload-area input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-    .img-preview { width: 100%; max-height: 300px; object-fit: cover; border-radius: var(--radius-sm); margin-top: 15px; display: none; border: 1px solid #333; }
-
-    .loader-container { display: none; text-align: center; padding: 20px 0; }
-    .spinner {
-      width: 40px; height: 40px; border: 3px solid rgba(212, 175, 55, 0.2);
-      border-top: 3px solid var(--gold-primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px auto;
-    }
-    .loader-text { font-size: 11px; color: var(--gold-primary); letter-spacing: 2px; text-transform: uppercase; animation: pulse 1.5s infinite; }
-    
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-    .result-box {
-      margin-top: 20px; background: #080808; border-radius: var(--radius-sm); padding: 20px;
-      border: 1px solid #222; font-size: 13px; line-height: 1.6; display: none; animation: slideUp 0.4s ease;
-    }
-    .result-box h1, .result-box h2, .result-box h3 { color: var(--gold-light); margin-top: 15px; margin-bottom: 8px; border-bottom: 1px solid #222; padding-bottom: 5px; font-size: 15px; }
-    .result-box p { margin-bottom: 10px; color: #ccc; }
-    .result-box ul { padding-left: 20px; margin-bottom: 10px; color: #ccc; }
-    .result-box li { margin-bottom: 5px; }
-    .result-box strong { color: var(--gold-primary); }
-
-    /* TOAST NOTIFICATIONS */
-    #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-    .toast {
-      background: #111; color: #fff; padding: 15px 20px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 500;
-      border-left: 4px solid var(--gold-primary); box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-      display: flex; align-items: center; gap: 10px; min-width: 250px; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .toast.show { transform: translateX(0); }
-    .toast.error { border-left-color: var(--danger); }
-    .toast.success { border-left-color: var(--success); }
-
-    /* MODAL SYSTEM */
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(5px); z-index: 5000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s;
-    }
-    .modal-overlay.active { display: flex; opacity: 1; }
-    .modal-content {
-      background: var(--bg-card); width: 90%; max-width: 500px; border-radius: var(--radius-md); border: 1px solid var(--border-light);
-      max-height: 85vh; overflow-y: auto; position: relative; transform: scale(0.9); transition: transform 0.3s;
-    }
-    .modal-overlay.active .modal-content { transform: scale(1); }
-    .modal-header { padding: 15px 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; background: var(--bg-card); z-index: 2; }
-    .modal-header h3 { color: var(--gold-primary); font-size: 16px; margin: 0; }
-    .modal-close { background: none; border: none; color: #888; font-size: 24px; cursor: pointer; }
-    .modal-body { padding: 20px; }
-
-    /* ==========================================================================
-       5. LAYOUTS ESPECÍFICOS (GRÁFICOS, CHAT, LISTAS)
-       ========================================================================== */
-    .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-    .kpi-card { background: #111; border: 1px solid #222; padding: 15px; border-radius: var(--radius-sm); text-align: center; }
-    .kpi-title { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
-    .kpi-value { font-size: 20px; color: var(--gold-primary); font-weight: bold; }
-    .kpi-sub { font-size: 9px; color: var(--success); }
-
-    .chart-container { width: 100%; height: 200px; background: #0A0A0A; border: 1px solid #222; border-radius: var(--radius-sm); margin-bottom: 20px; position: relative; }
-    canvas { width: 100%; height: 100%; }
-
-    .data-list { list-style: none; }
-    .data-item {
-      background: #0A0A0A; border: 1px solid #222; padding: 12px 15px; border-radius: var(--radius-sm); margin-bottom: 8px;
-      display: flex; justify-content: space-between; align-items: center; transition: var(--transition); cursor: pointer;
-    }
-    .data-item:hover { border-color: var(--gold-primary); background: #111; }
-    .data-item-info h4 { font-size: 13px; color: var(--text-main); margin-bottom: 2px; }
-    .data-item-info p { font-size: 11px; color: var(--text-muted); }
-    .data-item-value { text-align: right; }
-    .data-item-value span { display: block; font-size: 14px; color: var(--gold-light); font-weight: bold; }
-    .data-item-value small { font-size: 9px; color: var(--success); }
-
-    /* Estilos do Chatbot */
-    .chat-box { height: 350px; overflow-y: auto; background: #080808; border: 1px solid #222; border-radius: var(--radius-sm); padding: 15px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 15px; }
-    .msg { max-width: 85%; padding: 10px 15px; border-radius: 12px; font-size: 13px; line-height: 1.4; position: relative; word-wrap: break-word;}
-    .msg.user { background: #222; color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
-    .msg.ai { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--border-light); color: #eaeaea; align-self: flex-start; border-bottom-left-radius: 2px; }
-    .chat-input-area { display: flex; gap: 10px; }
-    .chat-input-area input { flex: 1; }
-    .chat-input-area button { width: auto; padding: 0 20px; }
-
-    /* ==========================================================================
-       6. NAVEGAÇÃO INFERIOR (TABS)
-       ========================================================================== */
-    .nav-bottom {
-      position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(15px);
-      border-top: 1px solid #222; display: flex; justify-content: space-around; padding: 10px 5px 20px 5px; z-index: 1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.8);
-    }
-    .nav-item {
-      background: none; border: none; color: #666; font-size: 9px; text-transform: uppercase; font-weight: 700;
-      letter-spacing: 0.5px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; transition: var(--transition); flex: 1;
-    }
-    .nav-item .icon { font-size: 18px; margin-bottom: 2px; filter: grayscale(100%); opacity: 0.5; transition: var(--transition); }
-    .nav-item.active { color: var(--gold-primary); }
-    .nav-item.active .icon { filter: grayscale(0%); opacity: 1; transform: translateY(-3px); }
-
-    .tab-content { display: none; animation: fadeIn 0.4s ease; }
-    .tab-content.active { display: block; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalesApp PRO - Painel Exclusivo do Vendedor</title>
+    <!-- Tailwind CSS para Design Profissional -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js para o Dashboard -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
 </head>
-<body>
-
-  <!-- TOAST CONTAINER -->
-  <div id="toast-container"></div>
-
-  <!-- HEADER GERAL -->
-  <header class="header-main">
-    <div class="brand">
-      <h1>ClosetJH</h1>
-      <p>Enterprise OS & AI System</p>
-    </div>
-    <div class="status-badge" id="auth-status">🔒 Smart Auth</div>
-  </header>
-
-  <div class="container">
-    
-    <!-- ==========================================
-         TAB 1: DASHBOARD (HOME)
-         ========================================== -->
-    <div id="tab-dashboard" class="tab-content active">
-      <div class="card">
-        <div class="card-title">📊 Visão Geral Financeira</div>
-        <div class="kpi-grid">
-          <div class="kpi-card">
-            <div class="kpi-title">Faturamento Mês</div>
-            <div class="kpi-value" id="dash-faturamento">R$ 0,00</div>
-            <div class="kpi-sub">Total Recebido</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-title">Lucro Líquido</div>
-            <div class="kpi-value" id="dash-lucro">R$ 0,00</div>
-            <div class="kpi-sub">Após custos</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-title">Vendas Realizadas</div>
-            <div class="kpi-value" id="dash-qtd-vendas">0</div>
-            <div class="kpi-sub">Pedidos</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-title">Ticket Médio</div>
-            <div class="kpi-value" id="dash-ticket">R$ 0,00</div>
-            <div class="kpi-sub">Por cliente</div>
-          </div>
-        </div>
-
-        <div class="chart-container">
-          <!-- Canvas para o motor de gráfico customizado -->
-          <canvas id="salesChart"></canvas>
-        </div>
-
-        <button class="btn btn-primary" onclick="abrirModal('modalNovaVenda')">➕ Registrar Nova Venda</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title">🛍️ Últimas Vendas</div>
-        <ul class="data-list" id="lista-ultimas-vendas">
-          <!-- Renderizado via JS -->
-          <p style="text-align: center; color: #555; font-size: 12px; margin-top: 10px;">Nenhuma venda registrada ainda.</p>
-        </ul>
-      </div>
-    </div>
-
-    <!-- ==========================================
-         TAB 2: CRM & CLIENTES
-         ========================================== -->
-    <div id="tab-crm" class="tab-content">
-      <div class="card">
-        <div class="card-title">👥 Base de Clientes (CRM)</div>
-        <p class="card-desc">Gerencie suas clientes, histórico de compras e preferências.</p>
-        
-        <div class="form-group">
-          <input type="text" id="busca-cliente" placeholder="Buscar cliente por nome ou telefone..." oninput="renderizarClientes()">
-        </div>
-
-        <button class="btn btn-secondary" onclick="abrirModal('modalNovoCliente')" style="margin-bottom: 15px;">➕ Cadastrar Cliente</button>
-
-        <ul class="data-list" id="lista-clientes">
-          <!-- Renderizado via JS -->
-        </ul>
-      </div>
-    </div>
-
-    <!-- ==========================================
-         TAB 3: STUDIO IA (Análise Visual)
-         ========================================== -->
-    <div id="tab-studio" class="tab-content">
-      <div class="card">
-        <div class="card-title">✨ Studio IA - Análise de Produto</div>
-        <p class="card-desc">Faça upload da foto de uma peça para gerar descrições, preços e copy de vendas.</p>
-
-        <div class="photo-upload-area" id="studio-upload-box" onclick="document.getElementById('imgStudio').click()">
-          <span class="icon">📸</span>
-          <span class="text">Toque para selecionar a foto da roupa</span>
-          <input type="file" id="imgStudio" accept="image/*">
-        </div>
-        <img id="previewStudio" class="img-preview" alt="Preview">
-        
-        <div class="grid-2" style="margin-top: 15px;" id="studio-actions" style="display:none;">
-          <button class="btn btn-danger btn-small" id="btnRemoverStudio" style="display: none;">Remover Imagem</button>
-        </div>
-
-        <div class="form-group" style="margin-top: 15px;">
-          <label>O que a IA deve gerar?</label>
-          <select id="tipoAnaliseStudio">
-            <option value="completa">Análise Completa (Preço, Tecido, Copy Insta)</option>
-            <option value="seo">Ficha Técnica e SEO para E-commerce</option>
-            <option value="looks">Sugestão de Looks e Combinações</option>
-          </select>
-        </div>
-
-        <button class="btn btn-primary" id="btnAnalisarStudio">🤖 Processar com Inteligência Artificial</button>
-
-        <div class="loader-container" id="loadStudio">
-          <div class="spinner"></div>
-          <div class="loader-text">A IA está processando a imagem...</div>
-        </div>
-
-        <div class="result-box" id="resultStudio"></div>
-      </div>
-    </div>
-
-    <!-- ==========================================
-         TAB 4: ATACADO & FORNECEDORES
-         ========================================== -->
-    <div id="tab-atacado" class="tab-content">
-      <div class="card">
-        <div class="card-title">🏭 Radar de Atacado</div>
-        <p class="card-desc">Encontre fornecedores, pólos de moda e estimativas de custo de produção.</p>
-        
-        <div class="form-group">
-          <label>Descreva a peça que deseja comprar em atacado:</label>
-          <input type="text" id="descAtacado" placeholder="Ex: Conjunto de linho pantalona e cropped verde...">
-        </div>
-
-        <div class="form-group">
-          <label>Foto de referência (Opcional):</label>
-          <div class="photo-upload-area" id="atacado-upload-box" onclick="document.getElementById('imgAtacado').click()" style="padding: 15px;">
-            <span class="icon" style="font-size: 20px;">🖼️</span>
-            <span class="text">Anexar Referência</span>
-            <input type="file" id="imgAtacado" accept="image/*">
-          </div>
-          <img id="previewAtacado" class="img-preview" alt="Preview" style="max-height: 150px;">
-        </div>
-
-        <button class="btn btn-primary" id="btnBuscarAtacado">🔍 Vasculhar Mercado de Atacado</button>
-
-        <div class="loader-container" id="loadAtacado">
-          <div class="spinner"></div>
-          <div class="loader-text">Buscando fornecedores e calculando margens...</div>
-        </div>
-
-        <div class="result-box" id="resultAtacado"></div>
-      </div>
-    </div>
-
-    <!-- ==========================================
-         TAB 5: MARKETING & CONSULTOR
-         ========================================== -->
-    <div id="tab-mkt" class="tab-content">
-      <div class="card">
-        <div class="card-title">🧠 Consultor Virtual ClosetJH</div>
-        <p class="card-desc">Converse com a IA sobre estratégias de vendas, marketing e gestão da sua loja.</p>
-        
-        <div class="chat-box" id="chatHistory">
-          <div class="msg ai">Olá! Sou seu consultor de negócios IA. Como posso ajudar a ClosetJH a vender mais hoje?</div>
-        </div>
-
-        <div class="chat-input-area">
-          <input type="text" id="chatInput" placeholder="Ex: Crie um roteiro de reels para promoção...">
-          <button class="btn btn-primary" id="btnEnviarChat">➤</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">📅 Gerador de Rotina Rápida</div>
-        <div class="form-group">
-          <select id="focoRotina">
-            <option value="lançamento">Lançamento de Coleção</option>
-            <option value="queima">Queima de Estoque</option>
-            <option value="engajamento">Aumentar Engajamento</option>
-          </select>
-        </div>
-        <button class="btn btn-secondary" id="btnGerarRotina">Gerar Calendário Semanal</button>
-        
-        <div class="loader-container" id="loadRotina">
-          <div class="spinner"></div><div class="loader-text">Criando planejamento estratégico...</div>
-        </div>
-        <div class="result-box" id="resultRotina"></div>
-      </div>
-    </div>
-
-    <!-- ==========================================
-         TAB 6: CONFIGURAÇÕES & GESTÃO
-         ========================================== -->
-    <div id="tab-config" class="tab-content">
-      <div class="card">
-        <div class="card-title">⚙️ Configurações do Sistema</div>
-        
-        <div class="form-group">
-          <label>Credencial API Gemini (Smart Auth)</label>
-          <p class="card-desc">Cole sua chave (AIza...) ou Token (AQ.Ab...). O sistema reconhece automaticamente.</p>
-          <input type="password" id="inputApiKey" placeholder="Insira a credencial aqui...">
-          <button class="btn btn-secondary" onclick="salvarConfig()" style="margin-top: 10px;">💾 Salvar Credencial</button>
-        </div>
-
-        <hr style="border: 0; border-top: 1px solid #222; margin: 20px 0;">
-
-        <div class="card-title">💾 Backup e Dados Locais</div>
-        <p class="card-desc">Todo o seu CRM e histórico de vendas fica salvo no seu celular/navegador. Faça backup regularmente.</p>
-        
-        <div class="grid-2">
-          <button class="btn btn-success btn-small" onclick="exportarDados()">📥 Exportar JSON</button>
-          <button class="btn btn-secondary btn-small" onclick="document.getElementById('importFile').click()">📤 Importar JSON</button>
-          <input type="file" id="importFile" style="display:none;" accept=".json" onchange="importarDados(event)">
-        </div>
-
-        <div style="margin-top: 30px;">
-          <button class="btn btn-danger" onclick="resetarSistema()">🗑️ Apagar Todos os Dados (Reset Total)</button>
-        </div>
-        
-        <div style="text-align: center; margin-top: 20px; font-size: 10px; color: #555;">
-          <p>ClosetJH Enterprise OS v3.0</p>
-          <p>Desenvolvido para Máxima Performance</p>
-        </div>
-      </div>
-    </div>
-
-  </div> <!-- End Container -->
-
-  <!-- ==========================================================================
-       MODAIS (JANELAS SOBREPOSTAS)
-       ========================================================================== -->
-  
-  <!-- Modal: Nova Venda -->
-  <div class="modal-overlay" id="modalNovaVenda">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Registrar Nova Venda</h3>
-        <button class="modal-close" onclick="fecharModal('modalNovaVenda')">×</button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label>Cliente</label>
-          <select id="venda-cliente">
-            <option value="Avulso">Cliente Avulso / Instagram</option>
-            <!-- Preenchido via JS -->
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Produto / Descrição</label>
-          <input type="text" id="venda-produto" placeholder="Ex: Vestido Midi Preto">
-        </div>
-        <div class="grid-2">
-          <div class="form-group">
-            <label>Valor de Venda (R$)</label>
-            <input type="number" id="venda-valor" placeholder="150.00" step="0.01">
-          </div>
-          <div class="form-group">
-            <label>Custo da Peça (R$)</label>
-            <input type="number" id="venda-custo" placeholder="70.00" step="0.01">
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Forma de Pagamento</label>
-          <select id="venda-pagamento">
-            <option value="PIX">PIX</option>
-            <option value="Cartão de Crédito">Cartão de Crédito</option>
-            <option value="Cartão de Débito">Cartão de Débito</option>
-            <option value="Dinheiro">Dinheiro</option>
-          </select>
-        </div>
-        <button class="btn btn-primary" onclick="salvarVenda()">Confirmar Venda</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal: Novo Cliente -->
-  <div class="modal-overlay" id="modalNovoCliente">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Cadastrar Cliente</h3>
-        <button class="modal-close" onclick="fecharModal('modalNovoCliente')">×</button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label>Nome Completo</label>
-          <input type="text" id="cli-nome" placeholder="Maria da Silva">
-        </div>
-        <div class="form-group">
-          <label>Telefone / WhatsApp</label>
-          <input type="text" id="cli-telefone" placeholder="(11) 99999-9999">
-        </div>
-        <div class="form-group">
-          <label>Instagram (Opcional)</label>
-          <input type="text" id="cli-insta" placeholder="@maria.silva">
-        </div>
-        <div class="form-group">
-          <label>Preferências de Estilo / Tamanho</label>
-          <textarea id="cli-prefs" placeholder="Gosta de vestidos midi, tamanho M, cores quentes..."></textarea>
-        </div>
-        <button class="btn btn-primary" onclick="salvarCliente()">Salvar Cliente</button>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- ==========================================================================
-       NAVEGAÇÃO INFERIOR
-       ========================================================================== -->
-  <nav class="nav-bottom">
-    <button class="nav-item active" onclick="mudarAba('dashboard')">
-      <span class="icon">📊</span>
-      <span>Painel</span>
-    </button>
-    <button class="nav-item" onclick="mudarAba('crm')">
-      <span class="icon">👥</span>
-      <span>CRM</span>
-    </button>
-    <button class="nav-item" onclick="mudarAba('studio')">
-      <span class="icon">✨</span>
-      <span>Studio</span>
-    </button>
-    <button class="nav-item" onclick="mudarAba('atacado')">
-      <span class="icon">🏭</span>
-      <span>Atacado</span>
-    </button>
-    <button class="nav-item" onclick="mudarAba('mkt')">
-      <span class="icon">📱</span>
-      <span>Markting</span>
-    </button>
-    <button class="nav-item" onclick="mudarAba('config')">
-      <span class="icon">⚙️</span>
-      <span>Gestão</span>
-    </button>
-  </nav>
-
-  <!-- ==========================================================================
-       LÓGICA JAVASCRIPT (O NÚCLEO DO SISTEMA)
-       ========================================================================== -->
-  <script>
-    /* ==========================================================================
-       A. BANCO DE DADOS LOCAL (LocalStorage Wrapper)
-       ========================================================================== */
-    const DB_KEY = 'closetjh_db_v3';
-    let db = {
-      clientes: [],
-      vendas: [],
-      config: { apiKey: '' },
-      chatHistory: []
-    };
-
-    function carregarDB() {
-      const saved = localStorage.getItem(DB_KEY);
-      if (saved) {
-        try { db = JSON.parse(saved); } catch (e) { console.error("Erro ao ler DB", e); }
-      }
-      if(!db.chatHistory) db.chatHistory = [];
-    }
-
-    function salvarDB() {
-      localStorage.setItem(DB_KEY, JSON.stringify(db));
-      renderizarDashboard();
-    }
-
-    function gerarID() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 5); }
-
-    function formatarMoeda(valor) {
-      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
-    }
-
-    function formatarData(dataStr) {
-      const d = new Date(dataStr);
-      return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
-    }
-
-    /* ==========================================================================
-       B. SISTEMA DE UI E UTILITÁRIOS (Toasts, Modais, Tabs)
-       ========================================================================== */
-    function showToast(msg, tipo = 'info') {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      toast.className = `toast ${tipo}`;
-      let icon = 'ℹ️';
-      if(tipo === 'success') icon = '✅';
-      if(tipo === 'error') icon = '❌';
-      toast.innerHTML = `<span>${icon}</span> <span>${msg}</span>`;
-      container.appendChild(toast);
-      
-      requestAnimationFrame(() => { toast.classList.add('show'); });
-      
-      setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 400);
-      }, 3500);
-    }
-
-    function mudarAba(abaId) {
-      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      
-      document.getElementById(`tab-${abaId}`).classList.add('active');
-      const eventTarget = event.currentTarget;
-      if(eventTarget) eventTarget.classList.add('active');
-      window.scrollTo(0, 0);
-    }
-
-    function abrirModal(modalId) { document.getElementById(modalId).classList.add('active'); }
-    function fecharModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
-
-    /* Compressor de Imagens Client-Side para evitar payload grande na API */
-    function processarImagem(file, maxSize = 800) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = e => {
-          const img = new Image();
-          img.src = e.target.result;
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            let width = img.width; let height = img.height;
-            if (width > height) { if (width > maxSize) { height = Math.round((height * maxSize) / width); width = maxSize; } } 
-            else { if (height > maxSize) { width = Math.round((width * maxSize) / height); height = maxSize; } }
-            canvas.width = width; canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-            const base64 = dataUrl.split(',')[1];
-            resolve({ dataUrl, base64 });
-          };
-          img.onerror = reject;
-        };
-        reader.onerror = reject;
-      });
-    }
-
-    /* ==========================================================================
-       C. SMART AUTH & GEMINI API INTEGRAÇÃO
-       ========================================================================== */
-    async function chamarIA(promptTexto, imagemBase64 = null, usarBuscaInternet = false) {
-      const apiKey = db.config.apiKey;
-      if (!apiKey) {
-        showToast("Você precisa configurar sua chave API na aba de Gestão primeiro.", "error");
-        throw new Error("API Key ausente");
-      }
-
-      const parts = [{ text: promptTexto }];
-      if (imagemBase64) {
-        parts.push({ inline_data: { mime_type: "image/jpeg", data: imagemBase64 } });
-      }
-
-      const bodyData = { contents: [{ parts }] };
-      if (usarBuscaInternet) {
-        bodyData.tools = [{ googleSearch: {} }];
-      }
-
-      let url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
-      let headers = { 'Content-Type': 'application/json' };
-
-      // Lógica principal do SMART AUTH pedida pelo usuário
-      if (apiKey.startsWith('AIza')) {
-        url += `?key=${apiKey}`;
-      } else {
-        // Chaves customizadas AQ.Ab... vão no header Bearer
-        headers['Authorization'] = `Bearer ${apiKey}`;
-      }
-
-      try {
-        const res = await fetch(url, { method: 'POST', headers: headers, body: JSON.stringify(bodyData) });
-        
-        if (!res.ok) {
-          const errText = await res.text();
-          console.error("Erro da API:", errText);
-          throw new Error(`Erro na comunicação com a IA (Status: ${res.status}). Verifique sua chave.`);
-        }
-
-        const data = await res.json();
-        if (data.candidates && data.candidates[0].content) {
-          return data.candidates[0].content.parts.map(p => p.text).join('\n');
-        } else {
-          throw new Error("Resposta vazia da IA.");
-        }
-      } catch (err) {
-        throw err;
-      }
-    }
-
-    /* ==========================================================================
-       D. MÓDULOS DE NEGÓCIO (Vendas, CRM, Dashboard)
-       ========================================================================== */
-    
-    // --- CRM ---
-    function salvarCliente() {
-      const nome = document.getElementById('cli-nome').value.trim();
-      if(!nome) return showToast("O nome é obrigatório", "error");
-      
-      const cliente = {
-        id: gerarID(),
-        nome: nome,
-        telefone: document.getElementById('cli-telefone').value,
-        insta: document.getElementById('cli-insta').value,
-        prefs: document.getElementById('cli-prefs').value,
-        dataCadastro: new Date().toISOString()
-      };
-      
-      db.clientes.push(cliente);
-      salvarDB();
-      fecharModal('modalNovoCliente');
-      showToast("Cliente cadastrado com sucesso!", "success");
-      
-      // Limpa os campos
-      ['cli-nome', 'cli-telefone', 'cli-insta', 'cli-prefs'].forEach(id => document.getElementById(id).value = '');
-      renderizarClientes();
-      renderizarSelectClientesVenda();
-    }
-
-    function renderizarClientes() {
-      const lista = document.getElementById('lista-clientes');
-      const termo = document.getElementById('busca-cliente').value.toLowerCase();
-      
-      const filtrados = db.clientes.filter(c => c.nome.toLowerCase().includes(termo) || c.telefone.includes(termo));
-      
-      if(filtrados.length === 0) {
-        lista.innerHTML = `<p style="text-align:center; color:#555; font-size:12px;">Nenhum cliente encontrado.</p>`;
-        return;
-      }
-
-      lista.innerHTML = filtrados.map(c => `
-        <li class="data-item">
-          <div class="data-item-info">
-            <h4>${c.nome}</h4>
-            <p>📱 ${c.telefone || 'Sem telefone'} | Insta: ${c.insta || '-'}</p>
-          </div>
-          <div class="data-item-value">
-            <button class="btn-secondary btn-small" onclick="alert('Perfil de ${c.nome}\\n\\nPreferências: ${c.prefs || 'Não informado'}')">Ver Perfil</button>
-          </div>
-        </li>
-      `).join('');
-    }
-
-    function renderizarSelectClientesVenda() {
-      const select = document.getElementById('venda-cliente');
-      let html = `<option value="Avulso">Cliente Avulso / Instagram</option>`;
-      db.clientes.forEach(c => {
-        html += `<option value="${c.id}">${c.nome}</option>`;
-      });
-      select.innerHTML = html;
-    }
-
-    // --- VENDAS ---
-    function salvarVenda() {
-      const prod = document.getElementById('venda-produto').value.trim();
-      const val = parseFloat(document.getElementById('venda-valor').value);
-      const custo = parseFloat(document.getElementById('venda-custo').value) || 0;
-      
-      if(!prod || isNaN(val)) return showToast("Preencha o produto e o valor corretamente.", "error");
-
-      const venda = {
-        id: gerarID(),
-        clienteId: document.getElementById('venda-cliente').value,
-        produto: prod,
-        valorVenda: val,
-        custo: custo,
-        lucro: val - custo,
-        pagamento: document.getElementById('venda-pagamento').value,
-        data: new Date().toISOString()
-      };
-
-      db.vendas.push(venda);
-      salvarDB();
-      fecharModal('modalNovaVenda');
-      showToast("Venda registrada com sucesso! 💰", "success");
-      
-      // Limpa campos
-      ['venda-produto', 'venda-valor', 'venda-custo'].forEach(id => document.getElementById(id).value = '');
-    }
-
-    // --- MOTOR DE GRÁFICOS CUSTOMIZADO (CANVAS RAW) ---
-    // Cria um gráfico de barras desenhando diretamente no Canvas (Para atingir o requisito sem libs)
-    function desenharGraficoVendas(canvasId, vendas) {
-      const canvas = document.getElementById(canvasId);
-      if(!canvas) return;
-      const ctx = canvas.getContext('2d');
-      
-      // Agrupar vendas por dia (últimos 7 dias)
-      const hoje = new Date();
-      hoje.setHours(0,0,0,0);
-      let dados = [];
-      let maxValor = 0;
-
-      for (let i = 6; i >= 0; i--) {
-        let dia = new Date(hoje);
-        dia.setDate(dia.getDate() - i);
-        let diaStr = dia.toISOString().split('T')[0];
-        
-        let totalDia = vendas.filter(v => v.data.startsWith(diaStr))
-                             .reduce((acc, curr) => acc + curr.valorVenda, 0);
-        
-        dados.push({ label: `${dia.getDate()}/${dia.getMonth()+1}`, valor: totalDia });
-        if(totalDia > maxValor) maxValor = totalDia;
-      }
-
-      // Configurações do Canvas responsivo
-      const rect = canvas.parentElement.getBoundingClientRect();
-      canvas.width = rect.width;
-      canvas.height = rect.height;
-      const w = canvas.width; const h = canvas.height;
-      
-      ctx.clearRect(0, 0, w, h);
-      
-      const padding = 30;
-      const graphW = w - padding * 2;
-      const graphH = h - padding * 2;
-      
-      // Desenha eixos
-      ctx.beginPath();
-      ctx.moveTo(padding, padding);
-      ctx.lineTo(padding, h - padding);
-      ctx.lineTo(w - padding, h - padding);
-      ctx.strokeStyle = '#333';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      // Se não houver vendas
-      if(maxValor === 0) {
-        ctx.fillStyle = '#666';
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText("Sem dados nos últimos 7 dias.", w/2, h/2);
-        return;
-      }
-
-      // Desenha barras
-      const barWidth = (graphW / dados.length) * 0.6;
-      const gap = (graphW / dados.length) * 0.4;
-      
-      dados.forEach((d, index) => {
-        const barHeight = (d.valor / maxValor) * graphH;
-        const x = padding + gap/2 + index * (barWidth + gap);
-        const y = h - padding - barHeight;
-        
-        // Gradiente da barra
-        let gradient = ctx.createLinearGradient(x, y, x, h-padding);
-        gradient.addColorStop(0, '#D4AF37');
-        gradient.addColorStop(1, '#AA8B2C');
-        
-        ctx.fillStyle = gradient;
-        // Borda arredondada superior
-        ctx.beginPath();
-        ctx.roundRect(x, y, barWidth, barHeight, [4, 4, 0, 0]);
-        ctx.fill();
-
-        // Label do eixo X
-        ctx.fillStyle = '#888';
-        ctx.font = '10px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(d.label, x + barWidth/2, h - padding + 15);
-        
-        // Valor acima da barra
-        if(d.valor > 0) {
-          ctx.fillStyle = '#fff';
-          ctx.fillText(`R$${Math.round(d.valor)}`, x + barWidth/2, y - 5);
-        }
-      });
-    }
-
-    function renderizarDashboard() {
-      const faturamento = db.vendas.reduce((a, b) => a + b.valorVenda, 0);
-      const lucro = db.vendas.reduce((a, b) => a + (b.lucro || 0), 0);
-      const ticket = db.vendas.length > 0 ? faturamento / db.vendas.length : 0;
-
-      document.getElementById('dash-faturamento').innerText = formatarMoeda(faturamento);
-      document.getElementById('dash-lucro').innerText = formatarMoeda(lucro);
-      document.getElementById('dash-qtd-vendas').innerText = db.vendas.length;
-      document.getElementById('dash-ticket').innerText = formatarMoeda(ticket);
-
-      const lista = document.getElementById('lista-ultimas-vendas');
-      if(db.vendas.length === 0) {
-        lista.innerHTML = '<p style="text-align: center; color: #555; font-size: 12px; margin-top: 10px;">Nenhuma venda registrada.</p>';
-      } else {
-        const ultimas = [...db.vendas].reverse().slice(0, 5); // Pega as 5 últimas
-        lista.innerHTML = ultimas.map(v => {
-          let nomeCli = "Avulso";
-          if(v.clienteId !== "Avulso") {
-            const cli = db.clientes.find(c => c.id === v.clienteId);
-            if(cli) nomeCli = cli.nome;
-          }
-          return `
-          <li class="data-item">
-            <div class="data-item-info">
-              <h4>${v.produto}</h4>
-              <p>👤 ${nomeCli} | 💳 ${v.pagamento} | 📅 ${formatarData(v.data)}</p>
+<body class="bg-slate-100 h-screen flex overflow-hidden font-sans text-slate-800">
+
+    <!-- MENU LATERAL / SIDEBAR -->
+    <aside class="w-72 bg-slate-900 text-slate-300 flex flex-col shadow-xl z-20">
+        <div class="p-6 border-b border-slate-800">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 text-white p-2.5 rounded-xl shadow-lg">
+                    <i class="fa-solid fa-chart-line text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-white tracking-wide">SalesApp PRO</h1>
+                    <span class="inline-block px-2 py-0.5 text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 rounded-full border border-emerald-500/20 mt-1">
+                        Área Restrita do Vendedor
+                    </span>
+                </div>
             </div>
-            <div class="data-item-value">
-              <span>${formatarMoeda(v.valorVenda)}</span>
-              <small>Lucro: ${formatarMoeda(v.lucro)}</small>
+        </div>
+
+        <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto">
+            <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Navegação</p>
+            
+            <button onclick="switchView('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all bg-blue-600 text-white shadow-lg shadow-blue-600/30">
+                <i class="fa-solid fa-house w-5 text-center"></i>
+                <span>Dashboard</span>
+            </button>
+            
+            <button onclick="switchView('catalogo')" id="nav-catalogo" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white text-slate-400">
+                <i class="fa-solid fa-box-open w-5 text-center"></i>
+                <span>Catálogo e Estoque</span>
+            </button>
+            
+            <button onclick="switchView('orcamento')" id="nav-orcamento" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white text-slate-400">
+                <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i>
+                <span>Novo Orçamento</span>
+            </button>
+
+            <button onclick="switchView('historico')" id="nav-historico" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white text-slate-400">
+                <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
+                <span>Histórico de Vendas</span>
+            </button>
+        </nav>
+
+        <!-- PERFIL DO VENDEDOR LOGADO -->
+        <div class="p-4 border-t border-slate-800 bg-slate-950/40">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">
+                    V1
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-white truncate">Carlos Vendedor</p>
+                    <p class="text-xs text-emerald-400 flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block mr-1.5 animate-pulse"></span> Sessão Ativa</p>
+                </div>
             </div>
-          </li>`;
-        }).join('');
-      }
+        </div>
+    </aside>
 
-      // Redesenha o gráfico (delay pequeno para garantir que a tab esteja visível se for o caso)
-      setTimeout(() => desenharGraficoVendas('salesChart', db.vendas), 100);
-    }
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
+        
+        <!-- TOPBAR -->
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shadow-sm z-10">
+            <div class="flex items-center space-x-4">
+                <h2 id="page-title" class="text-xl font-bold text-slate-800">Dashboard de Resultados</h2>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="text-right hidden sm:block">
+                    <p class="text-xs text-slate-400">Meta Mensal Atingida</p>
+                    <p class="text-sm font-bold text-slate-700">R$ 34.000 / R$ 50.000</p>
+                </div>
+                <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
+                <span class="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-lg border border-blue-100">
+                    Versão 2.4 PRO
+                </span>
+            </div>
+        </header>
 
+        <!-- ÁREA DINÂMICA DAS TELAS -->
+        <div class="flex-1 overflow-y-auto p-8">
 
-    /* ==========================================================================
-       E. LÓGICA DE INTELIGÊNCIA ARTIFICIAL (Studio, Atacado, Chatbot)
-       ========================================================================== */
-    
-    // --- STUDIO IA (FOTOS) ---
-    let b64Studio = null;
-    document.getElementById('imgStudio').addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if(!file) return;
-      showToast("Otimizando imagem para IA... ⏳");
-      try {
-        const res = await processarImagem(file);
-        b64Studio = res.base64;
-        document.getElementById('previewStudio').src = res.dataUrl;
-        document.getElementById('previewStudio').style.display = 'block';
-        document.getElementById('btnRemoverStudio').style.display = 'inline-block';
-        document.getElementById('studio-upload-box').style.display = 'none';
-        showToast("Imagem pronta!", "success");
-      } catch (err) { showToast("Erro ao processar foto.", "error"); }
-    });
+            <!-- ================= 1. DASHBOARD ================= -->
+            <section id="view-dashboard" class="view-section active space-y-8">
+                <!-- Cards de Indicadores -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
+                        <div class="absolute right-4 top-4 text-blue-100 text-4xl"><i class="fa-solid fa-wallet"></i></div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Vendas Hoje</p>
+                        <h3 class="text-2xl font-extrabold text-slate-800" id="dash-vendas-hoje">R$ 4.850,00</h3>
+                        <p class="text-xs text-emerald-600 font-semibold mt-2 flex items-center"><i class="fa-solid fa-arrow-up mr-1"></i> +14% vs. ontem</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
+                        <div class="absolute right-4 top-4 text-emerald-100 text-4xl"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Comissão Estimada</p>
+                        <h3 class="text-2xl font-extrabold text-slate-800" id="dash-comissao">R$ 242,50</h3>
+                        <p class="text-xs text-slate-400 mt-2">Base de 5% sobre vendas</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
+                        <div class="absolute right-4 top-4 text-purple-100 text-4xl"><i class="fa-solid fa-bullseye"></i></div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Progresso da Meta</p>
+                        <h3 class="text-2xl font-extrabold text-slate-800">68%</h3>
+                        <div class="w-full bg-slate-100 rounded-full h-2 mt-3 overflow-hidden">
+                            <div class="bg-purple-600 h-2 rounded-full" style="width: 68%"></div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
+                        <div class="absolute right-4 top-4 text-amber-100 text-4xl"><i class="fa-solid fa-file-signature"></i></div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Orçamentos Abertos</p>
+                        <h3 class="text-2xl font-extrabold text-slate-800" id="dash-orcamentos-qtd">3</h3>
+                        <p class="text-xs text-amber-600 font-semibold mt-2">Aguardando fechamento</p>
+                    </div>
+                </div>
 
-    document.getElementById('btnRemoverStudio').addEventListener('click', () => {
-      b64Studio = null;
-      document.getElementById('previewStudio').style.display = 'none';
-      document.getElementById('previewStudio').src = '';
-      document.getElementById('btnRemoverStudio').style.display = 'none';
-      document.getElementById('studio-upload-box').style.display = 'block';
-      document.getElementById('imgStudio').value = '';
-    });
+                <!-- Gráficos e Ações Rápidas -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <h3 class="text-base font-bold text-slate-800 mb-4">Desempenho de Vendas na Semana</h3>
+                        <div class="h-72">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800 mb-2">Atalhos do Vendedor</h3>
+                            <p class="text-xs text-slate-400 mb-4">Ações rápidas para agilizar o atendimento.</p>
+                            <div class="space-y-3">
+                                <button onclick="switchView('orcamento')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-md shadow-blue-600/20 flex items-center justify-center space-x-2">
+                                    <i class="fa-solid fa-plus-circle"></i>
+                                    <span>Criar Novo Orçamento</span>
+                                </button>
+                                <button onclick="switchView('catalogo')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 px-4 rounded-xl transition-all flex items-center justify-center space-x-2">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <span>Consultar Estoque Rápido</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl mt-6">
+                            <p class="text-xs font-bold text-amber-800 mb-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Atenção à Margem</p>
+                            <p class="text-[11px] text-amber-700 leading-relaxed">Lembre-se de nunca divulgar o valor de "Margem Mínima" diretamente ao cliente final.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-    document.getElementById('btnAnalisarStudio').addEventListener('click', async () => {
-      if(!b64Studio) return showToast("Anexe a foto da peça primeiro.", "error");
-      
-      const tipo = document.getElementById('tipoAnaliseStudio').value;
-      const loader = document.getElementById('loadStudio');
-      const box = document.getElementById('resultStudio');
-      const btn = document.getElementById('btnAnalisarStudio');
-      
-      btn.style.display = 'none'; loader.style.display = 'block'; box.style.display = 'none';
+            <!-- ================= 2. CATÁLOGO E ESTOQUE ================= -->
+            <section id="view-catalogo" class="view-section space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800">Catálogo de Produtos & Controle de Estoque</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Visualize preços de tabela e limites restritos de desconto.</p>
+                    </div>
+                    <div class="w-full sm:w-72 relative">
+                        <i class="fa-solid fa-search absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                        <input type="text" id="inputSearchCatalog" onkeyup="filterCatalog()" placeholder="Buscar por nome ou código..." class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
 
-      let prompt = "";
-      if(tipo === 'completa') {
-        prompt = `Aja como especialista em moda e vendas online para a loja 'ClosetJH'. Analise a roupa da imagem. Formate a saída em HTML (use tags h3, p, strong, ul, li).
-        Forneça: 1. Título atrativo. 2. Descrição de tecido/caimento. 3. Sugestão de preço de venda (realista para Brasil). 4. Uma legenda pronta para o Instagram com hashtags e CTA forte.`;
-      } else if (tipo === 'seo') {
-        prompt = `Analise a peça e crie uma Ficha Técnica focada em SEO para E-commerce. Formato HTML. Inclua: Título SEO, Descrição Otimizada (150 palavras), Palavras-chave em formato de bullets, e especificações técnicas (estimadas).`;
-      } else {
-        prompt = `Analise a peça e sugira 3 looks completos montados a partir dela (Ex: Look Trabalho, Look Noite, Look Casual). Formato HTML. Para cada look, sugira calçados e acessórios.`;
-      }
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                <th class="p-4 pl-6">Código / Produto</th>
+                                <th class="p-4">Estoque Atual</th>
+                                <th class="p-4">Preço Tabela (Cliente)</th>
+                                <th class="p-4 bg-rose-50 text-rose-700">Margem Mínima (Restrito)*</th>
+                                <th class="p-4 pr-6 text-right">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="catalogTableBody" class="divide-y divide-slate-100 text-sm">
+                            <!-- Preenchido via JavaScript -->
+                        </tbody>
+                    </table>
+                    <div class="p-4 bg-slate-50 border-t border-slate-200 text-xs text-slate-500">
+                        * A coluna vermelha indica o limite absoluto de desconto permitido pelo gerente. Descontos abaixo deste valor bloqueiam o pedido.
+                    </div>
+                </div>
+            </section>
 
-      try {
-        const res = await chamarIA(prompt, b64Studio, false);
-        let limpo = res.replace(/```html/g, '').replace(/```/g, '');
-        box.innerHTML = limpo;
-        box.style.display = 'block';
-        showToast("Análise concluída!", "success");
-      } catch (e) {
-        showToast(e.message, "error");
-      } finally {
-        btn.style.display = 'flex'; loader.style.display = 'none';
-      }
-    });
+            <!-- ================= 3. NOVO ORÇAMENTO ================= -->
+            <section id="view-orcamento" class="view-section space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    
+                    <!-- Lado Esquerdo: Seleção de Cliente e Produtos -->
+                    <div class="lg:col-span-2 space-y-6">
+                        
+                        <!-- Dados do Cliente -->
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                            <h3 class="text-base font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100 flex items-center">
+                                <span class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs mr-2 font-bold">1</span>
+                                Dados do Cliente
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Nome / Razão Social</label>
+                                    <input type="text" id="clientName" placeholder="Ex: Empresa ABC Ltda" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">WhatsApp / Telefone</label>
+                                    <input type="text" id="clientPhone" placeholder="(11) 99999-9999" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                        </div>
 
+                        <!-- Adicionar Produtos -->
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                            <h3 class="text-base font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100 flex items-center">
+                                <span class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs mr-2 font-bold">2</span>
+                                Adicionar Itens ao Carrinho
+                            </h3>
+                            <div class="flex flex-col sm:flex-row gap-3 items-end">
+                                <div class="flex-1 w-full">
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Selecionar Produto</label>
+                                    <select id="selectProduct" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Selecione um produto do catálogo...</option>
+                                    </select>
+                                </div>
+                                <div class="w-full sm:w-28">
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Quantidade</label>
+                                    <input type="number" id="inputQty" value="1" min="1" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-center focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <button onclick="addToCart()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-xl transition-all shadow-md shadow-blue-600/20 text-sm flex items-center justify-center space-x-2">
+                                    <i class="fa-solid fa-cart-plus"></i>
+                                    <span>Inserir</span>
+                                </button>
+                            </div>
 
-    // --- RADAR DE ATACADO ---
-    let b64Atacado = null;
-    document.getElementById('imgAtacado').addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if(!file) return;
-      try {
-        const res = await processarImagem(file);
-        b64Atacado = res.base64;
-        document.getElementById('previewAtacado').src = res.dataUrl;
-        document.getElementById('previewAtacado').style.display = 'block';
-      } catch (err) { showToast("Erro na foto de referência.", "error"); }
-    });
+                            <!-- Tabela do Carrinho -->
+                            <div class="mt-6 border border-slate-200 rounded-xl overflow-hidden">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase">
+                                            <th class="p-3 pl-4">Produto</th>
+                                            <th class="p-3 text-center">Qtd</th>
+                                            <th class="p-3">Preço Un.</th>
+                                            <th class="p-3">Subtotal</th>
+                                            <th class="p-3 pr-4 text-right">Remover</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cartTableBody" class="divide-y divide-slate-100 text-sm">
+                                        <tr>
+                                            <td colspan="5" class="p-6 text-center text-slate-400">Nenhum item adicionado ao orçamento ainda.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
 
-    document.getElementById('btnBuscarAtacado').addEventListener('click', async () => {
-      const desc = document.getElementById('descAtacado').value.trim();
-      if(!desc && !b64Atacado) return showToast("Descreva a peça ou anexe uma foto.", "error");
+                    </div>
 
-      const loader = document.getElementById('loadAtacado');
-      const box = document.getElementById('resultAtacado');
-      const btn = document.getElementById('btnBuscarAtacado');
-      
-      btn.style.display = 'none'; loader.style.display = 'block'; box.style.display = 'none';
+                    <!-- Lado Direito: Resumo e Fechamento -->
+                    <div class="space-y-6">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 sticky top-6">
+                            <h3 class="text-base font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100">Resumo do Pedido</h3>
+                            
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between text-slate-600">
+                                    <span>Subtotal Produtos:</span>
+                                    <span id="summarySubtotal" class="font-semibold text-slate-800">R$ 0,00</span>
+                                </div>
+                                
+                                <div class="pt-3 border-t border-slate-100">
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Desconto Especial Concedido (R$)</label>
+                                    <input type="number" id="inputDiscount" value="0" min="0" oninput="calculateTotals()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-slate-800">
+                                </div>
 
-      let prompt = `Aja como um comprador atacadista expert de moda feminina no Brasil (Brás, Bom Retiro, Goiânia, Fortaleza). 
-      Busque informações sobre: ${desc}. `;
-      if(b64Atacado) prompt += "Use a foto enviada como referência de estilo. ";
-      
-      prompt += `Me retorne em formato HTML (h3, p, ul, strong) o seguinte dossiê:
-      1. Estimativa de Custo de Produção/Atacado (R$).
-      2. Estimativa de Preço Final de Varejo (Margem de lucro).
-      3. Principais Pólos onde encontrar (Ex: Mega Moda, Brás, etc).
-      4. Dicas de qualidade ao comprar essa peça específica.`;
+                                <!-- Alerta de Margem Estourada -->
+                                <div id="marginWarning" class="hidden p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-bold space-y-1">
+                                    <p class="flex items-center"><i class="fa-solid fa-triangle-exclamation mr-1.5 text-base"></i> Bloqueio de Margem Mínima!</p>
+                                    <p class="font-normal text-[11px]">O desconto extra ultrapassou o limite mínimo permitido pelo sistema. Ajuste o valor para prosseguir.</p>
+                                </div>
 
-      try {
-        const res = await chamarIA(prompt, b64Atacado, true); // Usa busca internet (se a config da tool permitir)
-        let limpo = res.replace(/```html/g, '').replace(/```/g, '');
-        box.innerHTML = limpo;
-        box.style.display = 'block';
-      } catch (e) {
-        showToast(e.message, "error");
-      } finally {
-        btn.style.display = 'flex'; loader.style.display = 'none';
-      }
-    });
+                                <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                                    <span class="text-base font-bold text-slate-800">Valor Final:</span>
+                                    <span id="summaryTotal" class="text-2xl font-extrabold text-blue-600">R$ 0,00</span>
+                                </div>
+                            </div>
 
-    // --- MARKETING (ROTINA) ---
-    document.getElementById('btnGerarRotina').addEventListener('click', async () => {
-      const foco = document.getElementById('focoRotina').value;
-      const loader = document.getElementById('loadRotina');
-      const box = document.getElementById('resultRotina');
-      const btn = document.getElementById('btnGerarRotina');
-      
-      btn.style.display = 'none'; loader.style.display = 'block'; box.style.display = 'none';
+                            <div class="mt-8 space-y-3">
+                                <button onclick="finishOrderViaWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center space-x-2">
+                                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                                    <span>Enviar p/ WhatsApp do Cliente</span>
+                                </button>
+                                <button onclick="clearOrderForm()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-2.5 px-4 rounded-xl transition-all text-sm">
+                                    Limpar Orçamento
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-      const prompt = `Crie um cronograma estratégico de 5 dias (Segunda a Sexta) para o Instagram da loja ClosetJH. 
-      Foco da semana: ${foco.toUpperCase()}. 
-      Retorne em HTML formatado bonito. Para cada dia coloque: Manhã (Stories), Tarde (Feed/Reels), Noite (Interação/Live). Seja criativo e prático.`;
+                </div>
+            </section>
 
-      try {
-        const res = await chamarIA(prompt);
-        let limpo = res.replace(/```html/g, '').replace(/```/g, '');
-        box.innerHTML = limpo;
-        box.style.display = 'block';
-      } catch (e) { showToast(e.message, "error"); } 
-      finally { btn.style.display = 'inline-flex'; loader.style.display = 'none'; }
-    });
+            <!-- ================= 4. HISTÓRICO DE VENDAS ================= -->
+            <section id="view-historico" class="view-section space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800">Histórico de Orçamentos e Vendas</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Acompanhe os pedidos gerados e o status das negociações.</p>
+                    </div>
+                </div>
 
-    // --- CHATBOT CONSULTOR ---
-    function renderizarChat() {
-      const chatBox = document.getElementById('chatHistory');
-      chatBox.innerHTML = '<div class="msg ai">Olá! Sou seu consultor de negócios IA. Como posso ajudar a ClosetJH a vender mais hoje?</div>';
-      
-      db.chatHistory.forEach(msg => {
-        const div = document.createElement('div');
-        div.className = `msg ${msg.role === 'user' ? 'user' : 'ai'}`;
-        div.innerHTML = msg.text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        chatBox.appendChild(div);
-      });
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                <th class="p-4 pl-6">ID / Data</th>
+                                <th class="p-4">Cliente</th>
+                                <th class="p-4">Itens</th>
+                                <th class="p-4">Valor Total</th>
+                                <th class="p-4">Status</th>
+                                <th class="p-4 pr-6 text-right">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody" class="divide-y divide-slate-100 text-sm">
+                            <!-- Preenchido via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-    document.getElementById('btnEnviarChat').addEventListener('click', async () => {
-      const input = document.getElementById('chatInput');
-      const txt = input.value.trim();
-      if(!txt) return;
+        </div>
+    </main>
 
-      input.value = '';
-      db.chatHistory.push({ role: 'user', text: txt });
-      renderizarChat();
-      
-      const chatBox = document.getElementById('chatHistory');
-      const loadMsg = document.createElement('div');
-      loadMsg.className = 'msg ai';
-      loadMsg.innerText = 'Digitando...';
-      chatBox.appendChild(loadMsg);
-      chatBox.scrollTop = chatBox.scrollHeight;
+    <!-- SCRIPT DE COMPORTAMENTO DA APLICAÇÃO -->
+    <script>
+        // BANCO DE DADOS MOCKADO DE PRODUTOS
+        let productsDB = [
+            { id: 101, name: "Notebook Dell Inspiron 15", stock: 12, price: 4500.00, minPrice: 3800.00 },
+            { id: 102, name: "Mouse Sem Fio Logitech Ergo", stock: 85, price: 120.00, minPrice: 95.00 },
+            { id: 103, name: "Teclado Mecânico Gamer RGB", stock: 34, price: 350.00, minPrice: 280.00 },
+            { id: 104, name: "Monitor Profissional 27'' 4K", stock: 6, price: 1850.00, minPrice: 1550.00 },
+            { id: 105, name: "Cadeira Ergonômica Presidente", stock: 0, price: 1200.00, minPrice: 950.00 },
+            { id: 106, name: "SSD 1TB NVMe M.2 Kingston", stock: 42, price: 550.00, minPrice: 460.00 }
+        ];
 
-      // Monta contexto para IA (resumo do negócio)
-      let fat = db.vendas.reduce((a, b) => a + b.valorVenda, 0);
-      let numVendas = db.vendas.length;
-      let promptContexto = `Você é o consultor chefe da marca de roupas ClosetJH. Contexto atual da loja: Faturamento total R$ ${fat}, Vendas: ${numVendas}. Responda à dúvida do usuário de forma concisa e especialista em e-commerce.\n\nDúvida: ${txt}`;
+        let cart = [];
+        let historyDB = [
+            { id: "ORD-9821", date: "15/09/2026 14:22", client: "Empresa Alpha Ltda", itemsCount: 3, total: "R$ 4.870,00", status: "Aguardando Aprovação" },
+            { id: "ORD-9820", date: "15/09/2026 11:05", client: "João Carlos Silva", itemsCount: 1, total: "R$ 120,00", status: "Fechado com Sucesso" }
+        ];
 
-      try {
-        const resposta = await chamarIA(promptContexto);
-        db.chatHistory.push({ role: 'model', text: resposta });
-        salvarDB();
-        renderizarChat();
-      } catch (e) {
-        loadMsg.innerText = "Erro ao conectar. Verifique a chave.";
-        loadMsg.style.color = "red";
-      }
-    });
+        // INICIALIZAÇÃO
+        document.addEventListener("DOMContentLoaded", () => {
+            renderCatalog(productsDB);
+            populateProductSelect();
+            renderHistory();
+            initSalesChart();
+        });
 
-    // Permitir enviar chat com Enter
-    document.getElementById('chatInput').addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') document.getElementById('btnEnviarChat').click();
-    });
+        // NAVEGAÇÃO ENTRE ABAS
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
 
-    /* ==========================================================================
-       F. CONFIGURAÇÕES & IMPORT/EXPORT (Gestão de Dados)
-       ========================================================================== */
-    
-    function salvarConfig() {
-      const key = document.getElementById('inputApiKey').value.trim();
-      db.config.apiKey = key;
-      salvarDB();
-      showToast("Credencial salva com sucesso!", "success");
-      atualizarBadgeAuth();
-    }
+            document.querySelectorAll('aside nav button').forEach(btn => {
+                btn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-800 hover:text-white text-slate-400";
+            });
 
-    function atualizarBadgeAuth() {
-      const badge = document.getElementById('auth-status');
-      if(db.config.apiKey) {
-        badge.innerText = "✅ API Conectada";
-        badge.style.color = var('--success');
-        badge.style.borderColor = var('--success');
-      } else {
-        badge.innerText = "❌ Sem API Key";
-        badge.style.color = var('--danger');
-        badge.style.borderColor = var('--danger');
-      }
-    }
+            const activeBtn = document.getElementById('nav-' + viewId);
+            if(activeBtn) {
+                activeBtn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all bg-blue-600 text-white shadow-lg shadow-blue-600/30";
+            }
 
-    function exportarDados() {
-      const str = JSON.stringify(db, null, 2);
-      const blob = new Blob([str], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `ClosetJH_Backup_${new Date().toISOString().split('T')[0]}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-      showToast("Backup gerado com sucesso!", "success");
-    }
-
-    function importarDados(event) {
-      const file = event.target.files[0];
-      if(!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const content = JSON.parse(e.target.result);
-          if(content.clientes !== undefined && content.vendas !== undefined) {
-            db = content;
-            salvarDB();
-            location.reload(); // Recarrega para refletir tudo
-          } else {
-            showToast("Arquivo JSON inválido para este sistema.", "error");
-          }
-        } catch (err) {
-          showToast("Erro ao ler o arquivo.", "error");
+            const titles = {
+                'dashboard': 'Dashboard de Resultados',
+                'catalogo': 'Catálogo de Produtos & Estoque',
+                'orcamento': 'Criar Novo Orçamento / Pedido',
+                'historico': 'Histórico de Orçamentos'
+            };
+            document.getElementById('page-title').innerText = titles[viewId] || 'Painel Vendedor';
         }
-      };
-      reader.readAsText(file);
-    }
 
-    function resetarSistema() {
-      if(confirm("ALERTA CRÍTICO!\nIsso apagará TODOS os clientes, vendas, histórico de chat e configurações. Não pode ser desfeito. Tem certeza absoluta?")) {
-        localStorage.removeItem(DB_KEY);
-        location.reload();
-      }
-    }
-
-    /* ==========================================================================
-       G. INICIALIZAÇÃO DO SISTEMA
-       ========================================================================== */
-    window.onload = () => {
-      carregarDB();
-      
-      // Sincroniza campos de config
-      if(db.config.apiKey) {
-        document.getElementById('inputApiKey').value = db.config.apiKey;
-      }
-      
-      // Renderiza as views Iniciais
-      renderizarDashboard();
-      renderizarClientes();
-      renderizarSelectClientesVenda();
-      renderizarChat();
-      
-      // Atualiza badge visual no Header
-      const badge = document.getElementById('auth-status');
-      if(db.config.apiKey) {
-        badge.innerHTML = "✅ API Smart Auth Ativa";
-        badge.style.color = "#00E676";
-        badge.style.borderColor = "#00E676";
-      }
-      
-      // Resize listener para o Canvas do Gráfico não distorcer
-      window.addEventListener('resize', () => {
-        if(document.getElementById('tab-dashboard').classList.contains('active')) {
-          desenharGraficoVendas('salesChart', db.vendas);
+        // FORMATADOR DE MOEDA BRL
+        function formatBRL(val) {
+            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
-      });
-    };
-  </script>
+
+        // RENDERIZAR CATÁLOGO
+        function renderCatalog(data) {
+            const tbody = document.getElementById('catalogTableBody');
+            tbody.innerHTML = '';
+
+            if(data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">Nenhum produto encontrado.</td></tr>`;
+                return;
+            }
+
+            data.forEach(p => {
+                let stockBadge = p.stock > 10 
+                    ? `<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-bold text-xs rounded-full border border-emerald-200">${p.stock} un</span>`
+                    : (p.stock > 0 ? `<span class="px-2.5 py-1 bg-amber-50 text-amber-700 font-bold text-xs rounded-full border border-amber-200">Baixo (${p.stock} un)</span>`
+                                  : `<span class="px-2.5 py-1 bg-rose-50 text-rose-700 font-bold text-xs rounded-full border border-rose-200">Esgotado</span>`);
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="p-4 pl-6 font-semibold text-slate-800">
+                            ${p.name}
+                            <div class="text-xs text-slate-400 font-normal">Cód: ${p.id}</div>
+                        </td>
+                        <td class="p-4">${stockBadge}</td>
+                        <td class="p-4 font-bold text-slate-700">${formatBRL(p.price)}</td>
+                        <td class="p-4 bg-rose-50/40 font-bold text-rose-600">${formatBRL(p.minPrice)}</td>
+                        <td class="p-4 pr-6 text-right">
+                            <button onclick="selectProductForQuote(${p.id})" ${p.stock === 0 ? 'disabled' : ''} class="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white font-semibold rounded-lg text-xs transition-all disabled:opacity-40 disabled:hover:bg-blue-50 disabled:hover:text-blue-600">
+                                <i class="fa-solid fa-cart-plus mr-1"></i> Usar no Pedido
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function filterCatalog() {
+            const query = document.getElementById('inputSearchCatalog').value.toLowerCase();
+            const filtered = productsDB.filter(p => p.name.toLowerCase().includes(query) || p.id.toString().includes(query));
+            renderCatalog(filtered);
+        }
+
+        // PREENCHER SELECT DE PRODUTOS
+        function populateProductSelect() {
+            const select = document.getElementById('selectProduct');
+            select.innerHTML = '<option value="">Selecione um produto do catálogo...</option>';
+            productsDB.filter(p => p.stock > 0).forEach(p => {
+                select.innerHTML += `<option value="${p.id}">${p.name} (${formatBRL(p.price)})</option>`;
+            });
+        }
+
+        function selectProductForQuote(id) {
+            switchView('orcamento');
+            document.getElementById('selectProduct').value = id;
+            document.getElementById('inputQty').value = 1;
+        }
+
+        // ADICIONAR AO CARRINHO
+        function addToCart() {
+            const selectId = parseInt(document.getElementById('selectProduct').value);
+            const qty = parseInt(document.getElementById('inputQty').value);
+
+            if(!selectId || isNaN(qty) || qty <= 0) {
+                alert("Selecione um produto válido e informe uma quantidade maior que zero.");
+                return;
+            }
+
+            const product = productsDB.find(p => p.id === selectId);
+            if(qty > product.stock) {
+                alert(`Estoque insuficiente! Temos apenas ${product.stock} unidades disponíveis.`);
+                return;
+            }
+
+            const existing = cart.find(item => item.product.id === selectId);
+            if(existing) {
+                if(existing.qty + qty > product.stock) {
+                    alert("A quantidade total no carrinho excede o estoque disponível.");
+                    return;
+                }
+                existing.qty += qty;
+            } else {
+                cart.push({ product, qty });
+            }
+
+            document.getElementById('selectProduct').value = "";
+            document.getElementById('inputQty').value = "1";
+            renderCart();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            renderCart();
+        }
+
+        // RENDERIZAR CARRINHO E TOTAIS COM TRAVA DE MARGEM
+        function renderCart() {
+            const tbody = document.getElementById('cartTableBody');
+            tbody.innerHTML = '';
+
+            if(cart.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">Nenhum item adicionado ao orçamento ainda.</td></tr>`;
+                calculateTotals();
+                return;
+            }
+
+            cart.forEach((item, index) => {
+                const subtotal = item.product.price * item.qty;
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 pl-4 font-medium text-slate-800">${item.product.name}</td>
+                        <td class="p-3 text-center font-semibold text-slate-600">${item.qty}</td>
+                        <td class="p-3 text-slate-600">${formatBRL(item.product.price)}</td>
+                        <td class="p-3 font-bold text-slate-800">${formatBRL(subtotal)}</td>
+                        <td class="p-3 pr-4 text-right">
+                            <button onclick="removeFromCart(${index})" class="text-rose-500 hover:text-rose-700 transition-colors">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            calculateTotals();
+        }
+
+        function calculateTotals() {
+            let subtotalTabela = 0;
+            let subtotalMinimoPermitido = 0;
+
+            cart.forEach(item => {
+                subtotalTabela += (item.product.price * item.qty);
+                subtotalMinimoPermitido += (item.product.minPrice * item.qty);
+            });
+
+            const discountInput = parseFloat(document.getElementById('inputDiscount').value) || 0;
+            const finalTotal = subtotalTabela - discountInput;
+
+            document.getElementById('summarySubtotal').innerText = formatBRL(subtotalTabela);
+            document.getElementById('summaryTotal').innerText = formatBRL(finalTotal > 0 ? finalTotal : 0);
+
+            const warningBox = document.getElementById('marginWarning');
+            const isMarginViolated = (cart.length > 0 && finalTotal < subtotalMinimoPermitido);
+
+            if(isMarginViolated) {
+                warningBox.classList.remove('hidden');
+                document.getElementById('summaryTotal').classList.add('text-rose-600');
+                document.getElementById('summaryTotal').classList.remove('text-blue-600');
+            } else {
+                warningBox.classList.add('hidden');
+                document.getElementById('summaryTotal').classList.remove('text-rose-600');
+                document.getElementById('summaryTotal').classList.add('text-blue-600');
+            }
+
+            return !isMarginViolated;
+        }
+
+        function clearOrderForm() {
+            cart = [];
+            document.getElementById('clientName').value = "";
+            document.getElementById('clientPhone').value = "";
+            document.getElementById('inputDiscount').value = "0";
+            renderCart();
+        }
+
+        // FINALIZAR E ENVIAR WHATSAPP
+        function finishOrderViaWhatsApp() {
+            if(cart.length === 0) {
+                alert("Adicione pelo menos um item ao orçamento.");
+                return;
+            }
+
+            const clientName = document.getElementById('clientName').value.trim() || "Cliente";
+            const clientPhone = document.getElementById('clientPhone').value.replace(/\D/g, '');
+
+            if(!clientPhone) {
+                alert("Informe o número de WhatsApp do cliente para envio do orçamento.");
+                return;
+            }
+
+            if(!calculateTotals()) {
+                alert("ERRO DE SEGURANÇA: O desconto aplicado fere a margem mínima permitida. Reduza o desconto antes de enviar.");
+                return;
+            }
+
+            let message = `Olá *${clientName}*, segue o seu orçamento:\n\n`;
+            cart.forEach(item => {
+                message += `▪ ${item.qty}x ${item.product.name} - ${formatBRL(item.product.price * item.qty)}\n`;
+            });
+            message += `\n*Valor Total:* ${document.getElementById('summaryTotal').innerText}\n\nOrçamento gerado por SalesApp PRO.`;
+
+            const whatsappUrl = `https://wa.me/55${clientPhone}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+
+            // Salvar no Histórico
+            historyDB.unshift({
+                id: "ORD-" + Math.floor(1000 + Math.random() * 9000),
+                date: new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                client: clientName,
+                itemsCount: cart.reduce((acc, i) => acc + i.qty, 0),
+                total: document.getElementById('summaryTotal').innerText,
+                status: "Aguardando Aprovação"
+            });
+            renderHistory();
+            clearOrderForm();
+            switchView('historico');
+        }
+
+        // RENDERIZAR HISTÓRICO
+        function renderHistory() {
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = '';
+
+            document.getElementById('dash-orcamentos-qtd').innerText = historyDB.filter(h => h.status.includes("Aguardando")).length;
+
+            historyDB.forEach(h => {
+                let badge = h.status.includes("Sucesso") || h.status.includes("Aprovado")
+                    ? `<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-bold text-xs rounded-full border border-emerald-200">${h.status}</span>`
+                    : `<span class="px-2.5 py-1 bg-amber-50 text-amber-700 font-bold text-xs rounded-full border border-amber-200">${h.status}</span>`;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-4 pl-6 font-semibold text-slate-800">${h.id}<div class="text-xs text-slate-400 font-normal">${h.date}</div></td>
+                        <td class="p-4 text-slate-700 font-medium">${h.client}</td>
+                        <td class="p-4 text-slate-600">${h.itemsCount} item(ns)</td>
+                        <td class="p-4 font-bold text-slate-800">${h.total}</td>
+                        <td class="p-4">${badge}</td>
+                        <td class="p-4 pr-6 text-right">
+                            <button onclick="alert('Detalhes do orçamento ${h.id}')" class="text-blue-600 hover:text-blue-800 font-semibold text-xs">Visualizar</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // GRÁFICO DO DASHBOARD
+        function initSalesChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                    datasets: [{
+                        label: 'Vendas (R$)',
+                        data: [3200, 4100, 3900, 5200, 4850, 6100],
+                        backgroundColor: '#2563eb',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f1' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+    </script>
 </body>
 </html>
