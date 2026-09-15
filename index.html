@@ -358,9 +358,9 @@
 
   <script>
     // =========================================================================
-    // CREDENCIAL DE AUTENTICAÇÃO EMBUTIDA (FORMATO CURL)
+    // CREDENCIAL DE AUTENTICAÇÃO (CONFIGURE NA ABA AGENDA/CONFIGURAÇÕES)
     // =========================================================================
-    const CHAVE_API_PADRAO = "AQ.Ab8RN6Ke5MyDaVHe4aQvMp-6KF1P2yh1JMPD16bFpv4CnChfQg";
+    const CHAVE_API_PADRAO = "";
 
     // Polyfill seguro para roundRect caso o navegador móvel não suporte nativamente
     if (CanvasRenderingContext2D && !CanvasRenderingContext2D.prototype.roundRect) {
@@ -432,7 +432,7 @@
       const keyToUse = localStorage.getItem('closetjh_custom_key') || CHAVE_API_PADRAO;
       
       if (!keyToUse) {
-        throw new Error("Chave de API não configurada!");
+        throw new Error("Chave de API não configurada! Vá até a aba Agenda e salve sua chave nas Configurações.");
       }
 
       const controller = new AbortController();
@@ -456,7 +456,6 @@
           requestBody.tools = [{ googleSearch: {} }];
         }
 
-        // Endpoint exato e cabeçalho X-goog-api-key solicitados
         const fetchUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`;
         const headers = {
           'Content-Type': 'application/json',
