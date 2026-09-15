@@ -291,16 +291,18 @@
   <!-- TAB 3: RADAR DE CONFECÇÕES & FORNECEDORES -->
   <div id="tab3" class="tab-content">
     <div class="card">
-      <label>Radar de Lojas & Confecções (Pesquisa Real em Tempo Real)</label>
-      <label style="color:#aaa; font-size:9px;">Carregue a foto da peça para identificar o fornecedor por imagem (Opcional)</label>
+      <label>Radar de Lojas & Confecções (Multimodal: Imagem + Web em Tempo Real)</label>
+      
+      <label style="color:#aaa; font-size:9px;">1. Carregue a foto da peça para pesquisar visualmente (Opcional)</label>
       <input type="file" id="imageInputAtacado" accept="image/*">
       <img id="previewAtacado" class="preview-img" style="display:none;" />
+      <button class="btn-outline" id="btnRemoverImgAtacado" style="display:none; margin-top:5px;" onclick="limparImagemAtacado()">❌ Remover Imagem</button>
+
+      <label style="margin-top:12px;">2. Informe os termos de busca ou região (Opcional se houver foto)</label>
+      <input type="text" id="buscaFornecedor" placeholder="Ex: Vestido Alfaiataria Mega Moda 44, Goiânia">
       
-      <label style="margin-top:10px;">Ou informe a peça/estilo exato para pesquisar no mercado</label>
-      <input type="text" id="buscaFornecedor" placeholder="Ex: Vestido Alfaiataria Mega Moda 44, Macacão Jeans Goiânia">
-      
-      <button class="btn-gold" onclick="pesquisarFornecedores()">🌐 Pesquisa Exata em Tempo Real (Valores & Instagram)</button>
-      <div id="fornecedoresOutput" class="output-box">Consulte aqui os fornecedores reais com links de Instagram, endereços e valores exatos...</div>
+      <button class="btn-gold" onclick="pesquisarFornecedores()">🌐 Pesquisa Exata (Imagem + Dados Web)</button>
+      <div id="fornecedoresOutput" class="output-box">Consulte aqui fornecedores reais com links de Instagram, endereços e valores exatos...</div>
     </div>
   </div>
 
@@ -390,25 +392,43 @@
         const preview = document.getElementById('previewAtacado');
         preview.src = event.target.result;
         preview.style.display = 'block';
+        document.getElementById('btnRemoverImgAtacado').style.display = 'block';
         base64ImageAtacado = event.target.result.split(',')[1];
       }
       if(file) reader.readAsDataURL(file);
     });
 
+    function limparImagemAtacado() {
+      document.getElementById('imageInputAtacado').value = "";
+      document.getElementById('previewAtacado').style.display = 'none';
+      document.getElementById('btnRemoverImgAtacado').style.display = 'none';
+      base64ImageAtacado = "";
+    }
+
+    // Suporte Completo Multimodal + Google Search Grounding em tempo real
     async function chamarGemini(promptText, base64Img = null, usarBuscaGoogle = false) {
       const keyToUse = localStorage.getItem('closetjh_custom_key') || DEFAULT_KEY;
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      const timeoutId = setTimeout(() => controller.abort(), 25000);
 
       try {
         const parts = [{ text: promptText }];
+        
+        // Inclui a imagem se fornecida (Multimodal ativado)
         if (base64Img) {
-          parts.push({ inline_data: { mime_type: "image/jpeg", data: base64Img } });
+          parts.push({ 
+            inline_data: { 
+              mime_type: "image/jpeg", 
+              data: base64Img 
+            } 
+          });
         }
 
         const requestBody = { contents: [{ parts }] };
+        
+        // Ferramenta Google Search REST oficial para Gemini 1.5
         if (usarBuscaGoogle) {
-          requestBody.tools = [{ googleSearch: {} }];
+          requestBody.tools = [{ google_search: {} }];
         }
 
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${keyToUse}`, {
@@ -422,11 +442,11 @@
         const data = await res.json();
 
         if (data.error) {
-          throw new Error(data.error.message || `Erro da API do Google (${data.error.code})`);
+          throw new Error(`[Erro Google API ${data.error.code}]: ${data.error.message}`);
         }
 
         if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-          throw new Error("Resposta da IA vazia ou sem suporte a este formato.");
+          throw new Error("A IA não retornou resultados para esses parâmetros.");
         }
 
         return data.candidates[0].content.parts.map(p => p.text).join('\n');
@@ -441,7 +461,7 @@
       
       try {
         const prompt = 'Analise esta roupa feminina da ClosetJH. Responda APENAS em formato JSON estrito: {"nome": "Nome elegante da Peça", "tecido": "Tecido provável", "cores": "Cartela de cores sugerida", "preco_medio": "Valor médio de venda estimado (Ex: R$ 189,90)"}';
-        const resText = await chamarGemini(prompt, base64Image);
+        const resText = await chamarGemini(prompt, base64Image, false);
         const rawText = resText.replace(/```json|```/g, '').trim();
         const parsed = JSON.parse(rawText);
         
@@ -585,29 +605,45 @@
     }
 
     async function pesquisarFornecedores() {
-      const termo = document.getElementById('buscaFornecedor').value || 'Moda Feminina Atacado Regiao 44 Goiania';
+      const termoInput = document.getElementById('buscaFornecedor').value.trim();
+      const temImagem = !!base64ImageAtacado;
       const output = document.getElementById('fornecedoresOutput');
-      output.innerText = "🌐 Conectando ao Google para pesquisar lojas exatas, Instagrams e valores atualizados no mercado...";
+
+      if (!termoInput && !temImagem) {
+        return alert("Por favor, digite um termo de busca OU insira uma imagem da peça para pesquisar!");
+      }
+
+      output.innerText = temImagem 
+        ? "📸 Analisando imagem da peça e pesquisando fornecedores reais no Google em tempo real..."
+        : "🌐 Pesquisando fornecedores reais no Google em tempo real...";
+
+      let prompt = "";
+      if (temImagem && termoInput) {
+        prompt = `Analise visualmente a imagem deste produto de moda feminina e combine com a seguinte busca do usuário: '${termoInput}'.
+Faça uma pesquisa completa na web (Google) para localizar fornecedores REAIS de atacado em Goiânia / Região da 44 que vendem esta peça ou estilo similar.`;
+      } else if (temImagem) {
+        prompt = `Analise visualmente a imagem desta roupa feminina (identifique o tipo de corte, tecido, estampa e estilo).
+Pesquise no Google em tempo real por lojas e confecções de atacado REAIS (especialmente na Região da 44 / Goiânia - GO ou polo atacadista) que trabalhem com peças idênticas ou semelhantes.`;
+      } else {
+        prompt = `Faça uma pesquisa detalhada em tempo real na web (Google) sobre confecções e fornecedores REAIS no atacado para o seguinte termo: '${termoInput}'.`;
+      }
+
+      prompt += `\n\nRetorne informações REAIS, EXATAS E SEM ERROS encontradas na pesquisa:
+1. 🏬 Nome Oficial da Confecção / Loja Físicas Real
+2. 📍 Endereço Completo Exato (Galeria, Shopping na 44, Rua e Número da Loja)
+3. 📸 Instagram Oficial Real (@usuario)
+4. 📱 WhatsApp / Contato Comercial
+5. 💰 Preço Médio Exato da Peça no Atacado (R$) e Pedido Mínimo
+6. 👗 Descrição das Peças Disponíveis e Observações de Qualidade/Entrega.`;
 
       try {
-        const prompt = `Você é um assistente de compras para confecções de atacado. Faça uma pesquisa na web em tempo real sobre fornecedores e lojas de atacado reais em Goiânia (Região da 44, Mega Moda, etc.) para a peça ou categoria: '${termo}'.
-Retorne informações EXATAS, REAIS E SEM ERROS. Traga dados específicos da internet:
-1. 🏬 Nome Oficial da Confecção / Loja Físicas Real
-2. 📍 Endereço Exato (Galeria, Rua, Número da Loja, Shopping na 44)
-3. 📸 Instagram Oficial Real (@nome_da_loja)
-4. 📱 Contato comercial ou WhatsApp de Atacado Real
-5. 💰 Preço Médio Exato da Peça no Atacado (R$) e Pedido Mínimo
-6. 💡 Observação sobre qualidade ou entrega.
-
-Forneça resultados reais encontrados na pesquisa do Google.`;
-        
-        const resText = await chamarGemini(prompt, base64ImageAtacado, true);
+        // Envia base64ImageAtacado (se existir) + ativa Google Search Grounding (true)
+        const resText = await chamarGemini(prompt, base64ImageAtacado || null, true);
         output.innerText = resText;
       } catch(err) {
-        output.innerText = `⚠️ Falha ao buscar dados em tempo real. Verifique se a sua conexão está ativa.\n\n` +
-          `📍 Lojas Referência na 44:\n` +
-          `• Mega Moda Shopping - Av. Contorno, N 1490, Goiânia - GO | IG: @megamodashopping\n` +
-          `• Galeria Center Modas - Rua 44, Goiânia - GO | Atacado a partir de 6 peças.`;
+        console.error("Detalhes do erro na busca de atacado:", err);
+        output.innerText = `⚠️ Erro na consulta: ${err.message}\n\n` +
+          `💡 Dica: Se o erro persistir, verifique sua conexão ou adicione sua própria Chave API do Google AI Studio na aba "Agenda/Configurações".`;
       }
     }
 
@@ -618,7 +654,7 @@ Forneça resultados reais encontrados na pesquisa do Google.`;
 
       try {
         const prompt = `Como consultor de moda luxuosa da ClosetJH, crie 3 sugestões de combinações para o vendedor oferecer junto com a peça '${nome}'. Exemplo: Qual sapato, bolsa, cinto ou segunda peça oferecer para fechar o look completo.`;
-        const resText = await chamarGemini(prompt);
+        const resText = await chamarGemini(prompt, null, false);
         output.innerText = resText;
       } catch(e) {
         output.innerText = `💡 [SUGESTÕES PRONTAS DE COMBINAÇÃO para "${nome}"]:\n\n` +
@@ -637,7 +673,7 @@ Forneça resultados reais encontrados na pesquisa do Google.`;
 
       try {
         const prompt = `Crie uma legenda vendedora para o Instagram da ClosetJH. Produto: '${nome}', Tecido: '${tecido}', Valor: '${preco}'. Foco em elegância e urgência.`;
-        const resText = await chamarGemini(prompt);
+        const resText = await chamarGemini(prompt, null, false);
         output.innerText = resText;
       } catch(e) {
         output.innerText = `✨ [LEGENDA COMERCIAL PRONTA]:\n\n` +
@@ -656,7 +692,7 @@ Forneça resultados reais encontrados na pesquisa do Google.`;
 
       try {
         const prompt = `Monte 3 ideias de Stories estratégicos para o vendedor postar hoje vendendo a peça '${nome}'.`;
-        const resText = await chamarGemini(prompt);
+        const resText = await chamarGemini(prompt, null, false);
         output.innerText = resText;
       } catch(e) {
         output.innerText = `🎬 [ROTEIRO DE 3 STORIES DE OFERTA para "${nome}"]:\n\n` +
@@ -673,7 +709,7 @@ Forneça resultados reais encontrados na pesquisa do Google.`;
 Responda APENAS em JSON estrito com as chaves: "segunda", "terca", "quarta", "quinta", "sexta", "sabado". Defina ações práticas e de alta conversão para cada dia.`;
 
       try {
-        const resText = await chamarGemini(prompt);
+        const resText = await chamarGemini(prompt, null, false);
         const rawText = resText.replace(/```json|```/g, '').trim();
         const parsed = JSON.parse(rawText);
         if (parsed.segunda) document.getElementById('planSeg').value = parsed.segunda;
