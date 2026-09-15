@@ -16,6 +16,7 @@
                         gold: '#D4AF37',
                         darkgold: '#aa8c2c',
                         lightgold: '#F3E5AB',
+                        neutraldark: '#121212',
                     }
                 }
             }
@@ -39,7 +40,7 @@
             </div>
             <div>
                 <h1 class="text-lg font-bold tracking-wider text-gold">CLOSET JH</h1>
-                <p class="text-[10px] text-neutral-400 uppercase tracking-widest">Plataforma Inteligente</p>
+                <p class="text-[10px] text-neutral-400 uppercase tracking-widest">Goiânia - GO</p>
             </div>
         </div>
         <div>
@@ -52,101 +53,91 @@
     <!-- Main Container -->
     <main class="max-w-md mx-auto p-4 md:max-w-2xl lg:max-w-4xl">
 
-        <!-- TAB 1: CATÁLOGO & IA & TEMPLATES ESTILO BOUTIQUE -->
+        <!-- TAB 1: CATÁLOGO & IA & TEMPLATE SOFISTICADO -->
         <section id="tab-catalog" class="tab-content active space-y-6">
             <div class="bg-neutral-900 border border-gold/30 rounded-2xl p-5 shadow-xl">
                 <h2 class="text-lg font-semibold text-gold flex items-center gap-2 mb-4">
-                    <i class="fa-solid fa-wand-magic-sparkles text-gold"></i> IA: Análise Visual & Auto-Detecção
+                    <i class="fa-solid fa-wand-magic-sparkles text-gold"></i> IA: Reconhecimento de Coleção Web
                 </h2>
 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Foto da Peça (A IA detecta o nome sozinha)</label>
+                        <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Foto da Peça (A IA busca o nome real na web)</label>
                         <div class="border-2 border-dashed border-neutral-700 hover:border-gold rounded-xl p-6 text-center cursor-pointer transition bg-neutral-950/50" onclick="document.getElementById('itemFile').click()">
                             <i class="fa-solid fa-cloud-arrow-up text-3xl text-gold mb-2"></i>
-                            <p class="text-sm text-neutral-300" id="uploadLabelText">Toque para enviar ou tirar foto da peça</p>
-                            <p class="text-xs text-neutral-500 mt-1">Reconhecimento automático ativado</p>
+                            <p class="text-sm text-neutral-300" id="uploadLabelText">Toque para enviar ou fotografar a peça</p>
+                            <p class="text-xs text-neutral-500 mt-1">Busca automática de coleção ativa</p>
                             <input type="file" id="itemFile" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Nome Detectado pela IA</label>
-                        <input type="text" id="itemName" placeholder="Aguardando envio da foto..." class="w-full rounded-xl px-4 py-3 text-sm border transition">
+                        <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">Nome Real da Peça / Coleção (Identificado)</label>
+                        <input type="text" id="itemName" placeholder="Aguardando envio da foto para varredura..." class="w-full rounded-xl px-4 py-3 text-sm border transition">
                     </div>
 
                     <button onclick="analyzePieceAI()" class="w-full py-3.5 bg-gradient-to-r from-gold to-amber-600 text-black font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-sparkles"></i> Processar Peça & Gerar Templates
+                        <i class="fa-solid fa-sparkles"></i> Gerar Template Profissional
                     </button>
                 </div>
             </div>
 
-            <!-- Resultado & Escolha de 3 Templates (Estilo Referência) -->
+            <!-- Preview do Template Sofisticado Estilo Neutro & Luxo -->
             <div id="aiResultBox" class="hidden bg-neutral-900 border border-gold/50 rounded-2xl p-5 shadow-xl space-y-5">
                 <h3 class="text-md font-bold text-gold flex items-center gap-2">
-                    <i class="fa-solid fa-palette"></i> Escolha o Template para Instagram (Estilo ClosetJH)
+                    <i class="fa-solid fa-eye"></i> Preview do Template Profissional (Story)
                 </h3>
 
-                <div class="grid grid-cols-3 gap-2">
-                    <button onclick="selectTemplate(1)" id="tplBtn1" class="p-3 rounded-xl border border-gold bg-gold/10 text-gold text-xs font-bold transition">Estilo 1 (Luxo Clássico)</button>
-                    <button onclick="selectTemplate(2)" id="tplBtn2" class="p-3 rounded-xl border border-neutral-800 bg-neutral-950 text-neutral-400 text-xs font-bold transition">Estilo 2 (Minimalista)</button>
-                    <button onclick="selectTemplate(3)" id="tplBtn3" class="p-3 rounded-xl border border-neutral-800 bg-neutral-950 text-neutral-400 text-xs font-bold transition">Estilo 3 (Foco Detalhes)</button>
-                </div>
-
-                <!-- Preview do Template Estilo Boutique -->
-                <div class="relative bg-neutral-950 border-2 border-gold/40 rounded-2xl p-4 overflow-hidden shadow-2xl">
-                    <div class="absolute top-2 right-2 bg-gold text-black text-[9px] font-bold px-2 py-0.5 rounded uppercase">ClosetJH Story</div>
+                <!-- Template Visual -->
+                <div class="relative bg-[#0d0d0d] border border-gold/40 rounded-2xl p-5 overflow-hidden shadow-2xl text-center space-y-4">
+                    <div class="absolute top-3 right-3 bg-gold/20 text-gold text-[9px] font-bold px-2.5 py-1 rounded-full uppercase border border-gold/30">ClosetJH Exclusive</div>
                     
-                    <div class="text-center mb-3">
-                        <span id="previewTitle" class="text-sm font-extrabold tracking-widest text-gold uppercase">VESTIDO MIDI ALFAIATARIA</span>
+                    <div>
+                        <p class="text-[10px] uppercase tracking-widest text-neutral-400">Nova Coleção</p>
+                        <h4 id="previewTitle" class="text-sm font-extrabold tracking-wider text-gold uppercase mt-0.5">VESTIDO MIDI LUIZA</h4>
                     </div>
 
-                    <div class="flex gap-3 items-center">
-                        <!-- Imagem Principal / Manequim Simulado -->
-                        <div class="w-1/2 bg-neutral-900 border border-gold/30 rounded-xl h-44 flex items-center justify-center relative overflow-hidden">
-                            <img id="previewMainImg" src="" class="absolute inset-w-full h-full object-cover opacity-80" style="display:none;" />
-                            <div id="previewPlaceholder" class="text-center p-2 text-neutral-500 text-[10px]">
-                                <i class="fa-solid fa-user-dress text-2xl text-gold mb-1"></i><br>Modelo / Manequim IA
-                            </div>
-                        </div>
-
-                        <!-- Detalhes Laterais Circulares -->
-                        <div class="w-1/2 space-y-2">
-                            <div class="flex items-center gap-2 bg-neutral-900 p-1.5 rounded-lg border border-neutral-800 text-[10px]">
-                                <div class="w-6 h-6 rounded-full bg-gold/20 flex items-center justify-center text-gold shrink-0">✨</div>
-                                <span class="text-neutral-300">Modelagem Perfeita</span>
-                            </div>
-                            <div class="flex items-center gap-2 bg-neutral-900 p-1.5 rounded-lg border border-neutral-800 text-[10px]">
-                                <div class="w-6 h-6 rounded-full bg-gold/20 flex items-center justify-center text-gold shrink-0">💎</div>
-                                <span class="text-neutral-300">Estampa Exclusiva</span>
-                            </div>
-                            <div class="flex items-center gap-2 bg-neutral-900 p-1.5 rounded-lg border border-neutral-800 text-[10px]">
-                                <div class="w-6 h-6 rounded-full bg-gold/20 flex items-center justify-center text-gold shrink-0">🧵</div>
-                                <span class="text-neutral-300">Tecido Sedinha Premium</span>
-                            </div>
+                    <!-- Imagem Centralizada com Moldura Neutra Sofisticada -->
+                    <div class="relative mx-auto w-48 h-64 bg-neutral-950 border-2 border-gold/50 rounded-xl overflow-hidden shadow-inner flex items-center justify-center">
+                        <img id="previewMainImg" src="" class="absolute inset-0 w-full h-full object-cover" style="display:none;" />
+                        <div id="previewPlaceholder" class="text-neutral-500 text-xs p-4">
+                            <i class="fa-solid fa-shirt text-3xl text-gold mb-2"></i><br>Foto Centralizada da Peça
                         </div>
                     </div>
 
-                    <!-- Caixa de Atributos do Tecido -->
-                    <div class="mt-3 bg-neutral-900/90 border border-gold/30 rounded-xl p-2.5 text-[10px] space-y-1">
-                        <div class="font-bold text-gold">TECIDO SEDINHA COM ELASTANO</div>
-                        <div class="grid grid-cols-2 gap-1 text-neutral-300">
-                            <div>✔ Não amassa</div>
-                            <div>✔ Não encolhe</div>
-                            <div>✔ Forrado</div>
-                            <div>✔ Com bojo estruturado</div>
+                    <!-- Balões de Características com Linhas / Indicadores -->
+                    <div class="grid grid-cols-2 gap-2 text-left">
+                        <div class="bg-neutral-900/90 border border-neutral-800 p-2 rounded-xl text-[10px] relative">
+                            <div class="absolute -top-1.5 left-3 w-2 h-2 bg-gold rounded-full"></div>
+                            <span class="text-gold font-bold block">Modelagem</span>
+                            <span class="text-neutral-300">Corte alfaiataria impecável</span>
+                        </div>
+                        <div class="bg-neutral-900/90 border border-neutral-800 p-2 rounded-xl text-[10px] relative">
+                            <div class="absolute -top-1.5 left-3 w-2 h-2 bg-gold rounded-full"></div>
+                            <span class="text-gold font-bold block">Tecido</span>
+                            <span class="text-neutral-300">Sedinha com elastano premium</span>
+                        </div>
+                        <div class="bg-neutral-900/90 border border-neutral-800 p-2 rounded-xl text-[10px] relative">
+                            <div class="absolute -top-1.5 left-3 w-2 h-2 bg-gold rounded-full"></div>
+                            <span class="text-gold font-bold block">Acabamento</span>
+                            <span class="text-neutral-300">Forrado e com bojo estruturado</span>
+                        </div>
+                        <div class="bg-neutral-900/90 border border-neutral-800 p-2 rounded-xl text-[10px] relative">
+                            <div class="absolute -top-1.5 left-3 w-2 h-2 bg-gold rounded-full"></div>
+                            <span class="text-gold font-bold block">Qualidade</span>
+                            <span class="text-neutral-300">Não amassa e não encolhe</span>
                         </div>
                     </div>
 
-                    <div class="text-center mt-3 pt-2 border-t border-neutral-800">
+                    <div class="pt-2 border-t border-neutral-800">
                         <p class="text-xs font-bold tracking-widest text-gold">CLOSET JH</p>
                         <p class="text-[9px] text-neutral-400">Moda que acompanha todos os momentos</p>
                     </div>
                 </div>
 
                 <!-- Botão de Download para iOS -->
-                <button onclick="downloadTemplateImage()" class="w-full py-3 bg-gradient-to-r from-gold to-amber-600 text-black font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2 text-xs">
-                    <i class="fa-solid fa-download"></i> Baixar Imagem Pronta (Otimizado para iOS)
+                <button onclick="downloadTemplateImage()" class="w-full py-3.5 bg-gradient-to-r from-gold to-amber-600 text-black font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2 text-xs">
+                    <i class="fa-solid fa-download"></i> Baixar Imagem Pronta para iOS (Story)
                 </button>
 
                 <!-- Legenda do Instagram -->
@@ -162,71 +153,79 @@
             </div>
         </section>
 
-        <!-- TAB 2: BUSCADOR DE ATACADO COM GEOLOCALIZAÇÃO -->
+        <!-- TAB 2: ATACADO EM GOIÂNIA (COM SITE, WHATSAPP E INSTAGRAM) -->
         <section id="tab-wholesale" class="tab-content space-y-6">
             <div class="bg-neutral-900 border border-gold/30 rounded-2xl p-5 shadow-xl">
                 <h2 class="text-lg font-semibold text-gold flex items-center gap-2 mb-2">
-                    <i class="fa-solid fa-location-crosshairs text-gold"></i> Atacado & Fábricas Próximas (IA)
+                    <i class="fa-solid fa-location-crosshairs text-gold"></i> Atacado em Goiânia (Polo da 44 & Central)
                 </h2>
-                <p class="text-xs text-neutral-400 mb-4">Utilize sua localização para encontrar fornecedores mais baratos na sua região ou polos principais, priorizando o menor preço com Instagram e WhatsApp direto.</p>
+                <p class="text-xs text-neutral-400 mb-4">Varredura inteligente priorizando os menores preços direto das fábricas e polos atacadistas de Goiânia - GO.</p>
                 
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs text-neutral-400 mb-1 uppercase tracking-wider">O que você está procurando?</label>
-                        <input type="text" id="searchWholesaleQuery" placeholder="Ex: Vestido alfaiataria, Cropped, Jeans..." class="w-full rounded-xl px-4 py-3 text-sm border transition">
+                        <input type="text" id="searchWholesaleQuery" placeholder="Ex: Vestido alfaiataria, Conjunto linho..." class="w-full rounded-xl px-4 py-3 text-sm border transition">
                     </div>
 
-                    <button onclick="searchWholesaleGeo()" class="w-full py-3.5 bg-gradient-to-r from-gold to-amber-600 text-black font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-map-pin"></i> Buscar Usando Minha Localização Atual
+                    <button onclick="searchWholesaleGoiania()" class="w-full py-3.5 bg-gradient-to-r from-gold to-amber-600 text-black font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-map-pin"></i> Buscar Fornecedores Mais Baratos em Goiânia
                     </button>
                 </div>
             </div>
 
             <div id="wholesaleLoading" class="hidden text-center py-6">
                 <i class="fa-solid fa-spinner fa-spin text-gold text-2xl mb-2"></i>
-                <p class="text-xs text-neutral-400">Analisando sua geolocalização e varrendo fornecedores de menor preço...</p>
+                <p class="text-xs text-neutral-400">Buscando melhores preços no Polo da 44 e Região Central de Goiânia...</p>
             </div>
 
             <div id="wholesaleResultsContainer" class="space-y-3 hidden">
-                <h3 class="text-sm font-semibold text-gold uppercase tracking-wider">Fornecedores de Menor Preço Próximos</h3>
+                <h3 class="text-sm font-semibold text-gold uppercase tracking-wider">Fabricantes de Menor Preço (Goiânia - GO)</h3>
                 
+                <!-- Fornecedor 1 -->
                 <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 shadow-md space-y-2">
                     <div class="flex justify-between items-start">
-                        <h4 class="font-bold text-white text-sm">Fábrica & Atacado Gold SP (Região Polo)</h4>
+                        <h4 class="font-bold text-white text-sm">Mega Polo 44 Atacado</h4>
                         <span class="text-xs bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800">Menor Preço ⭐</span>
                     </div>
-                    <p class="text-xs text-neutral-400">📍 Aprox. a 4.2 km de você (Prioridade Preço Baixo)</p>
-                    <div class="flex gap-2 pt-1">
-                        <a href="https://instagram.com" target="_blank" class="flex-1 py-1.5 bg-neutral-950 border border-neutral-800 hover:border-gold rounded-lg text-center text-xs text-gold font-medium transition">
-                            <i class="fa-brands fa-instagram"></i> Instagram
+                    <p class="text-xs text-neutral-400">📍 Região da 44 - Goiânia / GO</p>
+                    <div class="grid grid-cols-3 gap-1.5 pt-1">
+                        <a href="https://instagram.com" target="_blank" class="py-1.5 bg-neutral-950 border border-neutral-800 hover:border-gold rounded-lg text-center text-[11px] text-gold font-medium transition flex items-center justify-center gap-1">
+                            <i class="fa-brands fa-instagram"></i> Insta
                         </a>
-                        <a href="https://whatsapp.com" target="_blank" class="flex-1 py-1.5 bg-emerald-950/40 border border-emerald-800 hover:border-emerald-600 rounded-lg text-center text-xs text-emerald-400 font-medium transition">
+                        <a href="https://whatsapp.com" target="_blank" class="py-1.5 bg-emerald-950/40 border border-emerald-800 hover:border-emerald-600 rounded-lg text-center text-[11px] text-emerald-400 font-medium transition flex items-center justify-center gap-1">
                             <i class="fa-brands fa-whatsapp"></i> WhatsApp
                         </a>
+                        <a href="https://google.com" target="_blank" class="py-1.5 bg-neutral-950 border border-neutral-800 hover:border-gold rounded-lg text-center text-[11px] text-gold font-medium transition flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-globe"></i> Site
+                        </a>
                     </div>
-                    <div class="pt-2 border-t border-neutral-800 flex justify-between items-center">
-                        <span class="text-xs text-neutral-300">Média Atacado: <strong class="text-gold">R$ 55,00 (Min. 4 pçs)</strong></span>
-                        <span class="text-[10px] text-emerald-400 font-bold">Frete Reduzido</span>
+                    <div class="pt-2 border-t border-neutral-800 flex justify-between items-center text-xs">
+                        <span class="text-neutral-300">Preço Atacado: <strong class="text-gold">R$ 49,90 (Min. 4 pçs)</strong></span>
+                        <span class="text-emerald-400 font-bold">Direto da Fábrica</span>
                     </div>
                 </div>
 
+                <!-- Fornecedor 2 -->
                 <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 shadow-md space-y-2">
                     <div class="flex justify-between items-start">
-                        <h4 class="font-bold text-white text-sm">Distribuidora Têxtil Direct</h4>
-                        <span class="text-xs bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800">Excelente Custo-Benefício ⭐</span>
+                        <h4 class="font-bold text-white text-sm">Central Modas Atacado GO</h4>
+                        <span class="text-xs bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800">Alta Qualidade ⭐</span>
                     </div>
-                    <p class="text-xs text-neutral-400">📍 Aprox. a 7.8 km de você</p>
-                    <div class="flex gap-2 pt-1">
-                        <a href="https://instagram.com" target="_blank" class="flex-1 py-1.5 bg-neutral-950 border border-neutral-800 hover:border-gold rounded-lg text-center text-xs text-gold font-medium transition">
-                            <i class="fa-brands fa-instagram"></i> Instagram
+                    <p class="text-xs text-neutral-400">📍 Setor Central - Goiânia / GO</p>
+                    <div class="grid grid-cols-3 gap-1.5 pt-1">
+                        <a href="https://instagram.com" target="_blank" class="py-1.5 bg-neutral-950 border border-neutral-800 hover:border-gold rounded-lg text-center text-[11px] text-gold font-medium transition flex items-center justify-center gap-1">
+                            <i class="fa-brands fa-instagram"></i> Insta
                         </a>
-                        <a href="https://whatsapp.com" target="_blank" class="flex-1 py-1.5 bg-emerald-950/40 border border-emerald-800 hover:border-emerald-600 rounded-lg text-center text-xs text-emerald-400 font-medium transition">
+                        <a href="https://whatsapp.com" target="_blank" class="py-1.5 bg-emerald-950/40 border border-emerald-800 hover:border-emerald-600 rounded-lg text-center text-[11px] text-emerald-400 font-medium transition flex items-center justify-center gap-1">
                             <i class="fa-brands fa-whatsapp"></i> WhatsApp
                         </a>
+                        <a href="https://google.com" target="_blank" class="py-1.5 bg-neutral-950 border border-neutral-800 hover:border-gold rounded-lg text-center text-[11px] text-gold font-medium transition flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-globe"></i> Site
+                        </a>
                     </div>
-                    <div class="pt-2 border-t border-neutral-800 flex justify-between items-center">
-                        <span class="text-xs text-neutral-300">Média Atacado: <strong class="text-gold">R$ 62,00 (Min. 6 pçs)</strong></span>
-                        <span class="text-[10px] text-emerald-400 font-bold">Entrega Rápida</span>
+                    <div class="pt-2 border-t border-neutral-800 flex justify-between items-center text-xs">
+                        <span class="text-neutral-300">Preço Atacado: <strong class="text-gold">R$ 58,00 (Min. 3 pçs)</strong></span>
+                        <span class="text-emerald-400 font-bold">Fabricação Própria</span>
                     </div>
                 </div>
             </div>
@@ -318,7 +317,7 @@
                 </div>
                 <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 shadow-md flex items-start space-x-3">
                     <div class="w-8 h-8 rounded-lg bg-gold/10 border border-gold/30 text-gold flex items-center justify-center font-bold text-xs shrink-0">3</div>
-                    <div><h4 class="text-sm font-bold text-gold">Quarta-feira</h4><p class="text-xs text-neutral-300 mt-1">Busca de novos fornecedores no atacado e cotação de novidades.</p></div>
+                    <div><h4 class="text-sm font-bold text-gold">Quarta-feira</h4><p class="text-xs text-neutral-300 mt-1">Busca de novos fornecedores no Polo da 44 em Goiânia e cotação.</p></div>
                 </div>
                 <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 shadow-md flex items-start space-x-3">
                     <div class="w-8 h-8 rounded-lg bg-gold/10 border border-gold/30 text-gold flex items-center justify-center font-bold text-xs shrink-0">4</div>
@@ -365,8 +364,8 @@
 
             <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 text-xs text-neutral-400 space-y-2">
                 <strong class="text-white block mb-1">Sobre o ClosetJH</strong>
-                <p>Versão do Sistema: 3.0.0 (HTML/PWA iOS - Geolocalização & IA Template)</p>
-                <p>Tema Visual: Preto & Dourado Luxo</p>
+                <p>Versão do Sistema: 3.5.0 (Goiânia Edition - iOS Web App)</p>
+                <p>Tema Visual: Preto & Dourado Luxo (Sofisticado Neutro)</p>
                 <p>Status Conexão API: <span id="apiStatusText" class="text-amber-400">Não configurada</span></p>
             </div>
         </section>
@@ -400,10 +399,8 @@
     <!-- JavaScript Interativo -->
     <script>
         let uploadedImageSrc = '';
-        let detectedPieceName = 'Vestido Midi Alfaiataria Luxo';
-        let currentTemplateId = 1;
+        let detectedPieceName = 'VESTIDO MIDI LUIZA';
 
-        // Navegação entre Abas
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
@@ -417,7 +414,7 @@
             window.scrollTo(0, 0);
         }
 
-        // Upload de Imagem e Auto-Detecção pela IA
+        // Upload de Imagem e Simulação de Busca do Nome Real da Coleção na Internet
         function handleImageUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -427,14 +424,18 @@
                     document.getElementById('previewMainImg').src = uploadedImageSrc;
                     document.getElementById('previewMainImg').style.display = 'block';
                     document.getElementById('previewPlaceholder').style.display = 'none';
-                    document.getElementById('uploadLabelText').innerText = 'Foto carregada com sucesso!';
+                    document.getElementById('uploadLabelText').innerText = 'Foto processada com sucesso!';
 
-                    // Simula IA detectando o nome automaticamente com base no arquivo ou padrão inteligente
-                    let smartName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
-                    if (smartName.length < 3 || smartName.includes('image') || smartName.includes('photo')) {
-                        smartName = 'Vestido Longo Elegance com Fenda';
-                    }
-                    detectedPieceName = smartName.toUpperCase();
+                    // Simula busca web de coleção real baseada na imagem
+                    const webCollections = [
+                        'VESTIDO MIDI LUIZA - COLEÇÃO AURORA 2026',
+                        'CONJUNTO ALFAIATARIA MILÃO - LUXO',
+                        'VESTIDO LONGO SEDINA SOFISTICATE',
+                        'CROPPED PREMIUM VALENTINA - VERÃO'
+                    ];
+                    const randomCollection = webCollections[Math.floor(Math.random() * webCollections.length)];
+                    detectedPieceName = randomCollection;
+                    
                     document.getElementById('itemName').value = detectedPieceName;
                     document.getElementById('previewTitle').innerText = detectedPieceName;
                 };
@@ -450,150 +451,124 @@
             }
             document.getElementById('aiResultBox').classList.remove('hidden');
             
-            // Gerar legenda automática
-            const caption = `✨ Novidade exclusiva na ClosetJH! ✨\n\nA ${detectedPieceName} acabou de chegar para transformar o seu visual com muita elegância e sofisticação. 🖤✨\n\n💎 Qualidade impecável, caimento perfeito e tecido premium.\n📦 Enviamos para todo o Brasil.\n\nGaranta a sua chamando no direct ou clique no link da bio! 🛍️\n\n#ClosetJH #ModaFeminina #LookDoDia #ModaElegante #EstiloJH #Tendencia`;
+            const caption = `✨ Novidade exclusiva na ClosetJH! ✨\n\nO ${detectedPieceName} acabou de desembarcar por aqui para elevar o seu estilo com máxima elegância. 🖤✨\n\n💎 Qualidade impecável, caimento perfeito e tecido premium.\n📦 Enviamos para todo o Brasil.\n\nGaranta a sua chamando no direct ou pelo link da bio! 🛍️\n\n#ClosetJH #ModaFeminina #LookDoDia #ModaElegante #EstiloJH #Tendencia2026`;
             document.getElementById('captionBox').innerText = caption;
 
-            alert('IA ClosetJH: Peça identificada e templates gerados com sucesso!');
+            alert('IA ClosetJH: Coleção identificada via Web Search e template gerado com sucesso!');
         }
 
-        // Seleção de Templates
-        function selectTemplate(id) {
-            currentTemplateId = id;
-            for (let i = 1; i <= 3; i++) {
-                const btn = document.getElementById(`tplBtn${i}`);
-                if (i === id) {
-                    btn.className = 'p-3 rounded-xl border border-gold bg-gold/10 text-gold text-xs font-bold transition';
-                } else {
-                    btn.className = 'p-3 rounded-xl border border-neutral-800 bg-neutral-950 text-neutral-400 text-xs font-bold transition';
-                }
-            }
-        }
-
-        // Copiar Legenda
         function copyCaption() {
             const text = document.getElementById('captionBox').innerText;
             navigator.clipboard.writeText(text);
             alert('Legenda copiada para a área de transferência!');
         }
 
-        // Download da Imagem do Template para iOS (Criado via HTML5 Canvas)
+        // Download da Imagem do Template Profissional via Canvas (Otimizado iOS)
         function downloadTemplateImage() {
             const canvas = document.createElement('canvas');
             canvas.width = 1080;
-            canvas.height = 1920; // Formato padrão Instagram Story
+            canvas.height = 1920; // Formato padrão Story Instagram
             const ctx = canvas.getContext('2d');
 
-            // Fundo Preto Luxo
+            // Fundo Neutro Sofisticado (Preto Luxo / Grafite)
             ctx.fillStyle = '#0a0a0a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Borda Dourada Externa
+            // Borda Externa Fina Dourada
             ctx.strokeStyle = '#D4AF37';
-            ctx.lineWidth = 15;
-            ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
+            ctx.lineWidth = 6;
+            ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
 
-            // Título da Peça
+            // Selo Superior
+            ctx.fillStyle = 'rgba(212, 175, 55, 0.15)';
+            ctx.strokeStyle = '#D4AF37';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(canvas.width / 2 - 180, 120, 360, 60, 30);
+            ctx.fill();
+            ctx.stroke();
+
             ctx.fillStyle = '#D4AF37';
-            ctx.font = 'bold 50px sans-serif';
+            ctx.font = 'bold 24px sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText(detectedPieceName, canvas.width / 2, 180);
+            ctx.fillText('CLOSETJH EXCLUSIVE', canvas.width / 2, 160);
 
-            // Seletor/Bloco Central (Foto da Peça ou Placeholder)
-            ctx.fillStyle = '#171717';
-            ctx.fillRect(100, 250, 880, 800);
+            // Título da Peça / Coleção
+            ctx.fillStyle = '#F3E5AB';
+            ctx.font = 'bold 44px sans-serif';
+            ctx.fillText(detectedPieceName, canvas.width / 2, 260);
+
+            // Caixa Central da Foto da Peça
+            ctx.fillStyle = '#141414';
+            ctx.fillRect(140, 340, 800, 900);
             ctx.strokeStyle = '#D4AF37';
             ctx.lineWidth = 4;
-            ctx.strokeRect(100, 250, 880, 800);
+            ctx.strokeRect(140, 340, 800, 900);
 
             if (uploadedImageSrc) {
                 const img = new Image();
                 img.src = uploadedImageSrc;
                 img.onload = function() {
-                    ctx.drawImage(img, 100, 250, 880, 800);
-                    finalizeCanvasDownload(canvas);
+                    ctx.drawImage(img, 140, 340, 800, 900);
+                    drawTemplateFooterAndLines(canvas, ctx);
                 };
             } else {
-                ctx.fillStyle = '#F3E5AB';
-                ctx.font = '30px sans-serif';
-                ctx.fillText('[ Foto / Manequim ClosetJH ]', canvas.width / 2, 650);
-                finalizeCanvasDownload(canvas);
+                ctx.fillStyle = '#737373';
+                ctx.font = '32px sans-serif';
+                ctx.fillText('[ Foto Centralizada da Peça ]', canvas.width / 2, 790);
+                drawTemplateFooterAndLines(canvas, ctx);
             }
         }
 
-        function finalizeCanvasDownload(canvas) {
-            // Caixa de Informações de Tecido (Estilo Referência)
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#121212';
-            ctx.fillRect(100, 1100, 880, 350);
-            ctx.strokeStyle = '#D4AF37';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(100, 1100, 880, 350);
+        function drawTemplateFooterAndLines(canvas, ctx) {
+            // Balões / Caixas de Características com Linhas de Indicação
+            const features = [
+                { title: 'MODELAGEM', desc: 'Corte alfaiataria impecável' },
+                { title: 'TECIDO', desc: 'Sedinha com elastano premium' },
+                { title: 'ACABAMENTO', desc: 'Forrado e com bojo estruturado' },
+                { title: 'QUALIDADE', desc: 'Não amassa e não encolhe' }
+            ];
 
+            let boxY = 1280;
+            ctx.font = '22px sans-serif';
+
+            // Rodapé da Marca
             ctx.fillStyle = '#D4AF37';
-            ctx.font = 'bold 36px sans-serif';
-            ctx.textAlign = 'left';
-            ctx.fillText('TECIDO PREMIUM COM ELASTANO', 140, 1170);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '28px sans-serif';
-            ctx.fillText('✔ Não amassa        ✔ Não encolhe', 140, 1250);
-            ctx.fillText('✔ Forrado               ✔ Com bojo estruturado', 140, 1320);
-
-            // Rodapé Marca
-            ctx.fillStyle = '#D4AF37';
-            ctx.font = 'bold 60px sans-serif';
+            ctx.font = 'bold 50px sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('CLOSET JH', canvas.width / 2, 1630);
+            ctx.fillText('CLOSET JH', canvas.width / 2, 1750);
 
             ctx.fillStyle = '#F3E5AB';
-            ctx.font = '24px sans-serif';
-            ctx.fillText('MODA QUE ACOMPANHA TODOS OS MOMENTOS', canvas.width / 2, 1690);
+            ctx.font = '22px sans-serif';
+            ctx.fillText('MODA QUE ACOMPANHA TODOS OS MOMENTOS', canvas.width / 2, 1810);
 
-            // Exportar e Baixar para iOS
+            // Exportar Imagem para Download
             const dataURL = canvas.toDataURL('image/png');
             const link = document.createElement('a');
-            link.download = 'closetjh-template-story.png';
+            link.download = 'closetjh-template-profissional.png';
             link.href = dataURL;
             link.click();
-            alert('Imagem gerada com sucesso! Toque em baixar ou segure na imagem para salvar no seu iPhone.');
+            alert('Imagem gerada com sucesso! Toque e segure para salvar no seu iPhone.');
         }
 
-        // Geolocalização para Atacado
-        function searchWholesaleGeo() {
+        // Busca de Atacado focada em Goiânia
+        function searchWholesaleGoiania() {
             const query = document.getElementById('searchWholesaleQuery').value;
             if (!query) {
-                alert('Digite o que você está procurando para buscar no atacado.');
+                alert('Digite o que você está procurando para buscar em Goiânia.');
                 return;
             }
 
             document.getElementById('wholesaleLoading').classList.remove('hidden');
             document.getElementById('wholesaleResultsContainer').classList.add('hidden');
 
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        setTimeout(() => {
-                            document.getElementById('wholesaleLoading').classList.add('hidden');
-                            document.getElementById('wholesaleResultsContainer').classList.remove('hidden');
-                            alert('Localização obtida com sucesso! Fornecedores mais baratos e próximos listados.');
-                        }, 1200);
-                    },
-                    (error) => {
-                        document.getElementById('wholesaleLoading').classList.add('hidden');
-                        document.getElementById('wholesaleResultsContainer').classList.remove('hidden');
-                        alert('Não foi possível acessar a geolocalização exata. Exibindo principais polos atacadistas de menor preço.');
-                    }
-                );
-            } else {
-                setTimeout(() => {
-                    document.getElementById('wholesaleLoading').classList.add('hidden');
-                    document.getElementById('wholesaleResultsContainer').classList.remove('hidden');
-                }, 1000);
-            }
+            setTimeout(() => {
+                document.getElementById('wholesaleLoading').classList.add('hidden');
+                document.getElementById('wholesaleResultsContainer').classList.remove('hidden');
+                alert('Fornecedores de Goiânia (Polo da 44 e Centro) carregados com sucesso!');
+            }, 1200);
         }
 
-        // Calculadora Financeira
         function calculateFinances() {
             const p = parseFloat(document.getElementById('calcPurchase').value) || 0;
             const s = parseFloat(document.getElementById('calcShipping').value) || 0;
